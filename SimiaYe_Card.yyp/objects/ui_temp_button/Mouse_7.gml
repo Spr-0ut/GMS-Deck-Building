@@ -1,9 +1,9 @@
 if(!instance_exists(ui_player_hand)) {
 	instance_create_layer(x,y,"Instances",ui_player_hand)
 }
-else if (object_get_visible(ui_player_hand)) {
-	//show player hand
+else if (ui_player_hand.is_hand_visible) {
+	ui_player_hand.hide_player_hand()
 }
 else {
-	//hide player hand
+	ui_player_hand.show_player_hand()
 }
