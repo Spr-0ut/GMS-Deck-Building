@@ -33,36 +33,27 @@ function get_hand_display_variables(card_instance) {
 	var card_has_been_saved = false
 	
 	for(var hand_index = 0; hand_index < array_length(cards_in_hand); hand_index++) {
-		total_width_of_hand += cards_in_hand[hand_index].sprite_width + SPACE_BETWEEN_CARDS_IN_HAND
 		if(!card_has_been_saved && hand_index == array_length(cards_in_hand) - 1 && cards_in_hand[hand_index] != 0) {
 			array_resize(cards_in_hand, array_length(cards_in_hand) + 10)
 			cards_in_hand[hand_index + 1] = card_instance
 			card_has_been_saved = true
+			total_width_of_hand += cards_in_hand[hand_index].sprite_width + SPACE_BETWEEN_CARDS_IN_HAND
 			number_of_cards_in_hand++
 			break
 		}
 		else if(cards_in_hand[hand_index] != 0) {
+			total_width_of_hand += cards_in_hand[hand_index].sprite_width + SPACE_BETWEEN_CARDS_IN_HAND
 			number_of_cards_in_hand++
 		}
 		else if(!card_has_been_saved) {
 			cards_in_hand[hand_index] = card_instance
 			card_has_been_saved = true
+			total_width_of_hand += cards_in_hand[hand_index].sprite_width + SPACE_BETWEEN_CARDS_IN_HAND
 			number_of_cards_in_hand++
 		}
 	}
 	
 	return [number_of_cards_in_hand, total_width_of_hand]
-}
-
-/// @desc		Checks cards_in_hand and returns the number of filled indexes
-/// @returns	The number of indexes with a card in it
-function get_number_of_cards_in_hand() {
-	var number_of_cards_in_hand = 0
-	for(var i = 0; i < array_length(cards_in_hand); i++) {
-		if(cards_in_hand[i] != 0)
-			number_of_cards_in_hand++;
-	}
-	return number_of_cards_in_hand
 }
 
 /// @desc		Makes all the cards in the player's hand visible
