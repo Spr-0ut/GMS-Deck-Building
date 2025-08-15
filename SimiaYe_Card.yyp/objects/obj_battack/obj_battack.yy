@@ -31,8 +31,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"spr_button_test",
-    "path":"sprites/spr_button_test/spr_button_test.yy",
+    "name":"spr_battack",
+    "path":"sprites/spr_battack/spr_battack.yy",
   },
   "spriteMaskId":null,
   "visible":true,
