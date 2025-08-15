@@ -4,7 +4,8 @@ playable = false
 play = false
 cardchosen = false 
 card_selected = false
-card_can_be_clicked = true
+card_start_x_position = x
+card_start_y_position = y
 
 attack = false
 armour = false 

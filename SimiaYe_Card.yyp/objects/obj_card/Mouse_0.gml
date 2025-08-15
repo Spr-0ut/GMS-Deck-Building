@@ -1,11 +1,9 @@
-if(!card_selected && card_can_be_clicked) {
+/// @description	Checks to see if no other cards are selected then allows this card to be selected
+if(!card_selected && ui_player_hand.card_can_be_selected) {
 	card_selected = true
-	card_can_be_clicked = false
-	show_debug_message(card_selected)
-	y -= 10
-}
-else if (card_can_be_clicked) {
-	card_selected = false
-	card_can_be_clicked = false
-	y = display_get_gui_height() - sprite_height
+	ui_player_hand.card_can_be_selected = false
+	card_start_x_position = x
+	card_start_y_position = y
+	x = mouse_x - (sprite_width / 2)
+	y = mouse_y - (sprite_height / 2)
 }

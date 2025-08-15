@@ -2,6 +2,7 @@
 
 cards_in_hand = array_create(10)
 is_hand_visible = true
+card_can_be_selected = true
 
 repeat(5)
 	add_card(obj_battack)
