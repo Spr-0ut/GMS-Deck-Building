@@ -3,7 +3,7 @@
 cards_in_hand = array_create(10)
 is_hand_visible = true
 
-repeat(1)
+repeat(5)
 	add_card(obj_battack)
 
 /// @desc							Adds a specified card to the player's hand and shows it in the UI

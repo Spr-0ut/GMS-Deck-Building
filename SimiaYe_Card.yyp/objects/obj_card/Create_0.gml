@@ -3,6 +3,8 @@
 playable = false 
 play = false
 cardchosen = false 
+card_selected = false
+card_can_be_clicked = true
 
 attack = false
 armour = false 
