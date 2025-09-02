@@ -1,18 +1,17 @@
 {
   "$GMObject":"",
-  "%Name":"obj_battack",
-  "eventList":[],
+  "%Name":"ui_temp_button",
+  "eventList":[
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":7,"eventType":6,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+  ],
   "managed":true,
-  "name":"obj_battack",
+  "name":"ui_temp_button",
   "overriddenProperties":[],
   "parent":{
-    "name":"Basic Cards",
-    "path":"folders/Objects/Card/Basic Cards.yy",
+    "name":"UI",
+    "path":"folders/Objects/UI.yy",
   },
-  "parentObjectId":{
-    "name":"obj_card",
-    "path":"objects/obj_card/obj_card.yy",
-  },
+  "parentObjectId":null,
   "persistent":false,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,
@@ -31,8 +30,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"spr_battack",
-    "path":"sprites/spr_battack/spr_battack.yy",
+    "name":"spr_button_test",
+    "path":"sprites/spr_button_test/spr_button_test.yy",
   },
   "spriteMaskId":null,
   "visible":true,

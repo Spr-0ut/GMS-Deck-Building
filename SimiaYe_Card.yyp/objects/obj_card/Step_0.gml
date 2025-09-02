@@ -1,5 +1,9 @@
 /// @description Insert description here
 // You can write your code in this editor
+if(card_selected) {
+	x = mouse_x - (sprite_width / 2)
+	y = mouse_y - (sprite_height / 2)
+}
 
 if (arena = true && cardchosen = true) {
 	playable = true
