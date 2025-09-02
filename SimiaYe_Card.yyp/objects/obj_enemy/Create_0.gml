@@ -1,7 +1,8 @@
 active_debuffs = {}
-/// @desc							Subtracts the amount of damage_taken and checks if enemy is alive
+/// @desc							Handles player attacks by applying debuffs and removing attack_data.damage
+///										from their health
 /// @param {Struct} attack_data		The struct containing information about the attack including damage,
-///									debuffs, and buffs						
+///										debuffs, and buffs						
 function hit_by_player(attack_data) {
 	for(var attack_debuff_index = 0; attack_debuff_index < array_length(attack_data.debuffs); attack_debuff_index++) {
 		var debuff_type = attack_data.debuffs[attack_debuff_index][0]
