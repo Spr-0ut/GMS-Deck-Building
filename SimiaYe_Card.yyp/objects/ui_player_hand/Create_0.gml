@@ -15,7 +15,7 @@ function initial_hand_setup() {
 		var card = instance_create_layer(x, y, "Instances", obj_battack)
 		cards_in_hand[card_index] = card
 	}
-	
+
 	set_cards_in_hand_position()
 }
 

@@ -1,8 +1,6 @@
-end_player_turn()
-
-/// @desc			controls the end of a players turn, filling the player's hand with cards
-function end_player_turn() {
-	if(instance_exists(ui_player_hand) && ui_player_hand.is_hand_visible) {
-		ui_player_hand.fill_player_hand()
-	}
+/// @desc			Checks if the End Turn button can be pressed and coordinates the end of the player's turn
+if(button_can_be_pressed) {
+	button_can_be_pressed = false
+	end_player_turn()
+	start_enemy_turn()
 }
