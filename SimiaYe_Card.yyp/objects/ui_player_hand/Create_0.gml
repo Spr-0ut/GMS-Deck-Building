@@ -43,11 +43,11 @@ function add_card(card) {
 
 /// @desc			Sets the position of all of the player's cards to be at the bottom center of the screen
 function set_cards_in_hand_position() {
-	number_of_cards_in_hand = array_length(cards_in_hand)
-		
+	var number_of_cards_in_hand = array_length(cards_in_hand)
 	var total_width_of_hand = get_width_of_player_hand()
 	var center_of_screen = display_get_gui_width() / 2
 	var left_most_card_x_pos = center_of_screen - (total_width_of_hand / 2)
+	
 	for(var card_index = 0; card_index < number_of_cards_in_hand; card_index++) {
 		var card_offset = (cards_in_hand[card_index].sprite_width + SPACE_BETWEEN_CARDS_IN_HAND) * card_index
 		
