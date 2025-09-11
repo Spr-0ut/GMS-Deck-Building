@@ -36,6 +36,7 @@
     {"name":"ui_room_switch_button","order":2,"path":"objects/ui_room_switch_button/ui_room_switch_button.yy",},
     {"name":"ui_temp_button","order":1,"path":"objects/ui_temp_button/ui_temp_button.yy",},
     {"name":"Arena","order":1,"path":"rooms/Arena/Arena.yy",},
+    {"name":"rm_level_select","order":3,"path":"rooms/rm_level_select/rm_level_select.yy",},
     {"name":"rm_main_menu","order":2,"path":"rooms/rm_main_menu/rm_main_menu.yy",},
     {"name":"etest","order":2,"path":"sprites/etest/etest.yy",},
     {"name":"spr_default_button","order":1,"path":"sprites/spr_default_button/spr_default_button.yy",},

@@ -66,6 +66,7 @@
     {"id":{"name":"ui_room_switch_button","path":"objects/ui_room_switch_button/ui_room_switch_button.yy",},},
     {"id":{"name":"ui_temp_button","path":"objects/ui_temp_button/ui_temp_button.yy",},},
     {"id":{"name":"Arena","path":"rooms/Arena/Arena.yy",},},
+    {"id":{"name":"rm_level_select","path":"rooms/rm_level_select/rm_level_select.yy",},},
     {"id":{"name":"rm_main_menu","path":"rooms/rm_main_menu/rm_main_menu.yy",},},
     {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
     {"id":{"name":"Script1","path":"scripts/Script1/Script1.yy",},},
@@ -82,6 +83,7 @@
     {"roomId":{"name":"rm_main_menu","path":"rooms/rm_main_menu/rm_main_menu.yy",},},
     {"roomId":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
     {"roomId":{"name":"Arena","path":"rooms/Arena/Arena.yy",},},
+    {"roomId":{"name":"rm_level_select","path":"rooms/rm_level_select/rm_level_select.yy",},},
   ],
   "templateType":null,
   "TextureGroups":[
