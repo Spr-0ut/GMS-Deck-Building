@@ -1,17 +1,22 @@
 {
   "$GMObject":"",
-  "%Name":"ui_temp_button",
+  "%Name":"ui_exit_button",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":7,"eventType":6,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"ui_temp_button",
-  "overriddenProperties":[],
+  "name":"ui_exit_button",
+  "overriddenProperties":[
+    {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"ui_button","path":"objects/ui_button/ui_button.yy",},"propertyId":{"name":"button_text","path":"objects/ui_button/ui_button.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"Exit",},
+  ],
   "parent":{
     "name":"Button",
     "path":"folders/Objects/UI/Button.yy",
   },
-  "parentObjectId":null,
+  "parentObjectId":{
+    "name":"ui_button",
+    "path":"objects/ui_button/ui_button.yy",
+  },
   "persistent":false,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,
@@ -30,8 +35,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"spr_button_test",
-    "path":"sprites/spr_button_test/spr_button_test.yy",
+    "name":"spr_default_button",
+    "path":"sprites/spr_default_button/spr_default_button.yy",
   },
   "spriteMaskId":null,
   "visible":true,
