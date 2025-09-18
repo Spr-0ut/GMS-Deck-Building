@@ -56,6 +56,7 @@
     {"id":{"name":"obj_brick","path":"objects/obj_brick/obj_brick.yy",},},
     {"id":{"name":"obj_card","path":"objects/obj_card/obj_card.yy",},},
     {"id":{"name":"obj_damageText","path":"objects/obj_damageText/obj_damageText.yy",},},
+    {"id":{"name":"obj_display_card","path":"objects/obj_display_card/obj_display_card.yy",},},
     {"id":{"name":"obj_easyenemy","path":"objects/obj_easyenemy/obj_easyenemy.yy",},},
     {"id":{"name":"obj_enemy","path":"objects/obj_enemy/obj_enemy.yy",},},
     {"id":{"name":"obj_interactable","path":"objects/obj_interactable/obj_interactable.yy",},},

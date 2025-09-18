@@ -22,7 +22,9 @@ function create_player_deck_view(layer_id) {
 			var card_x_pos = card_index % num_columns * (card_width + CARD_PADDING) + CARD_PADDING
 			var card_y_pos = floor(card_index / num_columns) * (card_height + CARD_PADDING) + CARD_PADDING
 			
-			instance_create_layer(card_x_pos, card_y_pos, layer_id, player_current_deck[card_index])
+			instance_create_layer(card_x_pos, card_y_pos, layer_id, obj_display_card, {
+				sprite_index : object_get_sprite(player_current_deck[card_index])
+			})
 		}
 	}
 }

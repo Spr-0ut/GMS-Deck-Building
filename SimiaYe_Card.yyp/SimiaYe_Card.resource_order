@@ -30,6 +30,7 @@
   "ResourceOrderSettings":[
     {"name":"obj_brick","order":1,"path":"objects/obj_brick/obj_brick.yy",},
     {"name":"obj_card","order":1,"path":"objects/obj_card/obj_card.yy",},
+    {"name":"obj_display_card","order":3,"path":"objects/obj_display_card/obj_display_card.yy",},
     {"name":"obj_easyenemy","order":1,"path":"objects/obj_easyenemy/obj_easyenemy.yy",},
     {"name":"obj_interactable","order":6,"path":"objects/obj_interactable/obj_interactable.yy",},
     {"name":"obj_main","order":1,"path":"objects/obj_main/obj_main.yy",},
