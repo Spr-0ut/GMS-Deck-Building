@@ -81,6 +81,7 @@
     {"id":{"name":"Card_Debuff_Effects","path":"scripts/Card_Debuff_Effects/Card_Debuff_Effects.yy",},},
     {"id":{"name":"player_deck","path":"scripts/player_deck/player_deck.yy",},},
     {"id":{"name":"Script1","path":"scripts/Script1/Script1.yy",},},
+    {"id":{"name":"top_layer_check","path":"scripts/top_layer_check/top_layer_check.yy",},},
     {"id":{"name":"etest","path":"sprites/etest/etest.yy",},},
     {"id":{"name":"spr_battack","path":"sprites/spr_battack/spr_battack.yy",},},
     {"id":{"name":"spr_brick","path":"sprites/spr_brick/spr_brick.yy",},},

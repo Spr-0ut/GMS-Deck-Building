@@ -46,6 +46,7 @@
     {"name":"rm_main_menu","order":2,"path":"rooms/rm_main_menu/rm_main_menu.yy",},
     {"name":"rm_settings","order":4,"path":"rooms/rm_settings/rm_settings.yy",},
     {"name":"player_deck","order":1,"path":"scripts/player_deck/player_deck.yy",},
+    {"name":"top_layer_check","order":2,"path":"scripts/top_layer_check/top_layer_check.yy",},
     {"name":"etest","order":2,"path":"sprites/etest/etest.yy",},
     {"name":"spr_default_button","order":1,"path":"sprites/spr_default_button/spr_default_button.yy",},
   ],
