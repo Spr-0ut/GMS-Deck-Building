@@ -1,3 +1,3 @@
 if(card_expanded) {
-	instance_destroy()
+	layer_destroy(layer)
 }

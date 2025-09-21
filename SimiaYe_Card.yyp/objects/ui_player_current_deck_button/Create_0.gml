@@ -3,6 +3,8 @@ event_inherited();
 
 #macro CARD_PADDING 10
 #macro BACKGROUND_ALPHA 0.5
+#macro CLOSE_BUTTON_PADDING 10
+
 show_player_deck = false
 
 /// @desc									Displays all of the players cards in their current deck in a grid
@@ -40,4 +42,18 @@ function draw_deck_background() {
 	var screen_height = camera_get_view_height(default_camera_id)
 	draw_rectangle(0, 0, screen_width, screen_height, false)
 	draw_set_alpha(1)	
+}
+
+/// @desc									Creates a button to delete the layer it's placed on
+/// @param {String, Id.Layer} layer_id		The layer the button will be shown on
+function create_close_button(layer_id) {
+	var close_button_sprite_width = sprite_get_width(object_get_sprite(ui_close_layer_button))
+	var button_x_pos = display_get_gui_width() - CLOSE_BUTTON_PADDING - close_button_sprite_width
+	var button_y_pos = CLOSE_BUTTON_PADDING
+	instance_create_layer(button_x_pos, button_y_pos, layer_id, ui_close_layer_button)
+}
+
+/// @desc									Clean up the background after the deck view is closed
+function hide_player_deck() {
+	show_player_deck = false
 }
