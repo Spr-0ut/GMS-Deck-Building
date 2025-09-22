@@ -1,5 +1,8 @@
 #macro EXPANDED_CARD_PADDING 100
 
+card_clicked = false
+remove_expanded_card = false
+
 /// @desc								Draws a rectangle over the whole camera to dim the game
 ///											NOTE: this must be called in the Draw event or it won't
 ///											work correctly
