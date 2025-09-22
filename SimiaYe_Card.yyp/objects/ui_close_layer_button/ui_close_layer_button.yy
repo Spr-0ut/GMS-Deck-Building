@@ -3,11 +3,12 @@
   "%Name":"ui_close_layer_button",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":7,"eventType":6,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
   "name":"ui_close_layer_button",
   "overriddenProperties":[
-    {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"ui_button","path":"objects/ui_button/ui_button.yy",},"propertyId":{"name":"button_text","path":"objects/ui_button/ui_button.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"Exit",},
+    {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"ui_button","path":"objects/ui_button/ui_button.yy",},"propertyId":{"name":"button_text","path":"objects/ui_button/ui_button.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"",},
   ],
   "parent":{
     "name":"Button",

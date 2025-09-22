@@ -5,5 +5,5 @@ if(is_top_layer(layer) && button_clicked) {
 	button_clicked = false
 	global.object_being_clicked = false
 	ui_player_current_deck_button.hide_player_deck()
-	layer_destroy(layer)
+	find_and_delete_related_layers(layer)
 }
