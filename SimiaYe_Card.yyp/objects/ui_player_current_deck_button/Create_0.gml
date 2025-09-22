@@ -4,6 +4,7 @@ event_inherited();
 #macro CARD_PADDING 10
 #macro BACKGROUND_ALPHA 0.5
 #macro CLOSE_BUTTON_PADDING 10
+#macro SCROLL_BAR_PADDING 5
 
 show_player_deck = false
 
@@ -51,6 +52,19 @@ function create_close_button(layer_id) {
 	var button_x_pos = display_get_gui_width() - CLOSE_BUTTON_PADDING - close_button_sprite_width
 	var button_y_pos = CLOSE_BUTTON_PADDING
 	instance_create_layer(button_x_pos, button_y_pos, layer_id, ui_close_layer_button)
+}
+
+/// @desc									Creates a scroll bar to move all display cards
+/// @param {String, Id.Layer} layer_id		The layer the scroll bar will be shown on
+function create_scroll_bar(layer_id) {
+	var bar_sprite_width = sprite_get_width(object_get_sprite(ui_player_deck_scrollbar))
+	var bar_sprite_height = sprite_get_height(object_get_sprite(ui_player_deck_scrollbar))
+	var bar_x_pos = display_get_gui_width() - SCROLL_BAR_PADDING - bar_sprite_width
+	var bar_y_pos = SCROLL_BAR_PADDING
+	var bar_sprite_y_scale = (display_get_gui_height() - (2 * SCROLL_BAR_PADDING)) / bar_sprite_height
+	instance_create_layer(bar_x_pos, bar_y_pos, layer_id, ui_player_deck_scrollbar, {
+		image_yscale : bar_sprite_y_scale
+	})
 }
 
 /// @desc									Clean up the background after the deck view is closed

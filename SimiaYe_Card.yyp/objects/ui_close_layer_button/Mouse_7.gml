@@ -3,7 +3,7 @@
 ///											variables since the button itself is being deleted
 if(is_top_layer(layer) && button_clicked) {
 	button_clicked = false
-	global.button_being_clicked = false
+	global.object_being_clicked = false
 	ui_player_current_deck_button.hide_player_deck()
 	layer_destroy(layer)
 }
