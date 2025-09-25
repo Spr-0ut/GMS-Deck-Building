@@ -3,15 +3,28 @@ event_inherited();
 
 #macro CARD_PADDING 10
 #macro BACKGROUND_ALPHA 0.5
-#macro CLOSE_BUTTON_PADDING 10
 #macro SCROLL_BAR_PADDING 5
 
 show_player_deck = false
+player_current_deck = get_player_current_deck()
+player_deck_instance_id = -1
+
+/// @desc									Creates the header that displays above the player deck
+/// @param {String, Id.Layer} layer_id		The layer the header will be shown on
+function create_player_deck_header(layer_id) {
+	var header_x_pos = 0
+	var header_y_pos = 0
+	var header_sprite_width = sprite_get_width(object_get_sprite(ui_player_deck_header_background))
+	var header_sprite_scale = display_get_gui_width() / header_sprite_width
+	instance_create_layer(header_x_pos, header_y_pos, layer_id, ui_player_deck_header_background, {
+		image_xscale : header_sprite_scale,
+		image_yscale : header_sprite_scale
+	})
+}
 
 /// @desc									Displays all of the players cards in their current deck in a grid
 /// @param {String, Id.Layer} layer_id		The layer the deck will be shown on
 function create_player_deck_view(layer_id) {
-	var player_current_deck = get_player_current_deck()
 	if(array_length(player_current_deck) > 0) {
 		//This assumes the cards will always be the same size. As of right now that's true and to make it
 		//	more generic would result in a potentially worse solution
@@ -30,6 +43,22 @@ function create_player_deck_view(layer_id) {
 			})
 		}
 	}
+}
+
+/// @desc									Clears out the displayed cards, sorts the displayed deck,
+///												and recreates them to be visable to the player
+function sort_player_deck(sort_function) {
+	if(array_length(player_current_deck) <= 0) {
+		player_current_deck = get_player_current_deck()
+	}
+	
+	for (var display_card_index = 0; display_card_index < instance_number(obj_display_card); display_card_index++)
+	{
+		instance_destroy(instance_find(obj_display_card,display_card_index))
+	}
+	
+	array_sort(player_current_deck, sort_function)
+	create_player_deck_view(player_deck_instance_id)
 }
 
 /// @desc									Draws a rectangle over the whole camera to dim the game
