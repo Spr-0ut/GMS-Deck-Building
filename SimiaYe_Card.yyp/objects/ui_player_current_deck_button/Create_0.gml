@@ -74,15 +74,6 @@ function draw_deck_background() {
 	draw_set_alpha(1)	
 }
 
-/// @desc									Creates a button to delete the layer it's placed on
-/// @param {String, Id.Layer} layer_id		The layer the button will be shown on
-function create_close_button(layer_id) {
-	var close_button_sprite_width = sprite_get_width(object_get_sprite(ui_close_layer_button))
-	var button_x_pos = display_get_gui_width() - CLOSE_BUTTON_PADDING - close_button_sprite_width
-	var button_y_pos = CLOSE_BUTTON_PADDING
-	instance_create_layer(button_x_pos, button_y_pos, layer_id, ui_close_layer_button)
-}
-
 /// @desc									Creates a scroll bar to move all display cards
 /// @param {String, Id.Layer} layer_id		The layer the scroll bar will be shown on
 function create_scroll_bar(layer_id) {

@@ -1,4 +1,3 @@
-// Inherit the parent event
 draw_self()
 
 draw_button_text()
