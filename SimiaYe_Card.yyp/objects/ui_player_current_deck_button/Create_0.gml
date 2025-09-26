@@ -8,6 +8,7 @@ event_inherited();
 show_player_deck = false
 player_current_deck = get_player_current_deck()
 player_deck_instance_id = -1
+bottom_of_header = 0
 
 /// @desc									Creates the header that displays above the player deck
 /// @param {String, Id.Layer} layer_id		The layer the header will be shown on
@@ -16,6 +17,9 @@ function create_player_deck_header(layer_id) {
 	var header_y_pos = 0
 	var header_sprite_width = sprite_get_width(object_get_sprite(ui_player_deck_header_background))
 	var header_sprite_scale = display_get_gui_width() / header_sprite_width
+	bottom_of_header = header_y_pos + 
+						(sprite_get_height(object_get_sprite(ui_player_deck_header_background)) * 
+						header_sprite_scale)
 	instance_create_layer(header_x_pos, header_y_pos, layer_id, ui_player_deck_header_background, {
 		image_xscale : header_sprite_scale,
 		image_yscale : header_sprite_scale
@@ -36,7 +40,8 @@ function create_player_deck_view(layer_id) {
 		
 		for (var card_index = 0; card_index < array_length(player_current_deck); card_index++) {
 			var card_x_pos = card_index % num_columns * (card_width + CARD_PADDING) + CARD_PADDING
-			var card_y_pos = floor(card_index / num_columns) * (card_height + CARD_PADDING) + CARD_PADDING
+			var card_y_pos = bottom_of_header + (floor(card_index / num_columns) * 
+								(card_height + CARD_PADDING)) + CARD_PADDING
 			
 			instance_create_layer(card_x_pos, card_y_pos, layer_id, obj_display_card, {
 				sprite_index : object_get_sprite(player_current_deck[card_index])
@@ -80,8 +85,8 @@ function create_scroll_bar(layer_id) {
 	var bar_sprite_width = sprite_get_width(object_get_sprite(ui_player_deck_scrollbar))
 	var bar_sprite_height = sprite_get_height(object_get_sprite(ui_player_deck_scrollbar))
 	var bar_x_pos = display_get_gui_width() - SCROLL_BAR_PADDING - bar_sprite_width
-	var bar_y_pos = SCROLL_BAR_PADDING
-	var bar_sprite_y_scale = (display_get_gui_height() - (2 * SCROLL_BAR_PADDING)) / bar_sprite_height
+	var bar_y_pos = bottom_of_header + SCROLL_BAR_PADDING
+	var bar_sprite_y_scale = (display_get_gui_height() - bar_y_pos -  SCROLL_BAR_PADDING) / bar_sprite_height
 	instance_create_layer(bar_x_pos, bar_y_pos, layer_id, ui_player_deck_scrollbar, {
 		image_yscale : bar_sprite_y_scale
 	})

@@ -31,6 +31,6 @@ function move_scroll_thumb() {
 	for (var movable_objects_index = 0; movable_objects_index < instance_number(obj_display_card); movable_objects_index++)
 	{
 		var display_card = instance_find(obj_display_card, movable_objects_index);
-		display_card.y = display_card.ystart - amount_page_scrolled
+		display_card.y = display_card.ystart - amount_page_scrolled + scroll_min
 	}
 }
