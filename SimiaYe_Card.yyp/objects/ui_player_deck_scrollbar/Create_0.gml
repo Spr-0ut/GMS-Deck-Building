@@ -1,4 +1,5 @@
 #macro SCROLL_BORDER_WIDTH 2
+#macro SCROLL_SMOOTHING_AMOUNT 0.25
 
 scroll_clicked = false
 amount_page_scrolled = 0
@@ -63,12 +64,18 @@ function find_scroll_thumb_scale() {
 /// @desc								Moves the scroll bar thumb to the new position as well as moving
 ///											all of the display cards that exist after using the scroll
 ///											wheel or clicking on the bar
-/// @param {Real} thumb_scroll_min			The highest position on screen the scroll thumb can go to
-///												(default to global variable)
-/// @param {Real} thumb_scroll_max			The lowest position on screen the scroll thumb can go to
-///												(default to global variable)
-function move_scroll_thumb(thumb_scroll_min = scroll_min, thumb_scroll_max = scroll_max) {
-	scroll_thumb.y = clamp(amount_page_scrolled, thumb_scroll_min, thumb_scroll_max)
+/// @param {bool} smooth_scroll			Flag to determine if the scroll should be animated or not
+/// @param {Real} thumb_scroll_min		The highest position on screen the scroll thumb can go to
+///											(default to global variable)
+/// @param {Real} thumb_scroll_max		The lowest position on screen the scroll thumb can go to
+///											(default to global variable)
+function move_scroll_thumb(smooth_scroll, thumb_scroll_min = scroll_min, thumb_scroll_max = scroll_max) {
+	if(smooth_scroll) {
+		scroll_thumb.y = lerp(scroll_thumb.y, amount_page_scrolled, SCROLL_SMOOTHING_AMOUNT);
+	}
+	else {
+		scroll_thumb.y = amount_page_scrolled
+	}
 		
 	for (var movable_objects_index = 0; movable_objects_index < instance_number(obj_display_card); movable_objects_index++)
 	{
