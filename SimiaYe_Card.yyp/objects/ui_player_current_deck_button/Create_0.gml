@@ -9,6 +9,7 @@ show_player_deck = false
 player_current_deck = get_player_current_deck()
 player_deck_instance_id = -1
 bottom_of_header = 0
+height_of_card_list = 0
 
 /// @desc									Creates the header that displays above the player deck
 /// @param {String, Id.Layer} layer_id		The layer the header will be shown on
@@ -37,6 +38,8 @@ function create_player_deck_view(layer_id) {
 		var default_camera_id = camera_get_default()
 		var screen_width = camera_get_view_width(default_camera_id)
 		var num_columns = floor(screen_width / (card_width + CARD_PADDING))
+		var num_rows = array_length(player_current_deck) / num_columns
+		height_of_card_list = (card_height + CARD_PADDING) * num_rows
 		
 		for (var card_index = 0; card_index < array_length(player_current_deck); card_index++) {
 			var card_x_pos = card_index % num_columns * (card_width + CARD_PADDING) + CARD_PADDING
@@ -82,14 +85,18 @@ function draw_deck_background() {
 /// @desc									Creates a scroll bar to move all display cards
 /// @param {String, Id.Layer} layer_id		The layer the scroll bar will be shown on
 function create_scroll_bar(layer_id) {
-	var bar_sprite_width = sprite_get_width(object_get_sprite(ui_player_deck_scrollbar))
-	var bar_sprite_height = sprite_get_height(object_get_sprite(ui_player_deck_scrollbar))
-	var bar_x_pos = display_get_gui_width() - SCROLL_BAR_PADDING - bar_sprite_width
-	var bar_y_pos = bottom_of_header + SCROLL_BAR_PADDING
-	var bar_sprite_y_scale = (display_get_gui_height() - bar_y_pos -  SCROLL_BAR_PADDING) / bar_sprite_height
-	instance_create_layer(bar_x_pos, bar_y_pos, layer_id, ui_player_deck_scrollbar, {
-		image_yscale : bar_sprite_y_scale
-	})
+	if((bottom_of_header + height_of_card_list) > display_get_gui_height()) {
+		var bar_sprite_width = sprite_get_width(object_get_sprite(ui_player_deck_scrollbar))
+		var bar_sprite_height = sprite_get_height(object_get_sprite(ui_player_deck_scrollbar))
+		var bar_x_pos = display_get_gui_width() - SCROLL_BAR_PADDING - bar_sprite_width
+		var bar_y_pos = bottom_of_header + SCROLL_BAR_PADDING
+		var bar_sprite_y_scale = (display_get_gui_height() - bar_y_pos -  SCROLL_BAR_PADDING) / bar_sprite_height
+		instance_create_layer(bar_x_pos, bar_y_pos, layer_id, ui_player_deck_scrollbar, {
+			image_yscale : bar_sprite_y_scale,
+			height_of_card_list : height_of_card_list,
+			header_bottom_y : bottom_of_header
+		})
+	}
 }
 
 /// @desc									Clean up the background after the deck view is closed
