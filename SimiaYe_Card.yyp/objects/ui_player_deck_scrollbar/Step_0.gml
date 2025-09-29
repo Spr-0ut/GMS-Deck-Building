@@ -2,7 +2,7 @@ if(scroll_thumb.y > scroll_min && scroll_thumb.y < scroll_max && scroll_thumb.y 
 	move_scroll_thumb(true, scroll_min, scroll_max)	
 }
 if(scroll_clicked) {
-	var temp_amount_page_scrolled = mouse_y
+	var temp_amount_page_scrolled = mouse_y - pos_thumb_clicked
 	amount_page_scrolled = clamp(temp_amount_page_scrolled, scroll_min, scroll_max)
 	move_scroll_thumb(false, scroll_min, scroll_max)
 }
