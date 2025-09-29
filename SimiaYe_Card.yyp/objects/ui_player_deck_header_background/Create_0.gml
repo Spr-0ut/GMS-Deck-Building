@@ -7,7 +7,7 @@ function fill_header() {
 	var close_button_x_pos = sprite_width - sprite_get_width(object_get_sprite(ui_close_layer_button))
 								- CLOSE_BUTTON_PADDING
 	var sort_buttons_x_pos = get_sort_buttons_x_pos(close_button_x_pos, 3)
-	var sort_button_y_pos = y + (sprite_height / 2) + CLOSE_BUTTON_PADDING
+	var sort_button_y_pos = y + (sprite_height / 4) + CLOSE_BUTTON_PADDING
 	var current_layer_depth = layer_get_depth(layer)
 	var header_buttons_layer_id = layer_create(current_layer_depth - 1)
 	
