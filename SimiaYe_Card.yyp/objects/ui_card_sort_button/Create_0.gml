@@ -59,15 +59,15 @@ function change_sort_direction() {
 	if(!is_sort_selected) {
 		is_sort_selected = true
 		is_sort_ascending = true
-		ui_player_current_deck_button.sort_player_deck(sort_cards)
+		ui_card_grid_display.sort_player_deck(sort_cards)
 	}
 	else if(is_sort_ascending) {
 		is_sort_ascending = false
-		ui_player_current_deck_button.sort_player_deck(sort_cards)
+		ui_card_grid_display.sort_player_deck(sort_cards)
 	}
 	else if (!is_sort_ascending) {
 		is_sort_ascending = true
-		ui_player_current_deck_button.sort_player_deck(sort_cards)
+		ui_card_grid_display.sort_player_deck(sort_cards)
 	}
 }
 

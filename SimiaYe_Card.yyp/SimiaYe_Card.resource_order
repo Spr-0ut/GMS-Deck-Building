@@ -35,6 +35,7 @@
     {"name":"obj_easyenemy","order":1,"path":"objects/obj_easyenemy/obj_easyenemy.yy",},
     {"name":"obj_interactable","order":6,"path":"objects/obj_interactable/obj_interactable.yy",},
     {"name":"obj_main","order":1,"path":"objects/obj_main/obj_main.yy",},
+    {"name":"ui_card_grid_display","order":7,"path":"objects/ui_card_grid_display/ui_card_grid_display.yy",},
     {"name":"ui_card_sort_by_cost","order":1,"path":"objects/ui_card_sort_by_cost/ui_card_sort_by_cost.yy",},
     {"name":"ui_card_sort_by_type","order":2,"path":"objects/ui_card_sort_by_type/ui_card_sort_by_type.yy",},
     {"name":"ui_charaselect","order":6,"path":"objects/ui_charaselect/ui_charaselect.yy",},

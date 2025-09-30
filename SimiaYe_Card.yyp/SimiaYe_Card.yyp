@@ -66,6 +66,7 @@
     {"id":{"name":"obj_sidechara","path":"objects/obj_sidechara/obj_sidechara.yy",},},
     {"id":{"name":"obj_wall","path":"objects/obj_wall/obj_wall.yy",},},
     {"id":{"name":"ui_button","path":"objects/ui_button/ui_button.yy",},},
+    {"id":{"name":"ui_card_grid_display","path":"objects/ui_card_grid_display/ui_card_grid_display.yy",},},
     {"id":{"name":"ui_card_sort_button","path":"objects/ui_card_sort_button/ui_card_sort_button.yy",},},
     {"id":{"name":"ui_card_sort_by_cost","path":"objects/ui_card_sort_by_cost/ui_card_sort_by_cost.yy",},},
     {"id":{"name":"ui_card_sort_by_type","path":"objects/ui_card_sort_by_type/ui_card_sort_by_type.yy",},},
