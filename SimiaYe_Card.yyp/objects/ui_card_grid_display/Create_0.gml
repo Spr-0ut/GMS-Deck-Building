@@ -17,7 +17,6 @@ create_scroll_bar()
 function create_card_display_header(layer_id) {
 	var header_x_pos = 0
 	var header_y_pos = 0
-	//TODO rename this
 	var header_sprite_width = sprite_get_width(object_get_sprite(ui_player_deck_header_background))
 	var header_sprite_scale = display_get_gui_width() / header_sprite_width
 	bottom_of_header = header_y_pos + 
@@ -84,7 +83,6 @@ function create_scroll_bar() {
 			var scroll_bar_grid_depth = layer_get_depth(layer) - 1
 			scroll_bar_instance_id = layer_create(scroll_bar_grid_depth, scroll_bar_layer_name)
 		}
-		//TODO rename
 		var bar_sprite_width = sprite_get_width(object_get_sprite(ui_player_deck_scrollbar))
 		var bar_sprite_height = sprite_get_height(object_get_sprite(ui_player_deck_scrollbar))
 		var bar_x_pos = display_get_gui_width() - SCROLL_BAR_PADDING - bar_sprite_width
