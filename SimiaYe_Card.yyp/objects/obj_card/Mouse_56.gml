@@ -4,6 +4,7 @@ if(card_selected) {
 	ui_player_hand.card_can_be_selected = true
 	if(y < card_start_y_position - (sprite_height * 1.5)) {
 		play_card()
+		discard_card()
 	}
 	
 	x = card_start_x_position

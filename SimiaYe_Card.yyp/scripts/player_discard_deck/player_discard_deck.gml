@@ -1,8 +1,8 @@
 /// @desc							Checks that the player_discarded_deck exists and if not 
 ///										creates an empty array
 function check_for_player_discard_deck() {
-	if(!variable_instance_exists(id, "player_discarded_deck")) {
-		player_discarded_deck = array_create(0)
+	if(!variable_global_exists("player_discarded_deck")) {
+		global.player_discarded_deck = array_create(0)
 	}
 }
 
@@ -10,7 +10,7 @@ function check_for_player_discard_deck() {
 
 function get_player_discard_deck() {
 	check_for_player_discard_deck()
-	return player_discarded_deck
+	return global.player_discarded_deck
 }
 
 /// @desc							Adds a card to the discard deck. This does not remove it from the
@@ -18,7 +18,7 @@ function get_player_discard_deck() {
 /// @param {Asset.GMObject} card	The card that is being added to the player's discard deck
 function add_card_to_discard_deck(card) {
 	check_for_player_discard_deck()
-	array_push(player_discarded_deck, card)
+	array_push(global.player_discarded_deck, card)
 }
 
 /// @desc							Removes a card from the player's discard deck. This only removes it
@@ -27,8 +27,8 @@ function add_card_to_discard_deck(card) {
 /// @param {Asset.GMObject} card	The card that is being removed from the player's discard deck
 function remove_card_from_player_discard_deck(card) {
 	check_for_player_discard_deck()
-	var card_index = array_get_index(player_discarded_deck, card)
-	array_delete(player_discarded_deck, card_index, 1)
+	var card_index = array_get_index(global.player_discarded_deck, card)
+	array_delete(global.player_discarded_deck, card_index, 1)
 }
 
 /// @desc							Empties out the discard deck, preparing it to be filled again. This
@@ -36,8 +36,8 @@ function remove_card_from_player_discard_deck(card) {
 ///										copy so this work can be done afterwards.
 /// @returns						The cards removed from the deck
 function remove_all_cards_from_player_discard_deck() {
-	var all_discarded_cards = array_create_ext(array_length(player_discarded_deck), function(_index) {
-		return player_discarded_deck[_index] })
-	player_discarded_deck = array_create(0)
+	var all_discarded_cards = array_create_ext(array_length(global.player_discarded_deck), function(_index) {
+		return global.player_discarded_deck[_index] })
+	global.player_discarded_deck = array_create(0)
 	return all_discarded_cards
 }

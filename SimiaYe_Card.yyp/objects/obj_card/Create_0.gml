@@ -15,6 +15,13 @@ function select_card() {
 	}
 }
 
+/// @description							Removes this card from the player's hand and destroy it
+function discard_card() {
+	add_card_to_discard_deck(object_index)
+	ui_player_hand.remove_card(id)
+	instance_destroy()
+}
+
 /// @description							Handles the card being played. This should be implemented in
 ///												each card.
 function play_card() {
