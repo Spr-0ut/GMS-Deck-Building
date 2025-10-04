@@ -36,6 +36,7 @@
     {"$GMObjectProperty":"v1","%Name":"font","filters":[
         "GMFont",
       ],"listItems":[],"multiselect":false,"name":"font","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resource":{"name":"fnt_button_font","path":"fonts/fnt_button_font/fnt_button_font.yy",},"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"fnt_button_font","varType":5,},
+    {"$GMObjectProperty":"v1","%Name":"text_color","filters":[],"listItems":[],"multiselect":false,"name":"text_color","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"$FFFFFFFF","varType":7,},
   ],
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
