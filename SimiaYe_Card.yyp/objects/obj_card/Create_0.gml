@@ -1,14 +1,29 @@
-/// @description Insert description here
-// You can write your code in this editor
-playable = false 
-play = false
-cardchosen = false 
 card_selected = false
 card_start_x_position = x
 card_start_y_position = y
 
-attack = false
-armour = false 
-shield = false
-buff = false 
-debuff = false
+/// @description							Checks to see if no other cards are selected then allows this
+///												card to be selected
+function select_card() {
+	if(!card_selected && ui_player_hand.card_can_be_selected && visible && is_top_layer(layer)) {
+		card_selected = true
+		ui_player_hand.card_can_be_selected = false
+		card_start_x_position = x
+		card_start_y_position = y
+		x = mouse_x - (sprite_width / 2)
+		y = mouse_y - (sprite_height / 2)
+	}
+}
+
+/// @description							Removes this card from the player's hand and destroy it
+function discard_card() {
+	add_card_to_discard_deck(object_index)
+	ui_player_hand.remove_card(id)
+	instance_destroy()
+}
+
+/// @description							Handles the card being played. This should be implemented in
+///												each card.
+function play_card() {
+	
+}

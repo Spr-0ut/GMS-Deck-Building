@@ -1,13 +1,13 @@
 {
   "$GMObject":"",
-  "%Name":"ui_player_current_deck_button",
+  "%Name":"ui_player_current_discard_button",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":7,"eventType":6,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"ui_player_current_deck_button",
+  "name":"ui_player_current_discard_button",
   "overriddenProperties":[
-    {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"ui_button","path":"objects/ui_button/ui_button.yy",},"propertyId":{"name":"button_text","path":"objects/ui_button/ui_button.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"Player Deck",},
+    {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"ui_button","path":"objects/ui_button/ui_button.yy",},"propertyId":{"name":"button_text","path":"objects/ui_button/ui_button.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"Discarded Cards",},
   ],
   "parent":{
     "name":"Button",
