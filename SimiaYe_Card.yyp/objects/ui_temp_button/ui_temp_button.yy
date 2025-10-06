@@ -8,8 +8,8 @@
   "name":"ui_temp_button",
   "overriddenProperties":[],
   "parent":{
-    "name":"UI",
-    "path":"folders/Objects/UI.yy",
+    "name":"Button",
+    "path":"folders/Objects/UI/Button.yy",
   },
   "parentObjectId":null,
   "persistent":false,

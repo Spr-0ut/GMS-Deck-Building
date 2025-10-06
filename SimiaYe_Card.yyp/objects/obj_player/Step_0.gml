@@ -14,17 +14,18 @@ if (chosen = true) {
 		//health
 		if (health <= 0)
 			chosen = false
-	}}
-//if out of arena you follow main player
-	else if (main = false) {
-		x = (obj_main.x)
-		y = (obj_main.y)
-		
-		if (place_meeting(x, y, obj_wall)) {
-			x -= (obj_main.x)
-			y -= (obj_main.y)
-		}
 	}
+}
+//if out of arena you follow main player
+else if (main = false) {
+	x = (obj_main.x)
+	y = (obj_main.y)
+		
+	if (place_meeting(x, y, obj_wall)) {
+		x -= (obj_main.x)
+		y -= (obj_main.y)
+	}
+}
 
 
  //selecting characters in the select screen

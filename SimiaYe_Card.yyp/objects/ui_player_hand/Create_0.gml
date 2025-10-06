@@ -2,10 +2,10 @@
 #macro DEFAULT_PLAYER_HAND_SIZE 6
 #macro MAX_PLAYER_HAND_SIZE 16
 
-is_hand_visible = true
-card_can_be_selected = true
 player_hand_size = DEFAULT_PLAYER_HAND_SIZE
 cards_in_hand = array_create(player_hand_size)
+is_hand_visible = true
+card_can_be_selected = true
 
 initial_hand_setup()
 
@@ -26,6 +26,7 @@ function fill_player_hand() {
 	if(num_cards_needed > 0) {
 		repeat(num_cards_needed) {
 			add_card(obj_battack)
+			//add_multiple_cards(get_player_current_deck())
 		}
 	}
 }
@@ -41,18 +42,42 @@ function add_card(card) {
 	}
 }
 
+/// @desc							Adds multiple specified cards to the player's hand 
+///										and shows it in the UI
+/// @param {Array} cards			The cards that are being added to the player's hand
+function add_multiple_cards(cards) {
+	var current_num_cards_in_hand = array_length(cards_in_hand)
+	var new_array_length = current_num_cards_in_hand + array_length(cards)
+	array_resize(cards_in_hand, new_array_length)
+	for(var card_index = current_num_cards_in_hand; card_index < new_array_length; card_index++) {
+		var card_instance = instance_create_layer(x, y, "Instances", cards[card_index])
+		cards_in_hand[card_index] = card_instance
+	}
+	position_cards_in_hand()
+}
+
+/// @desc							Removes the given card from the players hand if it exists
+/// @param {Id.Instance} card		The card that is being removed from the player's hand
+function remove_card(card) {
+	for(var card_index = 0; card_index < array_length(cards_in_hand); card_index++) {
+		if (cards_in_hand[card_index].id == card.id) {
+			array_delete(cards_in_hand, card_index, 1)
+			position_cards_in_hand()
+			break
+		}
+	}
+}
+
 /// @desc			Sets the position of all of the player's cards to be at the bottom center of the screen
 function set_cards_in_hand_position() {
-	var number_of_cards_in_hand = array_length(cards_in_hand)
-	var total_width_of_hand = get_width_of_player_hand()
-	var center_of_screen = display_get_gui_width() / 2
-	var left_most_card_x_pos = center_of_screen - (total_width_of_hand / 2)
-	
-	for(var card_index = 0; card_index < number_of_cards_in_hand; card_index++) {
-		var card_offset = (cards_in_hand[card_index].sprite_width + SPACE_BETWEEN_CARDS_IN_HAND) * card_index
-		
-		cards_in_hand[card_index].x = left_most_card_x_pos + card_offset
-		cards_in_hand[card_index].y = display_get_gui_height() - cards_in_hand[card_index].sprite_height
+	total_width_of_hand = get_width_of_player_hand()
+	var next_card_x = (display_get_gui_width() - total_width_of_hand) / 2
+	for(var card_index = 0; card_index < array_length(cards_in_hand); card_index++) {
+		if(cards_in_hand[card_index] != 0) {
+			cards_in_hand[card_index].x = next_card_x
+			cards_in_hand[card_index].y = display_get_gui_height() - cards_in_hand[card_index].sprite_height
+			next_card_x += cards_in_hand[card_index].sprite_width + SPACE_BETWEEN_CARDS_IN_HAND
+		}
 	}
 }
 
@@ -74,20 +99,20 @@ function get_width_of_player_hand() {
 	return total_width_of_hand
 }
 
-/// @desc		Makes all the cards in the player's hand visible
+/// @desc							Makes all the cards in the player's hand visible
 function show_player_hand() {
 	is_hand_visible = true
-	array_foreach(cards_in_hand, function(_val, _index)
+	array_foreach(cards_in_hand, function(_card, _index)
 	{
-        _val.visible = true
+        _card.visible = true
 	});
 }
 
-/// @desc		Hides all of the cards in the player's hand
+/// @desc							Hides all of the cards in the player's hand
 function hide_player_hand() {
 	is_hand_visible = false
-	array_foreach(cards_in_hand, function(_val, _index)
+	array_foreach(cards_in_hand, function(_card, _index)
 	{
-        _val.visible = false
+        _card.visible = false
 	});
 }
