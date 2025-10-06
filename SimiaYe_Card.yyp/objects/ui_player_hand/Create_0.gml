@@ -24,9 +24,12 @@ function fill_player_hand() {
 	var number_of_cards_in_hand = array_length(cards_in_hand)
 	var num_cards_needed = player_hand_size - number_of_cards_in_hand
 	if(num_cards_needed > 0) {
-		repeat(num_cards_needed) {
+		if(num_cards_needed > 1) {
+			var cards_to_add = array_create(num_cards_needed, obj_battack)
+			add_multiple_cards(cards_to_add)
+		}
+		else {
 			add_card(obj_battack)
-			//add_multiple_cards(get_player_current_deck())
 		}
 	}
 }
@@ -49,11 +52,11 @@ function add_multiple_cards(cards) {
 	var current_num_cards_in_hand = array_length(cards_in_hand)
 	var new_array_length = current_num_cards_in_hand + array_length(cards)
 	array_resize(cards_in_hand, new_array_length)
-	for(var card_index = current_num_cards_in_hand; card_index < new_array_length; card_index++) {
+	for(var card_index = 0; card_index < array_length(cards); card_index++) {
 		var card_instance = instance_create_layer(x, y, "Instances", cards[card_index])
-		cards_in_hand[card_index] = card_instance
+		cards_in_hand[card_index + current_num_cards_in_hand] = card_instance
 	}
-	position_cards_in_hand()
+	set_cards_in_hand_position()
 }
 
 /// @desc							Removes the given card from the players hand if it exists
@@ -62,7 +65,7 @@ function remove_card(card) {
 	for(var card_index = 0; card_index < array_length(cards_in_hand); card_index++) {
 		if (cards_in_hand[card_index].id == card.id) {
 			array_delete(cards_in_hand, card_index, 1)
-			position_cards_in_hand()
+			set_cards_in_hand_position()
 			break
 		}
 	}
