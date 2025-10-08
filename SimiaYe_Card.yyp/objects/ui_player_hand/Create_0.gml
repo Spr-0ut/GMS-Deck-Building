@@ -3,7 +3,7 @@
 #macro MAX_PLAYER_HAND_SIZE 16
 
 player_hand_size = DEFAULT_PLAYER_HAND_SIZE
-cards_in_hand = array_create(player_hand_size)
+cards_in_hand = array_create(0)
 is_hand_visible = true
 card_can_be_selected = true
 
@@ -11,12 +11,8 @@ initial_hand_setup()
 
 /// @desc			Setsup the player's initial hand, adding cards to fill the player_hand_size
 function initial_hand_setup() {
-	for (var card_index = 0; card_index < player_hand_size; card_index++) {
-		var card = instance_create_layer(x, y, "Instances", obj_battack)
-		cards_in_hand[card_index] = card
-	}
-
-	set_cards_in_hand_position()
+	global.player_current_deck = undefined
+	fill_player_hand()
 }
 
 /// @desc			Adds cards to the player's hand until they have player_hand_size amount
@@ -25,11 +21,23 @@ function fill_player_hand() {
 	var num_cards_needed = player_hand_size - number_of_cards_in_hand
 	if(num_cards_needed > 0) {
 		if(num_cards_needed > 1) {
-			var cards_to_add = array_create(num_cards_needed, obj_battack)
+			var cards_to_add = array_create(num_cards_needed, -1)
+			for(var card_num = 0; card_num < num_cards_needed; card_num++) {
+				var drawn_card = draw_card()
+				if(drawn_card == noone) {
+					array_resize(cards_to_add, card_num)
+					break;
+				}
+				else {
+					cards_to_add[card_num] = drawn_card
+				}
+			}
 			add_multiple_cards(cards_to_add)
 		}
 		else {
-			add_card(obj_battack)
+			var drawn_card = draw_card()
+			if(drawn_card != noone)
+				add_card(drawn_card)
 		}
 	}
 }
