@@ -24,7 +24,7 @@ function fill_player_hand() {
 			var cards_to_add = array_create(num_cards_needed, -1)
 			for(var card_num = 0; card_num < num_cards_needed; card_num++) {
 				var drawn_card = draw_card()
-				if(drawn_card == noone) {
+				if(drawn_card == -1) {
 					array_resize(cards_to_add, card_num)
 					break;
 				}
@@ -36,7 +36,7 @@ function fill_player_hand() {
 		}
 		else {
 			var drawn_card = draw_card()
-			if(drawn_card != noone)
+			if(drawn_card != -1)
 				add_card(drawn_card)
 		}
 	}

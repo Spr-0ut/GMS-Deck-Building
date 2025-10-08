@@ -47,7 +47,7 @@ function get_player_current_deck() {
 /// @desc							Handles drawing a single card out of the player_current_deck and
 ///										shuffling the discarded cards into the player_current_deck
 ///										when it is empty.
-/// @returns						Returns the card drawn from player_current_deck or noone if no
+/// @returns {Asset.GMObject}		Returns the card drawn from player_current_deck or -1 if no
 ///										cards are able to be drawn
 function draw_card() {
 	check_for_player_current_deck()
@@ -55,7 +55,7 @@ function draw_card() {
 	if(array_length(global.player_current_deck) < 1) {
 		var discarded_cards = get_player_discard_deck()
 		if(array_length(discarded_cards) < 1) {
-			return noone
+			return -1
 		}
 		add_discarded_cards_to_current_deck()
 	}

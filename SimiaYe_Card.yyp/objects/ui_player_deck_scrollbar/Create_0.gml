@@ -82,7 +82,7 @@ function move_scroll_thumb(smooth_scroll, thumb_scroll_min = scroll_min, thumb_s
 	{
 		var display_card = instance_find(obj_display_card, movable_objects_index);
 		var percent_scrolled = (scroll_thumb.y - thumb_scroll_min) / (thumb_scroll_max - thumb_scroll_min)
-		var card_grid_display_height = display_get_gui_height() - (header_bottom_y)
+		var card_grid_display_height = display_get_gui_height() - header_bottom_y
 		display_card.y = display_card.ystart - (percent_scrolled * 
 							(list_of_card_height - card_grid_display_height))
 	}
