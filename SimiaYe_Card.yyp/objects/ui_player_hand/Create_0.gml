@@ -34,6 +34,16 @@ function fill_player_hand() {
 	}
 }
 
+/// @desc							Removes all cards from the player's hand, puts them in the
+///										discard deck, and destroys their instnace
+function empty_player_hand() {
+	array_foreach(cards_in_hand, function(card, card_index) {
+		add_card_to_discard_deck(card.object_index)
+		instance_destroy(card)
+	})
+	array_resize(cards_in_hand, 0)
+}
+
 /// @desc							Adds a specified card to the player's hand and shows it in the UI
 /// @param {Asset.GMObject} card	The card that is being added to the player's hand
 function add_card(card) {
@@ -64,6 +74,7 @@ function add_multiple_cards(cards) {
 function remove_card(card) {
 	for(var card_index = 0; card_index < array_length(cards_in_hand); card_index++) {
 		if (cards_in_hand[card_index].id == card.id) {
+			instance_destroy(card)
 			array_delete(cards_in_hand, card_index, 1)
 			set_cards_in_hand_position()
 			break
@@ -73,7 +84,7 @@ function remove_card(card) {
 
 /// @desc			Sets the position of all of the player's cards to be at the bottom center of the screen
 function set_cards_in_hand_position() {
-	total_width_of_hand = get_width_of_player_hand()
+	var total_width_of_hand = get_width_of_player_hand()
 	var next_card_x = (display_get_gui_width() - total_width_of_hand) / 2
 	for(var card_index = 0; card_index < array_length(cards_in_hand); card_index++) {
 		if(cards_in_hand[card_index] != 0) {
