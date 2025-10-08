@@ -1,1 +1,1 @@
-button_can_be_pressed = true
+end_enemy_turn()

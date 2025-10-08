@@ -18,12 +18,28 @@ function start_enemy_turn() {
 	array_sort(enemies, sort_enemies)
 	
 	for(var enemy_index = 0; enemy_index < num_enemies; enemy_index++) {
-		//TODO implement the enemy attacking the player and getting hurt by debuffs
-		//This is already done, but it's on a different branch that needs to be merged
+		enemies[enemy_index].attack_player()
 	}
 	//This is a temporary solution to stop the player pressing the button multiple times.
 	//Eventually this should be replaced with waiting for the enemy to finish their animation
 	alarm[0] = 60
+}
+
+/// @desc			Finds all the enemies that currently exist and triggers end of turn actions
+function end_enemy_turn() {
+	var num_enemies = instance_number(obj_enemy)
+	var enemies = array_create(num_enemies)
+	for(var enemy_index = 0; enemy_index < num_enemies; enemy_index++) {
+		enemies[enemy_index] = instance_find(obj_enemy, enemy_index)
+	}
+	
+	array_sort(enemies, sort_enemies)
+	
+	for(var enemy_index = 0; enemy_index < num_enemies; enemy_index++) {
+		enemies[enemy_index].trigger_end_of_turn_debuffs()
+	}
+	
+	button_can_be_pressed = true
 }
 
 /// @desc			Basic enemy sorting algorithm to determine the farthest left enemy

@@ -89,6 +89,7 @@
     {"id":{"name":"rm_settings","path":"rooms/rm_settings/rm_settings.yy",},},
     {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
     {"id":{"name":"Card_Debuff_Effects","path":"scripts/Card_Debuff_Effects/Card_Debuff_Effects.yy",},},
+    {"id":{"name":"debuff_handler","path":"scripts/debuff_handler/debuff_handler.yy",},},
     {"id":{"name":"player_deck","path":"scripts/player_deck/player_deck.yy",},},
     {"id":{"name":"player_discard_deck","path":"scripts/player_discard_deck/player_discard_deck.yy",},},
     {"id":{"name":"Script1","path":"scripts/Script1/Script1.yy",},},
