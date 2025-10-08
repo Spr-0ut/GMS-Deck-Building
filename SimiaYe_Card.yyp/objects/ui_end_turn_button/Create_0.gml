@@ -1,3 +1,6 @@
+// Inherit the parent event
+event_inherited();
+
 button_can_be_pressed = true
 
 /// @desc			Controls the end of a players turn, filling the player's hand with cards
@@ -40,6 +43,9 @@ function end_enemy_turn() {
 	}
 	
 	button_can_be_pressed = true
+	if(position_meeting(mouse_x, mouse_y, ui_end_turn_button)) {
+		handle_mouse_enter()
+	}
 }
 
 /// @desc			Basic enemy sorting algorithm to determine the farthest left enemy

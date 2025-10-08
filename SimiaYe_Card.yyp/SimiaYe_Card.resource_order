@@ -1,6 +1,15 @@
 {
-  "FolderOrderSettings":[],
+  "FolderOrderSettings":[
+    {"name":"Cards_Sort_Buttons","order":7,"path":"folders/Objects/UI/Button/Cards_Sort_Buttons.yy",},
+  ],
   "ResourceOrderSettings":[
+    {"name":"ui_button","order":2,"path":"objects/ui_button/ui_button.yy",},
+    {"name":"ui_close_layer_button","order":1,"path":"objects/ui_close_layer_button/ui_close_layer_button.yy",},
+    {"name":"ui_end_turn_button","order":8,"path":"objects/ui_end_turn_button/ui_end_turn_button.yy",},
+    {"name":"ui_exit_button","order":4,"path":"objects/ui_exit_button/ui_exit_button.yy",},
+    {"name":"ui_player_current_discard_button","order":3,"path":"objects/ui_player_current_discard_button/ui_player_current_discard_button.yy",},
+    {"name":"ui_room_switch_button","order":5,"path":"objects/ui_room_switch_button/ui_room_switch_button.yy",},
+    {"name":"ui_temp_button","order":6,"path":"objects/ui_temp_button/ui_temp_button.yy",},
     {"name":"debuff_handler","order":1,"path":"scripts/debuff_handler/debuff_handler.yy",},
   ],
 }
