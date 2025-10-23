@@ -16,11 +16,6 @@ if(!variable_global_exists("object_being_clicked")) {
 	global.object_being_clicked = false
 }
 
-/// @desc					Handles what happens when the ui_dropdown_option is selected
-function handle_option_clicked(selected_dropdown_option) {
-	// This should be implemented in each ui_dropdown
-}
-
 /// @desc					Finds or creates the layer the dropdown options should be in and puts the id
 ///								in drop_down_options_layer
 function get_dropdown_options_layer() {
@@ -57,13 +52,17 @@ function close_dropdown() {
 	
 	for(var option_index = 0; option_index < array_length(dropdown_options_instances); option_index++) {
 		if(position_meeting(mouse_x, mouse_y, dropdown_options_instances[option_index])) {
-			//TODO set resolution
-			handle_option_clicked(dropdown_options_instances[option_index])
 			selected_value = dropdown_options_instances[option_index].option_text
+			handle_option_clicked()
 			break;
 		}
 	}
 	layer_destroy(drop_down_options_layer)
+}
+
+/// @desc					Handles what happens when the ui_dropdown_option is selected
+function handle_option_clicked() {
+	event_user(0)
 }
 
 /// @desc					Calculates the required points for the indicator triangle
