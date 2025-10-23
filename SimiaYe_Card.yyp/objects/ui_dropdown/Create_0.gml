@@ -65,6 +65,28 @@ function handle_option_clicked() {
 	event_user(0)
 }
 
+/// @desc					Draws the text for the selected dropdown option
+function draw_selected_option_text() {
+	var text_height = string_height(selected_value);
+	var text_width = string_width(selected_value);
+	var text_y_size_scale = 1;
+	var text_x_size_scale = 1;
+	if ((sprite_height - (DROPDOWN_OPTION_TEXT_PADDING * 2)) > 0 && text_height > 
+			(sprite_height - (DROPDOWN_OPTION_TEXT_PADDING * 2))) {
+	    text_y_size_scale = (sprite_height - (DROPDOWN_OPTION_TEXT_PADDING * 2)) / text_height;
+	}
+	if ((sprite_width - (DROPDOWN_OPTION_TEXT_PADDING * 2)) > 0 && text_height > 
+			(sprite_width - (DROPDOWN_OPTION_TEXT_PADDING * 2))) {
+	    text_x_size_scale = (sprite_width - (DROPDOWN_OPTION_TEXT_PADDING * 2)) / text_width;
+	}
+	if(text_y_size_scale < text_x_size_scale)
+		draw_text_transformed(x + DROPDOWN_BORDER_WIDTH + DROPDOWN_TEXT_PADDING, y,
+								selected_value, text_y_size_scale, text_y_size_scale, 0);
+	else
+		draw_text_transformed(x + DROPDOWN_BORDER_WIDTH + DROPDOWN_TEXT_PADDING, y,
+								selected_value, text_x_size_scale, text_x_size_scale, 0);
+}
+
 /// @desc					Calculates the required points for the indicator triangle
 function setup_triangle() {
 	var arrow_y_size = (sprite_height - (DROPDOWN_ARROW_VERTICAL_PADDING * 2 * image_yscale))

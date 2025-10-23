@@ -14,7 +14,7 @@ else if(step_number == 1 && screen_width != -1 && screen_height != -1) {
 	window_set_size(screen_width, screen_height); 
 }
 
-else if(step_number == 2) {
+else if(step_number == 2 && fullscreen_changed) {
 	var fullscreen = window_get_fullscreen() ^^ fullscreen_changed
 	window_set_fullscreen(fullscreen); 
 }
