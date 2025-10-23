@@ -12,6 +12,7 @@ if (step_number == 0) {
     
 else if(step_number == 1 && screen_width != -1 && screen_height != -1) {
 	window_set_size(screen_width, screen_height); 
+	window_center()
 }
 
 else if(step_number == 2 && fullscreen_changed) {
