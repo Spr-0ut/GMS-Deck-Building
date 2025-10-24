@@ -20,8 +20,14 @@ else if(step_number == 2 && fullscreen_changed) {
 	window_set_fullscreen(fullscreen); 
 }
 
-else if(step_number > 2) {
-	instance_destroy(); 
+else if(step_number == 3) {
+	var accept_resolution_layer = layer_create(depth - 100, "accept_resolution_layer")
+	var layer_outline = fx_create("_filter_outline")
+	fx_set_parameter(layer_outline, "g_OutlineColour", [1, 0, 0, 1]);
+	fx_set_parameter(layer_outline, "g_OutlineRadius", 10);
+	instance_create_layer(x, y, accept_resolution_layer, ui_accept_resolution_changes)
 }
 
-step_number++;
+if (step_number < 4) {
+	step_number++;
+}

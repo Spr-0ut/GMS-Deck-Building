@@ -10,7 +10,7 @@ function draw_option_text() {
 			(sprite_height - (DROPDOWN_OPTION_TEXT_PADDING * 2))) {
 	    text_y_size_scale = (sprite_height - (DROPDOWN_OPTION_TEXT_PADDING * 2)) / text_height;
 	}
-	if ((sprite_width - (DROPDOWN_OPTION_TEXT_PADDING * 2)) > 0 && text_height > 
+	if ((sprite_width - (DROPDOWN_OPTION_TEXT_PADDING * 2)) > 0 && text_width > 
 			(sprite_width - (DROPDOWN_OPTION_TEXT_PADDING * 2))) {
 	    text_x_size_scale = (sprite_width - (DROPDOWN_OPTION_TEXT_PADDING * 2)) / text_width;
 	}

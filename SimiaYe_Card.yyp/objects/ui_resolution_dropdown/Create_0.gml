@@ -2,6 +2,7 @@
 event_inherited();
 
 dropdown_items = ["640 X 360", "1280 X 720", "1600 X 900", "1920 X 1080", "2048 X 1152", "2560 X 1440", "3840 X 2160"]
+old_resolution = $"{window_get_width()} X {window_get_height()}"
 
 /// @desc					Finds the default resolution of the screen and updates the window
 function find_resolution() {
@@ -31,8 +32,14 @@ function update_resolution() {
 	var new_resolution = string_split(selected_value, " X ")
 	var new_width = real(string_digits(new_resolution[0]))
 	var new_height = real(string_digits(new_resolution[1]))
+	old_resolution = $"{window_get_width()} X {window_get_height()}"
 	instance_create_layer(x, y, layer, ui_window_settings_updater, {
 		screen_width : new_width,
 		screen_height : new_height
 	})
+}
+
+/// @desc					Resets the selected resolution to what it was before selecting a dropdown option
+function revert_resolution_changes() {
+	selected_value = old_resolution
 }
