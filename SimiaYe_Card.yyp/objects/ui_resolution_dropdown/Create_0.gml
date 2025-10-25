@@ -3,6 +3,7 @@ event_inherited();
 
 dropdown_items = ["640 X 360", "1280 X 720", "1600 X 900", "1920 X 1080", "2048 X 1152", "2560 X 1440", "3840 X 2160"]
 old_resolution = $"{window_get_width()} X {window_get_height()}"
+selected_value = old_resolution
 
 /// @desc					Finds the default resolution of the screen and updates the window
 function find_resolution() {
