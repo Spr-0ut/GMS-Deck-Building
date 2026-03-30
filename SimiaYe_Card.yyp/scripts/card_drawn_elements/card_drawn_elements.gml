@@ -1,68 +1,73 @@
 #macro CARD_ENERGY_COST_FONT				fnt_energy_cost
 #macro CARD_ATTACKER_SELECTION_TYPE_FONT	fnt_attacker_selection_type
 #macro CARD_DESCRIPTION_FONT				fnt_card_description
-#macro ENERGY_CIRCLE_COLOR					make_colour_rgb(0, 174, 240)
 #macro PLAY_CARD_ERROR_FONT					fnt_button_font
 #macro PLAY_CARD_ERROR_COLOR				make_colour_rgb(174, 0, 0)
 
 /// @description										Creates the flexpanels for the card, with nodes for
-///															outside_border, background, image_box,
-///															energy_circle, and description_box
+///															card_sprite, outside_border, background,
+///															attacker_selection_type, image_box, card_type
+///															description_box, and energy_box
 /// @param {Real} spr_width								The width of the card sprite
 /// @param {Real} spr_height							The height of the card sprite
 /// @param {Real} x_scale								Optional horizontal scaling argument, defaulting to 1
 /// @param {Real} y_scale								Optional vertical scaling argument, defaulting to 1
 /// @returns											The parent node of the flex panel
 function create_card_flexpanels(spr_width, spr_height, spr_xscale = 1, spr_yscale = 1) {
-	var node = flexpanel_create_node({ 
-		name : "outside_border", 
+	var node = flexpanel_create_node({
+		name : "card_sprite",
 		width : spr_width,
 		height : spr_height,
-		borderHorizontal : 4 * spr_xscale,
-		borderVertical : 4 * spr_yscale,
 		nodes : [
-		{
-			name : "background",
-			borderHorizontal : 8 * spr_xscale,
-			borderVertical : 8 * spr_yscale,
-			gap : 20 * spr_yscale,
-			nodes : [
 			{
-				name : "image_box",
-				height : 113 * spr_yscale,
-				flexDirection : "row",
-				gap : 9 * spr_xscale,
+				name : "outside_border",
+				borderVertical : 1 * spr_yscale,
+				borderLeft : 5 * spr_xscale,
+				borderRight : 1 * spr_xscale,
 				nodes : [
 				{
-					name : "card_type",
-					marginHorizontal : 1 * spr_xscale,
-					marginVertical : 1 * spr_yscale,
-					width : 20 * spr_xscale,
-					height : 20 * spr_yscale,
-					top : 26 * spr_yscale
-				},
-				{
-					name : "attacker_selection_type",
-					width : "45%",
-					height : 60 * spr_yscale
-				},
-				]
+					name : "background",
+					borderHorizontal : 3 * spr_xscale,
+					borderVertical : 3 * spr_yscale,
+					gap : 5 * spr_yscale,
+					nodes : [
+					{
+						name : "attacker_selection_type",
+						height : 11  * spr_yscale,
+						width : 15 * spr_xscale,
+						left : 61 * spr_xscale,
+						positionType : "absolute"
+					},
+					{
+						name : "image_box",
+						top : 22 * spr_yscale,
+						height : 49 * spr_yscale
+					},
+					{
+						name : "card_type",
+						width : 15 * spr_xscale,
+						height : 15 * spr_yscale,
+						left : 26 * spr_xscale,
+						top : 61 * spr_yscale,
+						positionType : "absolute"
+					},
+					{
+						name : "description_box",
+						top : 22 * spr_yscale,
+						height : 37 * spr_yscale,
+						padding : 2
+					}]
+				}]
 			},
 			{
-				name : "description_box",
-				height : 97 * spr_xscale,
-				paddingHorizontal : 2 * spr_xscale,
-				paddingVertical : 2 * spr_yscale
-			}]
-		},
-		{
-			name : "energy_circle",
-			width : 31 * spr_xscale,
-			height : 31 * spr_yscale,
-			marginHorizontal : 1 * spr_xscale,
-			marginVertical : 1 * spr_yscale,
-			positionType : "absolute"
-		}]
+				name : "energy_box",
+				width : 17 * spr_xscale,
+				height : 21  * spr_yscale,
+				marginHorizontal : 4 * spr_xscale,
+				marginVertical : 4 * spr_yscale,
+				positionType : "absolute"
+			} 
+		]
 	})
 	
 	flexpanel_calculate_layout(node, spr_width, spr_height, flexpanel_direction.LTR)
@@ -78,46 +83,56 @@ function create_card_flexpanels(spr_width, spr_height, spr_xscale = 1, spr_yscal
 //To activate the debug menu run this code: show_debug_overlay(true)
 /*
 {
-	"name" : "outside_border",
-	"width" : 128,
-	"height" : 256,
-	"border" : 4,
-	"nodes" : [
+	"name" : "card_sprite",
+	"width" : 81,
+	"height" : 122,
+	"nodes" : [	
 	{
-		"name" : "background",
-		"border" : 8,
-		"gap" : 20,
+		"name" : "outside_border",
+		"borderVertical" : 1,
+		"borderLeft" : 5,
+		"borderRight" : 1,
 		"nodes" : [
 		{
-			"name" : "image_box",
-			"height" : 113,
-			"flexDirection" : "row",
-			"gap" : 9,
+			"name" : "background",
+			"borderHorizontal" : 3,
+			"borderVertical" : 3,
+			"gap" : 5,
 			"nodes" : [
 			{
-				"name" : "card_type",
-				"margin" : 1,
-				"width" : 20,
-				"height" : 20,
-				"top" : 26
+				"name" : "attacker_selection_type",
+				"height" : 11,
+				"width" : 15,
+				"left" : 61,
+				"positionType" : "absolute"
 			},
 			{
-				"name" : "attacker_selection_type",
-				"width" : "45%",
-				"height" : 60
-			}]
-		},
-		{
-			"name" : "description_box",
-			"height" : 97,
-			"padding" : 2
+				"name" : "image_box",
+				"top" : 22,
+				"height" : 49
+			},
+			{
+				"name" : "card_type",
+				"width" : 15,
+				"height" : 15,
+				"left" : 26,
+				"top" : 61,
+				"positionType" : "absolute"
+			},
+			{
+				"name" : "description_box",
+				"top" : 22,
+				"height" : 37,
+				"padding" : 2
+			}],
 		}]
 	},
 	{
-		"name" : "energy_circle",
-		"width" : 31,
-		"height" : 31,
-		"margin" : 1,
+		"name" : "energy_box",
+		"width" : 17,
+		"height" : 21,
+		"marginHorizontal" : 4,
+		"marginVertical" : 4,
 		"positionType" : "absolute"
 	}]
 }
@@ -132,45 +147,29 @@ function create_card_flexpanels(spr_width, spr_height, spr_xscale = 1, spr_yscal
 /// @param {Pointer.FlexpanelNode} card_flexpanels		The parent node of the card's flex panel
 function draw_energy_cost(energy_cost, card_flexpanels) {
 	if(energy_cost >= 0) {
-		draw_energy_circle(card_flexpanels)
-		
-		draw_set_colour(c_white)
+		draw_set_colour(c_black)
 		draw_set_alpha(1)
 		draw_set_font(CARD_ENERGY_COST_FONT)
 		draw_set_halign(fa_center)
 		draw_set_valign(fa_middle)
 	
-		var energy_circle_panel = flexpanel_node_layout_get_position(flexpanel_node_get_child(card_flexpanels, "energy_circle"), false)
-		var text_x_pos = x + energy_circle_panel.left + (energy_circle_panel.width / 2)
-		var text_y_pos = y + energy_circle_panel.top + ceil(energy_circle_panel.height / 2)
-		var text_size_scale = find_energy_cost_text_scaling(energy_circle_panel)
+		var energy_box_panel = flexpanel_node_layout_get_position(flexpanel_node_get_child(card_flexpanels, "energy_box"), false)
+		var text_x_pos = x + energy_box_panel.left + (energy_box_panel.width / 2)
+		var text_y_pos = y + energy_box_panel.top + ceil(energy_box_panel.height / 2)
+		var text_size_scale = find_energy_cost_text_scaling(energy_box_panel)
 	
 		draw_text_transformed(text_x_pos, text_y_pos, energy_cost, text_size_scale, text_size_scale, 0)
 	}
 }
 
-/// @description										Creates a blue circle in the energy_circle panel
-/// 														NOTE: This can only be called in the draw 
-/// 														function otherwise it will not work
-/// @param {Pointer.FlexpanelNode} card_flexpanels		The parent node of the card's flex panel
-function draw_energy_circle(card_flexpanels) {
-	draw_set_colour(ENERGY_CIRCLE_COLOR)
-	draw_set_alpha(1)
-	var energy_circle_panel = flexpanel_node_layout_get_position(flexpanel_node_get_child(card_flexpanels, "energy_circle"), false)
-	var circle_x_pos = x + energy_circle_panel.left + (energy_circle_panel.width / 2)
-	var circle_y_pos = y + energy_circle_panel.top + ceil(energy_circle_panel.height / 2)
-	
-	draw_circle(circle_x_pos, circle_y_pos, energy_circle_panel.width / 2, false)
-}
-
 /// @description										Finds the scaling needed for the energy cost text
-/// @param {Array<Id.Instance>} energy_circle_panel		The panel that the energy cost will be displayed in
+/// @param {Array<Id.Instance>} energy_box_panel		The panel that the energy cost will be displayed in
 /// @returns											The scaling factor of the text
-function find_energy_cost_text_scaling(energy_circle_panel) {
-	var max_string_width = energy_circle_panel.width -  energy_circle_panel.paddingLeft
-													- energy_circle_panel.paddingRight
-	var max_string_height = energy_circle_panel.height - energy_circle_panel.paddingTop
-													- energy_circle_panel.paddingBottom
+function find_energy_cost_text_scaling(energy_box_panel) {
+	var max_string_width = energy_box_panel.width -  energy_box_panel.paddingLeft
+													- energy_box_panel.paddingRight
+	var max_string_height = energy_box_panel.height - energy_box_panel.paddingTop
+													- energy_box_panel.paddingBottom
 
 	var text_size_x_scale = max_string_width / string_width(energy_cost)
 	var text_size_y_scale = max_string_height / string_height(energy_cost)

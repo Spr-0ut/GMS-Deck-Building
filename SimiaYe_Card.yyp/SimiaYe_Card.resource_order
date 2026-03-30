@@ -127,9 +127,11 @@
     {"name":"spr_card_sort_button","order":3,"path":"sprites/spr_card_sort_button/spr_card_sort_button.yy",},
     {"name":"spr_card","order":1,"path":"sprites/spr_card/spr_card.yy",},
     {"name":"spr_close_layer","order":2,"path":"sprites/spr_close_layer/spr_close_layer.yy",},
+    {"name":"spr_damage_card","order":4,"path":"sprites/spr_damage_card/spr_damage_card.yy",},
     {"name":"spr_default_button","order":1,"path":"sprites/spr_default_button/spr_default_button.yy",},
     {"name":"spr_player_deck_header_background","order":8,"path":"sprites/spr_player_deck_header_background/spr_player_deck_header_background.yy",},
     {"name":"spr_player_deck_scroll_thumb","order":1,"path":"sprites/spr_player_deck_scroll_thumb/spr_player_deck_scroll_thumb.yy",},
+    {"name":"spr_science_card","order":5,"path":"sprites/spr_science_card/spr_science_card.yy",},
     {"name":"spr_selectable_chara_back_button","order":4,"path":"sprites/spr_selectable_chara_back_button/spr_selectable_chara_back_button.yy",},
   ],
 }
