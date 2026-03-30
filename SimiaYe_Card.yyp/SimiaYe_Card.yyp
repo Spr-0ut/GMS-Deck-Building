@@ -182,6 +182,7 @@
     {"id":{"name":"spr_button_test","path":"sprites/spr_button_test/spr_button_test.yy",},},
     {"id":{"name":"spr_card_sort_button","path":"sprites/spr_card_sort_button/spr_card_sort_button.yy",},},
     {"id":{"name":"spr_card","path":"sprites/spr_card/spr_card.yy",},},
+    {"id":{"name":"spr_chara_selected_icon","path":"sprites/spr_chara_selected_icon/spr_chara_selected_icon.yy",},},
     {"id":{"name":"spr_close_layer","path":"sprites/spr_close_layer/spr_close_layer.yy",},},
     {"id":{"name":"spr_damage_card","path":"sprites/spr_damage_card/spr_damage_card.yy",},},
     {"id":{"name":"spr_default_button","path":"sprites/spr_default_button/spr_default_button.yy",},},

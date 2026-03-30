@@ -6,7 +6,7 @@
 
 /// @description										Creates the flexpanels for the card, with nodes for
 ///															card_sprite, outside_border, background,
-///															attacker_selection_type, image_box, card_type
+///															attacker_selected_icon, image_box, card_type
 ///															description_box, and energy_box
 /// @param {Real} spr_width								The width of the card sprite
 /// @param {Real} spr_height							The height of the card sprite
@@ -27,15 +27,16 @@ function create_card_flexpanels(spr_width, spr_height, spr_xscale = 1, spr_yscal
 				nodes : [
 				{
 					name : "background",
-					borderHorizontal : 3 * spr_xscale,
-					borderVertical : 3 * spr_yscale,
+					borderHorizontal : 1 * spr_xscale,
+					borderVertical : 1 * spr_yscale,
 					gap : 5 * spr_yscale,
 					nodes : [
 					{
-						name : "attacker_selection_type",
-						height : 11  * spr_yscale,
-						width : 15 * spr_xscale,
-						left : 61 * spr_xscale,
+						name : "attacker_selected_icon",
+						height : 16 * spr_yscale,
+						width : 20 * spr_xscale,
+						top : 2 * spr_yscale,
+						left : 53 * spr_xscale,
 						positionType : "absolute"
 					},
 					{
@@ -47,24 +48,25 @@ function create_card_flexpanels(spr_width, spr_height, spr_xscale = 1, spr_yscal
 						name : "card_type",
 						width : 15 * spr_xscale,
 						height : 15 * spr_yscale,
-						left : 26 * spr_xscale,
-						top : 61 * spr_yscale,
+						left : 28 * spr_xscale,
+						top : 63 * spr_yscale,
 						positionType : "absolute"
 					},
 					{
 						name : "description_box",
 						top : 22 * spr_yscale,
 						height : 37 * spr_yscale,
-						padding : 2
+						paddingHorizontal : 2 * spr_xscale,
+						paddingVertical : 2 * spr_yscale
 					}]
 				}]
 			},
 			{
 				name : "energy_box",
-				width : 17 * spr_xscale,
-				height : 21  * spr_yscale,
+				width : 15 * spr_xscale,
+				height : 19  * spr_yscale,
 				marginHorizontal : 4 * spr_xscale,
-				marginVertical : 4 * spr_yscale,
+				marginVertical : 6 * spr_yscale,
 				positionType : "absolute"
 			} 
 		]
@@ -95,15 +97,16 @@ function create_card_flexpanels(spr_width, spr_height, spr_xscale = 1, spr_yscal
 		"nodes" : [
 		{
 			"name" : "background",
-			"borderHorizontal" : 3,
-			"borderVertical" : 3,
+			"borderHorizontal" : 1,
+			"borderVertical" : 1,
 			"gap" : 5,
 			"nodes" : [
 			{
-				"name" : "attacker_selection_type",
-				"height" : 11,
-				"width" : 15,
-				"left" : 61,
+				"name" : "attacker_selected_icon",
+				"height" : 16,
+				"width" : 20,
+				"top" : 2,
+				"left" : 53,
 				"positionType" : "absolute"
 			},
 			{
@@ -115,24 +118,25 @@ function create_card_flexpanels(spr_width, spr_height, spr_xscale = 1, spr_yscal
 				"name" : "card_type",
 				"width" : 15,
 				"height" : 15,
-				"left" : 26,
-				"top" : 61,
+				"left" : 28,
+				"top" : 63,
 				"positionType" : "absolute"
 			},
 			{
 				"name" : "description_box",
 				"top" : 22,
 				"height" : 37,
-				"padding" : 2
+				"paddingHorizontal" : 2,
+				"paddingVertical" : 2
 			}],
 		}]
 	},
 	{
 		"name" : "energy_box",
-		"width" : 17,
-		"height" : 21,
+		"width" : 15,
+		"height" : 19,
 		"marginHorizontal" : 4,
-		"marginVertical" : 4,
+		"marginVertical" : 6,
 		"positionType" : "absolute"
 	}]
 }
@@ -181,62 +185,22 @@ function find_energy_cost_text_scaling(energy_box_panel) {
 	}
 }
 
-/// @description										Finds which attackers are selected for the card and shows the
-///															prompt for it in the top center of the card NOTE: This can
+/// @description										Finds if the card requires selecting a character, and if so
+///															displays an icon in the top left corner. NOTE: This can
 ///															only be called in the draw function otherwise it will not work
-/// @param {card_selection_target} attacker_selection_type		The card_selection_target to determine how
-///																	many attacker are selected
-/// @param {Array<chara_class>} allowed_classes			Array of all the allowed classes to be displayed
+/// @param {card_selection_target} attacker_selection_type		The card_selection_target to determine if an attacker
+///																	needs to be selected by the player
 /// @param {Pointer.FlexpanelNode} card_flexpanels		The parent node of the card's flex panel
 /// @param {Real} x_scale								Optional horizontal scaling argument, defaulting to 1
 /// @param {Real} y_scale								Optional vertical scaling argument, defaulting to 1
-function draw_attacker_selection_type_text(attacker_selection_type, allowed_classes, card_flexpanels, x_scale = 1, y_scale = 1) {
-	draw_set_colour(c_white)
-	draw_set_alpha(1)
-	draw_set_font(CARD_ATTACKER_SELECTION_TYPE_FONT)
-	draw_set_halign(fa_center)
-	draw_set_valign(fa_top)
-	
-	var attacker_selection_type_panel = flexpanel_node_layout_get_position(flexpanel_node_get_child(card_flexpanels, "attacker_selection_type"), false)
-	var text_x_pos = x + attacker_selection_type_panel.left + (attacker_selection_type_panel.width / 2)
-	var text_y_pos = y + attacker_selection_type_panel.top
-	var attacker_selection_type_text = find_attacker_selection_type_string(attacker_selection_type, allowed_classes)
-	var line_seperation = string_height(attacker_selection_type_text) + PADDING_BETWEEN_CARD_DESCRIPTION_LINES
-	var text_max_width = attacker_selection_type_panel.width - attacker_selection_type_panel.paddingLeft 
-														- attacker_selection_type_panel.paddingRight
-	draw_text_ext_transformed(text_x_pos, text_y_pos, attacker_selection_type_text, line_seperation, text_max_width, x_scale, y_scale, 0)
-}
+function draw_attacker_selected_icon(attacker_selection_type, card_flexpanels, x_scale = 1, y_scale = 1) {
+	if(attacker_selection_type == card_selection_target.any_class || 
+		attacker_selection_type == card_selection_target.selected_class) {
+		var attacker_selected_icon_panel = flexpanel_node_layout_get_position(flexpanel_node_get_child(card_flexpanels, "attacker_selected_icon"), false)
+		var sprite_x_pos = x + attacker_selected_icon_panel.left
+		var sprite_y_pos = y + attacker_selected_icon_panel.top
 
-/// @description										Checks the attacker_selection_type and allowed_classes to
-///															determine what text should be displayed
-/// @param {card_selection_target} attacker_selection_type		The card_selection_target to determine
-///																		how many attacker are selected
-/// @param {Array<chara_class>} allowed_classes			Array of all the allowed classes to be displayed
-/// @returns											The string of all the allowed classes for selecting which
-///															characters are allowed to attack for this card
-function find_attacker_selection_type_string(attacker_selection_type, allowed_classes) {
-	if(attacker_selection_type == card_selection_target.all_players) {
-		return "All"
-	}
-	else if(attacker_selection_type == card_selection_target.any_class || array_contains(allowed_classes, chara_class.all_chara)) {
-		return "Any"
-	}
-	else if (attacker_selection_type == card_selection_target.random_chara) {
-		return "Random"	
-	}
-	else {
-		var allowed_classes_string = ""
-		if(array_contains(allowed_classes, chara_class.damage)) {
-			allowed_classes_string = string_concat(allowed_classes_string, ", ", "dmg")
-		}
-		if(array_contains(allowed_classes, chara_class.science)) {
-			allowed_classes_string = string_concat(allowed_classes_string, ", ", "sci")
-		}
-	
-		if(string_starts_with(allowed_classes_string, ", ")) {
-			allowed_classes_string = string_delete(allowed_classes_string, 0, 2)
-		}
-		return allowed_classes_string
+		draw_sprite_stretched(spr_chara_selected_icon, -1, sprite_x_pos, sprite_y_pos, attacker_selected_icon_panel.width, attacker_selected_icon_panel.height)
 	}
 }
 
