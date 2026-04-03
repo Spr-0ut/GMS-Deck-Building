@@ -10,6 +10,7 @@ flexpanels = create_card_flexpanels(sprite_width, sprite_height, image_xscale, i
 card_elements_data = new card_element_position(flexpanels, sprite_xoffset, sprite_yoffset)
 
 card_selected = false
+card_start_angle = 0
 card_start_x_position = x
 card_start_y_position = y
 error_text = ""
@@ -98,13 +99,17 @@ function select_card() {
 		global.object_being_clicked	= true
 		card_selected = true
 		if(card_can_be_moved) {
+			card_start_angle = image_angle
+			image_angle = 0
 			card_start_x_position = x
-			x = mouse_x - (sprite_width / 2)
+			x = mouse_x
 			y = mouse_y - (sprite_height / 2)
 		}
 	}
 }
 
+/// @description							Handles the card being released, either playing the card
+///												or reseting it to the bottom of the screen
 function card_released() {
 	global.object_being_clicked	= false
 	card_selected = false
@@ -151,6 +156,7 @@ function queue_error_message(error_message) {
 /// @description							The callback function for obj_target_selection_handler,
 ///												reseting the card position if playing it was canceled
 function reset_card() {
+	image_angle = card_start_angle
 	x = card_start_x_position
 	y = card_start_y_position
 }

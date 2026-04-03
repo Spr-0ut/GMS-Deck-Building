@@ -8,6 +8,7 @@ if(array_contains(interaction_type, card_interaction_type.selectable_card) &&
 		obj_target_selection_handler.target_selected(id)
 	}
 	else {
+		image_angle = card_start_angle
 		y = card_start_y_position
 		obj_target_selection_handler.target_deselected(id)
 	}
