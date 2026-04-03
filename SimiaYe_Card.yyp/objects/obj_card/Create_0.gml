@@ -6,7 +6,8 @@
 #macro PADDING_BETWEEN_CARD_DESCRIPTION_LINES	2
 #macro CARD_SELECTION_CONFIRMATION_MOVEMENT		30
 
-flexpanels = create_card_flexpanels(sprite_width, sprite_height)
+flexpanels = create_card_flexpanels(sprite_width, sprite_height, image_xscale, image_yscale)
+card_elements_data = new card_element_position(flexpanels, sprite_xoffset, sprite_yoffset)
 
 card_selected = false
 card_start_x_position = x

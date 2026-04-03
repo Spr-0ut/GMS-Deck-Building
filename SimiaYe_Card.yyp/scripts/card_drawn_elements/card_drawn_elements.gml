@@ -149,7 +149,9 @@ function create_card_flexpanels(spr_width, spr_height, spr_xscale = 1, spr_yscal
 /// 														otherwise it will not work
 /// @param {Real} energy_cost							The energy cost to be displayed in the top left corner
 /// @param {Pointer.FlexpanelNode} card_flexpanels		The parent node of the card's flex panel
-function draw_energy_cost(energy_cost, card_flexpanels) {
+/// @param {Struct} card_elements_data					A struct containing the energy_box_base_angle and 
+///															energy_box_to_origin_dist
+function draw_energy_cost(energy_cost, card_flexpanels, card_elements_data) {
 	if(energy_cost >= 0) {
 		draw_set_colour(c_black)
 		draw_set_alpha(1)
@@ -158,11 +160,11 @@ function draw_energy_cost(energy_cost, card_flexpanels) {
 		draw_set_valign(fa_middle)
 	
 		var energy_box_panel = flexpanel_node_layout_get_position(flexpanel_node_get_child(card_flexpanels, "energy_box"), false)
-		var text_x_pos = x + energy_box_panel.left + (energy_box_panel.width / 2)
-		var text_y_pos = y + energy_box_panel.top + ceil(energy_box_panel.height / 2)
+		var text_x_pos = x - (dcos(image_angle + card_elements_data.energy_box_base_angle) * card_elements_data.energy_box_to_origin_dist)
+		var text_y_pos = y + (dsin(image_angle + card_elements_data.energy_box_base_angle) * card_elements_data.energy_box_to_origin_dist)
 		var text_size_scale = find_energy_cost_text_scaling(energy_box_panel)
 	
-		draw_text_transformed(text_x_pos, text_y_pos, energy_cost, text_size_scale, text_size_scale, 0)
+		draw_text_transformed(text_x_pos, text_y_pos, energy_cost, text_size_scale, text_size_scale, image_angle)
 	}
 }
 
@@ -191,16 +193,22 @@ function find_energy_cost_text_scaling(energy_box_panel) {
 /// @param {card_selection_target} attacker_selection_type		The card_selection_target to determine if an attacker
 ///																	needs to be selected by the player
 /// @param {Pointer.FlexpanelNode} card_flexpanels		The parent node of the card's flex panel
-/// @param {Real} x_scale								Optional horizontal scaling argument, defaulting to 1
-/// @param {Real} y_scale								Optional vertical scaling argument, defaulting to 1
-function draw_attacker_selected_icon(attacker_selection_type, card_flexpanels, x_scale = 1, y_scale = 1) {
+/// @param {Struct} card_elements_data					A struct containing the attacker_selected_icon_base_angle and 
+///															attacker_selected_icon_to_origin_dist
+function draw_attacker_selected_icon(attacker_selection_type, card_flexpanels, card_elements_data) {
 	if(attacker_selection_type == card_selection_target.any_class || 
 		attacker_selection_type == card_selection_target.selected_class) {
 		var attacker_selected_icon_panel = flexpanel_node_layout_get_position(flexpanel_node_get_child(card_flexpanels, "attacker_selected_icon"), false)
-		var sprite_x_pos = x + attacker_selected_icon_panel.left
-		var sprite_y_pos = y + attacker_selected_icon_panel.top
+	
+		var sprite_x_scale = attacker_selected_icon_panel.width / sprite_get_width(spr_chara_selected_icon)
+		var sprite_y_scale = attacker_selected_icon_panel.height / sprite_get_height(spr_chara_selected_icon)
+		
+		var sprite_x_pos = x + (sprite_get_xoffset(spr_chara_selected_icon) * sprite_x_scale) -
+							(dcos(image_angle + card_elements_data.attacker_selected_icon_base_angle) * card_elements_data.attacker_selected_icon_to_origin_dist)
+		var sprite_y_pos = y + (sprite_get_yoffset(spr_chara_selected_icon) * sprite_y_scale) +
+							(dsin(image_angle + card_elements_data.attacker_selected_icon_base_angle) * card_elements_data.attacker_selected_icon_to_origin_dist)
 
-		draw_sprite_stretched(spr_chara_selected_icon, -1, sprite_x_pos, sprite_y_pos, attacker_selected_icon_panel.width, attacker_selected_icon_panel.height)
+		draw_sprite_ext(spr_chara_selected_icon, -1, sprite_x_pos, sprite_y_pos, sprite_x_scale, sprite_y_scale, image_angle, image_blend, image_alpha)
 	}
 }
 
@@ -209,16 +217,27 @@ function draw_attacker_selected_icon(attacker_selection_type, card_flexpanels, x
 ///															function otherwise it will not work
 /// @param {card_type} type_of_card						The type of card being played
 /// @param {Pointer.FlexpanelNode} card_flexpanels		The parent node of the card's flex panel
-function draw_card_type(type_of_card, card_flexpanels) {
+/// @param {Struct} card_elements_data					A struct containing the card_type_base_angle and 
+///															card_type_to_origin_dist
+function draw_card_type(type_of_card, card_flexpanels, card_elements_data) {
 	var card_type_panel = flexpanel_node_layout_get_position(flexpanel_node_get_child(card_flexpanels, "card_type"), false)
-	var sprite_x_pos = x + card_type_panel.left
-	var sprite_y_pos = y + card_type_panel.top
+	
+	var sprite_x_pos = x - (dcos(image_angle + card_elements_data.card_type_base_angle) * card_elements_data.card_type_to_origin_dist)
+	var sprite_y_pos = y + (dsin(image_angle + card_elements_data.card_type_base_angle) * card_elements_data.card_type_to_origin_dist)
 
 	if(type_of_card == card_type.attack) {
-		draw_sprite_stretched(spr_attack_symbol, -1, sprite_x_pos, sprite_y_pos, card_type_panel.width, card_type_panel.height)
+		var sprite_x_scale = card_type_panel.width / sprite_get_width(spr_attack_symbol)
+		var sprite_y_scale = card_type_panel.height / sprite_get_height(spr_attack_symbol)
+		sprite_x_pos += sprite_get_xoffset(spr_attack_symbol) * sprite_x_scale
+		sprite_y_pos += sprite_get_yoffset(spr_attack_symbol) * sprite_y_scale
+		draw_sprite_ext(spr_attack_symbol, -1, sprite_x_pos, sprite_y_pos, sprite_x_scale, sprite_y_scale, image_angle, image_blend, image_alpha)
 	}
 	else if(type_of_card == card_type.ability) {
-		draw_sprite_stretched(spr_ability_symbol, -1, sprite_x_pos, sprite_y_pos, card_type_panel.width, card_type_panel.height)
+		var sprite_x_scale = card_type_panel.width / sprite_get_width(spr_ability_symbol)
+		var sprite_y_scale = card_type_panel.height / sprite_get_height(spr_ability_symbol)
+		sprite_x_pos += sprite_get_xoffset(spr_ability_symbol) * sprite_x_scale
+		sprite_y_pos += sprite_get_yoffset(spr_ability_symbol) * sprite_y_scale
+		draw_sprite_ext(spr_ability_symbol, -1, sprite_x_pos, sprite_y_pos, sprite_x_scale, sprite_y_scale, image_angle, image_blend, image_alpha)
 	}
 }
 
@@ -228,9 +247,11 @@ function draw_card_type(type_of_card, card_flexpanels) {
 ///															function otherwise it will not work
 /// @param {String} card_description					The text to be displayed at the bottom of the card
 /// @param {Pointer.FlexpanelNode} card_flexpanels		The parent node of the card's flex panel
+/// @param {Struct} card_elements_data					A struct containing the description_box_base_angle and 
+///															description_box_to_origin_dist
 /// @param {Real} x_scale								Optional horizontal scaling argument, defaulting to 1
 /// @param {Real} y_scale								Optional vertical scaling argument, defaulting to 1
-function draw_description(card_description, card_flexpanels, x_scale = 1, y_scale = 1) {
+function draw_description(card_description, card_flexpanels, card_elements_data, x_scale = 1, y_scale = 1) {
 	draw_set_colour(c_black)
 	draw_set_alpha(1)
 	draw_set_font(CARD_DESCRIPTION_FONT)
@@ -242,15 +263,15 @@ function draw_description(card_description, card_flexpanels, x_scale = 1, y_scal
 	y_scale *= scale_to_fit_description_box
 	
 	var description_box_panel = flexpanel_node_layout_get_position(flexpanel_node_get_child(card_flexpanels, "description_box"), false)
-	var text_x_pos = x + description_box_panel.paddingLeft + description_box_panel.left
-	var text_y_pos = y + description_box_panel.paddingTop + description_box_panel.top
+	var text_x_pos = x - (dcos(image_angle + card_elements_data.description_box_base_angle) * card_elements_data.description_box_to_origin_dist)
+	var text_y_pos = y + (dsin(image_angle + card_elements_data.description_box_base_angle) * card_elements_data.description_box_to_origin_dist)
+								
 	var line_seperation = string_height(card_description) + PADDING_BETWEEN_CARD_DESCRIPTION_LINES
-	
 	var text_max_width = (description_box_panel.width - description_box_panel.paddingLeft 
-														- description_box_panel.paddingRight)
-														/ x_scale
+													  - description_box_panel.paddingRight)
+													  / x_scale
 														
-	draw_text_ext_transformed(text_x_pos, text_y_pos, card_description, line_seperation, text_max_width, x_scale, y_scale, 0)
+	draw_text_ext_transformed(text_x_pos, text_y_pos, card_description, line_seperation, text_max_width, x_scale, y_scale, image_angle)
 }
 
 /// @desc												Calculates the scaling needed for the card's

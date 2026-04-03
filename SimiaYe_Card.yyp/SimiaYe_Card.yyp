@@ -156,6 +156,7 @@
     {"id":{"name":"rm_settings","path":"rooms/rm_settings/rm_settings.yy",},},
     {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
     {"id":{"name":"card_drawn_elements","path":"scripts/card_drawn_elements/card_drawn_elements.yy",},},
+    {"id":{"name":"card_element_position_struct","path":"scripts/card_element_position_struct/card_element_position_struct.yy",},},
     {"id":{"name":"debuff_handler","path":"scripts/debuff_handler/debuff_handler.yy",},},
     {"id":{"name":"enum_card_attack_target","path":"scripts/enum_card_attack_target/enum_card_attack_target.yy",},},
     {"id":{"name":"enum_card_buff_effects","path":"scripts/enum_card_buff_effects/enum_card_buff_effects.yy",},},
