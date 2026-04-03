@@ -99,7 +99,6 @@ function select_card() {
 		card_selected = true
 		if(card_can_be_moved) {
 			card_start_x_position = x
-			card_start_y_position = y
 			x = mouse_x - (sprite_width / 2)
 			y = mouse_y - (sprite_height / 2)
 		}
