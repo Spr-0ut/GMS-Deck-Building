@@ -41,10 +41,10 @@ function create_card_grid_view() {
 		}
 		//This assumes the cards will always be the same size. As of right now that's true and to make it
 		//	more generic would result in a potentially worse solution
-		var card_width = sprite_get_width(object_get_sprite(cards_to_display[0]))
-		var card_height = sprite_get_height(object_get_sprite(cards_to_display[0]))
-		var card_x_offset = sprite_get_xoffset(object_get_sprite(cards_to_display[0]))
-		var card_y_offset = sprite_get_yoffset(object_get_sprite(cards_to_display[0]))
+		var card_width = sprite_get_width(object_get_sprite(cards_to_display[0])) * CARD_DEFAULT_SCALE
+		var card_height = sprite_get_height(object_get_sprite(cards_to_display[0])) * CARD_DEFAULT_SCALE
+		var card_x_offset = sprite_get_xoffset(object_get_sprite(cards_to_display[0])) * CARD_DEFAULT_SCALE
+		var card_y_offset = sprite_get_yoffset(object_get_sprite(cards_to_display[0])) * CARD_DEFAULT_SCALE
 		var screen_width = display_get_gui_width()
 		var num_columns = floor(screen_width / (card_width + CARD_PADDING))
 		var num_rows = ceil(array_length(cards_to_display) / num_columns)
@@ -58,6 +58,8 @@ function create_card_grid_view() {
 								(card_height + CARD_PADDING)) + CARD_PADDING + card_y_offset
 
 			var display_card = instance_create_layer(card_x_pos, card_y_pos, card_display_instance_id, cards_to_display[card_index], {
+				image_xscale : CARD_DEFAULT_SCALE,
+				image_yscale : CARD_DEFAULT_SCALE,
 				flexpanels,
 				interaction_type : [card_interaction_type.display_card,
 									cards_are_selectable ? card_interaction_type.selectable_card :

@@ -1,7 +1,7 @@
 #macro SPACE_BETWEEN_CARDS_IN_HAND 0
 #macro DEFAULT_PLAYER_HAND_SIZE 6
 #macro MAX_PLAYER_HAND_SIZE 16
-#macro CARD_SCALE 3
+#macro CARD_DEFAULT_SCALE 3
 #macro DEGREES_OF_PLAYER_HAND_ARC 90
 
 player_hand_size = DEFAULT_PLAYER_HAND_SIZE
@@ -85,8 +85,8 @@ function get_player_current_hand() {
 ///										returned to the top of the player's deck
 function add_card(card) {
 	var card_instance = instance_create_layer(x, y, "Instances", card, {
-		image_xscale : CARD_SCALE,
-		image_yscale : CARD_SCALE
+		image_xscale : CARD_DEFAULT_SCALE,
+		image_yscale : CARD_DEFAULT_SCALE
 	})
 	var number_of_cards_in_hand = array_length(cards_in_hand)
 	if(number_of_cards_in_hand < MAX_PLAYER_HAND_SIZE) {
@@ -110,8 +110,8 @@ function add_multiple_cards(cards) {
 	array_resize(cards_in_hand, new_array_length)
 	for(var card_index = 0; card_index < array_length(cards); card_index++) {
 		var card_instance = instance_create_layer(x, y, "Instances", cards[card_index], {
-		image_xscale : CARD_SCALE,
-		image_yscale : CARD_SCALE
+		image_xscale : CARD_DEFAULT_SCALE,
+		image_yscale : CARD_DEFAULT_SCALE
 		})
 		cards_in_hand[card_index + current_num_cards_in_hand] = card_instance
 	}
@@ -123,8 +123,8 @@ function add_multiple_cards(cards) {
 /// @param {Id.Instance} card		The card that is being copied
 function add_copy_of_card_to_hand(card) {
 	var card_instance = instance_create_layer(x, y, "Instances", card.object_index, {
-		image_xscale : CARD_SCALE,
-		image_yscale : CARD_SCALE
+		image_xscale : CARD_DEFAULT_SCALE,
+		image_yscale : CARD_DEFAULT_SCALE
 	})
 	var number_of_cards_in_hand = array_length(cards_in_hand)
 	if(number_of_cards_in_hand < MAX_PLAYER_HAND_SIZE) {

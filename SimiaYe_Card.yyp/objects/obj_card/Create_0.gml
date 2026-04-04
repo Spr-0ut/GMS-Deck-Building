@@ -229,11 +229,13 @@ function exhaust_card(on_card_exhaust = undefined, on_card_exhaust_args = []) {
 function create_expanded_card() {
 	var screen_height = display_get_gui_height()
 	var screen_width = display_get_gui_width()
-	var sprite_size_scale = (screen_height - EXPANDED_CARD_PADDING) / sprite_height
+	var base_sprite_height = sprite_get_height(sprite_index)
+	var base_sprite_width = sprite_get_width(sprite_index)
+	var sprite_size_scale = (screen_height - EXPANDED_CARD_PADDING) / base_sprite_height
 	
-	var card_x_pos = (screen_width - (sprite_width * sprite_size_scale)) / 2 + (sprite_xoffset * sprite_size_scale)
-	var card_y_pos = (screen_height - (sprite_height * sprite_size_scale)) / 2 + (sprite_yoffset * sprite_size_scale)
-	var new_flexpanels = create_card_flexpanels(sprite_width * sprite_size_scale, sprite_height * sprite_size_scale, sprite_size_scale, sprite_size_scale)
+	var card_x_pos = (screen_width - (base_sprite_width * sprite_size_scale)) / 2 + (sprite_get_xoffset(sprite_index) * sprite_size_scale)
+	var card_y_pos = (screen_height - (base_sprite_height * sprite_size_scale)) / 2 + (sprite_get_yoffset(sprite_index) * sprite_size_scale)
+	var new_flexpanels = create_card_flexpanels(base_sprite_width * sprite_size_scale, base_sprite_height * sprite_size_scale, sprite_size_scale, sprite_size_scale)
 	
 	var expanded_card_instance_id = layer_create(-200, "expanded_card_instance")
 	instance_create_layer(card_x_pos, card_y_pos, expanded_card_instance_id, obj_display_card, {
