@@ -149,28 +149,29 @@ function remove_card(card) {
 		if (cards_in_hand[card_index].id == card.id) {
 			instance_destroy(card)
 			array_delete(cards_in_hand, card_index, 1)
-			set_cards_in_hand_position()
 			break
 		}
 	}
+	set_cards_in_hand_position()
 }
 
 /// @desc			Sets the position of all of the player's cards to be in an arc at the bottom 
 ///						center of the screen, and set their image_angle to follow the arc
 function set_cards_in_hand_position() {
-	var total_width_of_hand = get_width_of_player_hand()
-	var next_card_x = (display_get_gui_width() - total_width_of_hand + cards_in_hand[0].sprite_width) / 2
+	if(array_length(cards_in_hand) > 0) {
+		var total_width_of_hand = get_width_of_player_hand()
+		var next_card_x = (display_get_gui_width() - total_width_of_hand + cards_in_hand[0].sprite_width) / 2
 	
-	var cards_starting_angle = (180 - DEGREES_OF_PLAYER_HAND_ARC) / 2
-	var amount_card_showing = (3 / 4 * cards_in_hand[0].sprite_height)
-	for(var card_index = 0; card_index < array_length(cards_in_hand); card_index++) {
-		if(cards_in_hand[card_index] != 0) {
-			cards_in_hand[card_index].x = next_card_x
-			
-			var arc_angle_of_card = (DEGREES_OF_PLAYER_HAND_ARC / (array_length(cards_in_hand) - 1) * card_index) + cards_starting_angle
-			cards_in_hand[card_index].y = display_get_gui_height() - (amount_card_showing * dsin(arc_angle_of_card))
-			cards_in_hand[card_index].image_angle = dcos(arc_angle_of_card) * DEGREES_OF_PLAYER_HAND_ARC / 4
-			next_card_x += cards_in_hand[card_index].sprite_width + SPACE_BETWEEN_CARDS_IN_HAND
+		var cards_starting_angle = (180 - DEGREES_OF_PLAYER_HAND_ARC) / 2
+		var amount_card_showing = (3 / 4 * cards_in_hand[0].sprite_height)
+		for(var card_index = 0; card_index < array_length(cards_in_hand); card_index++) {
+			if(cards_in_hand[card_index] != 0) {
+				cards_in_hand[card_index].x = next_card_x
+				var arc_angle_of_card = (DEGREES_OF_PLAYER_HAND_ARC / max(1, array_length(cards_in_hand) - 1) * card_index) + cards_starting_angle
+				cards_in_hand[card_index].y = display_get_gui_height() - (amount_card_showing * dsin(arc_angle_of_card))
+				cards_in_hand[card_index].image_angle = dcos(arc_angle_of_card) * DEGREES_OF_PLAYER_HAND_ARC / 4
+				next_card_x += cards_in_hand[card_index].sprite_width + SPACE_BETWEEN_CARDS_IN_HAND
+			}
 		}
 	}
 }
