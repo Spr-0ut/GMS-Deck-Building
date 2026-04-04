@@ -231,8 +231,8 @@ function create_expanded_card() {
 	var screen_width = display_get_gui_width()
 	var sprite_size_scale = (screen_height - EXPANDED_CARD_PADDING) / sprite_height
 	
-	var card_x_pos = (screen_width - (sprite_width * sprite_size_scale)) / 2
-	var card_y_pos = (screen_height - (sprite_height * sprite_size_scale)) / 2
+	var card_x_pos = (screen_width - (sprite_width * sprite_size_scale)) / 2 + (sprite_xoffset * sprite_size_scale)
+	var card_y_pos = (screen_height - (sprite_height * sprite_size_scale)) / 2 + (sprite_yoffset * sprite_size_scale)
 	var new_flexpanels = create_card_flexpanels(sprite_width * sprite_size_scale, sprite_height * sprite_size_scale, sprite_size_scale, sprite_size_scale)
 	
 	var expanded_card_instance_id = layer_create(-200, "expanded_card_instance")
