@@ -9,12 +9,16 @@ cards_in_hand = array_create(0)
 is_hand_visible = true
 total_width_of_hand = 0
 run_card_drawn_functions = false
+card_initial_pos = 0
+cards_starting_angle = 0
+amount_card_showing = 0
 
 initial_hand_setup()
 
 /// @desc			Setsup the player's initial hand, adding cards to fill the player_hand_size
 function initial_hand_setup() {
 	global.player_current_deck = undefined
+	global.card_min_y = infinity
 	fill_player_hand()
 }
 
@@ -159,17 +163,28 @@ function remove_card(card) {
 ///						center of the screen, and set their image_angle to follow the arc
 function set_cards_in_hand_position() {
 	if(array_length(cards_in_hand) > 0) {
-		var total_width_of_hand = get_width_of_player_hand()
-		var next_card_x = (display_get_gui_width() - total_width_of_hand + cards_in_hand[0].sprite_width) / 2
-	
-		var cards_starting_angle = (180 - (DEGREES_PER_CARD_IN_ARC * (array_length(cards_in_hand) - 1))) / 2
-		var amount_card_showing = (3 / 4 * cards_in_hand[0].sprite_height)
+		get_width_of_player_hand()
+		card_initial_pos = (display_get_gui_width() - total_width_of_hand + cards_in_hand[0].sprite_width) / 2
+		cards_starting_angle = (180 - (DEGREES_PER_CARD_IN_ARC * (array_length(cards_in_hand) - 1))) / 2
+		amount_card_showing = (3 / 4 * cards_in_hand[0].sprite_height)
+		
+		var next_card_x = card_initial_pos
 		for(var card_index = 0; card_index < array_length(cards_in_hand); card_index++) {
 			if(cards_in_hand[card_index] != 0) {
+				cards_in_hand[card_index].card_index_in_hand = card_index
 				cards_in_hand[card_index].x = next_card_x
+				cards_in_hand[card_index].card_start_x_position = next_card_x
+				
 				var arc_angle_of_card = (DEGREES_PER_CARD_IN_ARC * card_index) + cards_starting_angle
 				cards_in_hand[card_index].y = display_get_gui_height() - (amount_card_showing * dsin(arc_angle_of_card))
+				cards_in_hand[card_index].card_start_y_position = cards_in_hand[card_index].y
+				if(global.card_min_y > cards_in_hand[card_index].y) {
+					global.card_min_y = cards_in_hand[card_index].y
+				}
+				
 				cards_in_hand[card_index].image_angle = dcos(arc_angle_of_card) * DEGREES_PER_CARD_IN_ARC
+				cards_in_hand[card_index].card_start_angle = cards_in_hand[card_index].image_angle
+				
 				next_card_x += cards_in_hand[card_index].sprite_width + SPACE_BETWEEN_CARDS_IN_HAND
 			}
 		}
@@ -177,9 +192,8 @@ function set_cards_in_hand_position() {
 }
 
 /// @desc			Loop through the player's hand to find the total width of all card sprites
-/// @returns		The total width of the player's current hand
 function get_width_of_player_hand() {
-	var total_width_of_hand = 0
+	total_width_of_hand = 0
 	
 	for(var hand_index = 0; hand_index < array_length(cards_in_hand); hand_index++) {
 		if(cards_in_hand[hand_index] != 0) {
@@ -191,7 +205,6 @@ function get_width_of_player_hand() {
 			hand_index--
 		}
 	}
-	return total_width_of_hand
 }
 
 /// @desc							Runs the card_drawn_action for each of the cards in hand. This
@@ -219,4 +232,56 @@ function hide_player_hand() {
 	{
         _card.visible = false
 	});
+}
+
+/// @desc								Checks to see if any cards need to be shifted as the player moves
+///											the card around in their hand
+/// @param {Real} selected_card_index	The index in cards_in_hand of the card being moved around
+/// @param {Real} card_x_pos			The current x position of the card being moved around
+function check_for_card_swap(selected_card_index, card_x_pos) {
+	if(cards_in_hand[selected_card_index].card_start_x_position < card_x_pos) {
+		for(var card_index = selected_card_index + 1; card_index < array_length(cards_in_hand); card_index++) {
+			if(cards_in_hand[card_index].x < card_x_pos) {
+				swap_cards(card_index, card_index - 1)
+			}
+			else {
+				break	
+			}
+		}
+	}
+	else if(cards_in_hand[selected_card_index].card_start_x_position > card_x_pos) {
+		for(var card_index = selected_card_index - 1; card_index >= 0; card_index--) {
+			if(cards_in_hand[card_index].x > card_x_pos) {
+				swap_cards(card_index, card_index + 1)
+			}
+			else {
+				break
+			}
+		}
+	}
+}
+
+/// @desc								Swaps the position and angle of the cards at the given indicies,
+///											as well as the position of the cards in cards_in_hand
+/// @param {Real} current_index			The index of the first card to swap in cards_in_hand
+/// @param {Real} index_to_swap_with	The index of the second card to swap in cards_in_hand
+function swap_cards(current_index, index_to_swap_with) {
+	var width_of_cards = (cards_in_hand[current_index].sprite_width + SPACE_BETWEEN_CARDS_IN_HAND)
+	cards_in_hand[index_to_swap_with].card_start_x_position = card_initial_pos + (width_of_cards * current_index)
+	cards_in_hand[current_index].card_start_x_position = card_initial_pos + (width_of_cards * index_to_swap_with)
+	
+	var new_arc_angle_of_swap_card = (DEGREES_PER_CARD_IN_ARC * (current_index)) + cards_starting_angle
+	cards_in_hand[index_to_swap_with].card_start_y_position = display_get_gui_height() - (amount_card_showing * dsin(new_arc_angle_of_swap_card))
+	var new_arc_angle_of_current_card = (DEGREES_PER_CARD_IN_ARC * (index_to_swap_with)) + cards_starting_angle
+	cards_in_hand[current_index].card_start_y_position = display_get_gui_height() - (amount_card_showing * dsin(new_arc_angle_of_current_card))
+	
+	cards_in_hand[index_to_swap_with].card_start_angle = dcos(new_arc_angle_of_swap_card) * DEGREES_PER_CARD_IN_ARC
+	cards_in_hand[current_index].card_start_angle = dcos(new_arc_angle_of_current_card) * DEGREES_PER_CARD_IN_ARC
+	
+	cards_in_hand[index_to_swap_with].card_index_in_hand = current_index
+	cards_in_hand[current_index].card_index_in_hand = index_to_swap_with
+	
+	var prev_card = cards_in_hand[index_to_swap_with]
+	cards_in_hand[index_to_swap_with] = cards_in_hand[current_index]
+	cards_in_hand[current_index] = prev_card
 }

@@ -5,6 +5,8 @@
 #macro NOT_ENOUGH_CARDS_IN_DECK_TO_PLAY			"Not enough cards in your deck to play this card"
 #macro PADDING_BETWEEN_CARD_DESCRIPTION_LINES	2
 #macro CARD_SELECTION_CONFIRMATION_MOVEMENT		30
+#macro CARD_POSITION_ADJUSTMENT_SPEED			0.1
+#macro CARD_ANGLE_ADJUSTMENT_SPEED				0.1
 
 flexpanels = create_card_flexpanels(sprite_width, sprite_height, image_xscale, image_yscale)
 card_elements_data = new card_element_position(flexpanels, sprite_xoffset, sprite_yoffset)
@@ -22,6 +24,10 @@ card_can_be_moved = array_all(interaction_type,
 							return _val != card_interaction_type.display_card &&
 									_val != card_interaction_type.selectable_card 
 						})
+
+if(!variable_global_exists("card_min_y")) {
+	global.card_min_y = infinity
+}
 
 #region THIS NEED TO BE LOOKED AT FOR EACH CARD
 
