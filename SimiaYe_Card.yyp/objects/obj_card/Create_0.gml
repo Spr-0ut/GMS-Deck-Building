@@ -5,8 +5,9 @@
 #macro NOT_ENOUGH_CARDS_IN_DECK_TO_PLAY			"Not enough cards in your deck to play this card"
 #macro PADDING_BETWEEN_CARD_DESCRIPTION_LINES	2
 #macro CARD_SELECTION_CONFIRMATION_MOVEMENT		30
-#macro CARD_POSITION_ADJUSTMENT_SPEED			0.1
-#macro CARD_ANGLE_ADJUSTMENT_SPEED				0.1
+#macro CARD_HOVER_MOVEMENT_DISTANCE				10
+#macro CARD_POSITION_ADJUSTMENT_SPEED			0.2
+#macro CARD_ANGLE_ADJUSTMENT_SPEED				0.2
 
 flexpanels = create_card_flexpanels(sprite_width, sprite_height, image_xscale, image_yscale)
 card_elements_data = new card_element_position(flexpanels, sprite_xoffset, sprite_yoffset)
@@ -25,11 +26,11 @@ card_can_be_moved = array_all(interaction_type,
 									_val != card_interaction_type.selectable_card 
 						})
 
+card_can_auto_adjust = true
+hovering_over_card = false
+
 if(!variable_global_exists("card_min_y")) {
 	global.card_min_y = infinity
-}
-if(card_can_be_moved && !variable_global_exists("card_can_auto_adjust")) {
-	global.card_can_auto_adjust = true
 }
 
 #region THIS NEED TO BE LOOKED AT FOR EACH CARD
@@ -165,10 +166,19 @@ function queue_error_message(error_message) {
 /// @description							The callback function for obj_target_selection_handler,
 ///												reseting the card position if playing it was canceled
 function reset_card() {
-	global.card_can_auto_adjust = true
+	with(obj_card) {
+		card_can_auto_adjust = true
+	}
 	image_angle = card_start_angle
 	x = card_start_x_position
 	y = card_start_y_position
+	
+	if(collision_point(mouse_x, mouse_y, id, true, false) == noone) {
+		hovering_over_card = false
+	}
+	else {
+		hovering_over_card = true	
+	}
 }
 
 /// @description							Creates the target selection handler on a new layer above
@@ -176,7 +186,9 @@ function reset_card() {
 function create_target_selection_handler(remove_card_energy) {
 	var top_layer_depth = layer_get_depth(find_top_layer())
 	var target_selection_layer = layer_create(top_layer_depth - 100)
-	global.card_can_auto_adjust = false
+	with(obj_card) {
+		card_can_auto_adjust = false
+	}
 	instance_create_layer(x, y, target_selection_layer, obj_target_selection_handler, 
 	{
 		num_chara_to_select,
@@ -203,7 +215,10 @@ function card_has_been_played(selected_chara, selected_cards, enemy_instance, re
 		ui_player_energy.remove_from_player_current_energy(energy_cost)
 	}
 	
-	global.card_can_auto_adjust = true
+	with(obj_card) {
+		card_can_auto_adjust = true
+	}
+	
 	var on_card_action_complete = undefined
 	if(card_is_discarded_when_played) {
 		on_card_action_complete = method(self, discard_card)
@@ -261,4 +276,11 @@ function create_expanded_card() {
 		card_description,
 		card_type
 	})
+}
+
+/// @desc								Adjusts the cards y position to show that the curser is
+///											over top this card
+function indicate_hovering_over_card() {
+	card_can_auto_adjust = false
+	y = card_start_y_position - CARD_HOVER_MOVEMENT_DISTANCE * image_yscale	
 }
