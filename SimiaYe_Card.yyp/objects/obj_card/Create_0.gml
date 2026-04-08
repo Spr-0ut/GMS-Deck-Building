@@ -28,6 +28,9 @@ card_can_be_moved = array_all(interaction_type,
 if(!variable_global_exists("card_min_y")) {
 	global.card_min_y = infinity
 }
+if(card_can_be_moved && !variable_global_exists("card_can_auto_adjust")) {
+	global.card_can_auto_adjust = true
+}
 
 #region THIS NEED TO BE LOOKED AT FOR EACH CARD
 
@@ -162,6 +165,7 @@ function queue_error_message(error_message) {
 /// @description							The callback function for obj_target_selection_handler,
 ///												reseting the card position if playing it was canceled
 function reset_card() {
+	global.card_can_auto_adjust = true
 	image_angle = card_start_angle
 	x = card_start_x_position
 	y = card_start_y_position
@@ -172,6 +176,7 @@ function reset_card() {
 function create_target_selection_handler(remove_card_energy) {
 	var top_layer_depth = layer_get_depth(find_top_layer())
 	var target_selection_layer = layer_create(top_layer_depth - 100)
+	global.card_can_auto_adjust = false
 	instance_create_layer(x, y, target_selection_layer, obj_target_selection_handler, 
 	{
 		num_chara_to_select,
@@ -198,6 +203,7 @@ function card_has_been_played(selected_chara, selected_cards, enemy_instance, re
 		ui_player_energy.remove_from_player_current_energy(energy_cost)
 	}
 	
+	global.card_can_auto_adjust = true
 	var on_card_action_complete = undefined
 	if(card_is_discarded_when_played) {
 		on_card_action_complete = method(self, discard_card)
