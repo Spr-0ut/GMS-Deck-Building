@@ -5,7 +5,8 @@
 #macro NOT_ENOUGH_CARDS_IN_DECK_TO_PLAY			"Not enough cards in your deck to play this card"
 #macro PADDING_BETWEEN_CARD_DESCRIPTION_LINES	2
 #macro CARD_SELECTION_CONFIRMATION_MOVEMENT		30
-#macro CARD_HOVER_MOVEMENT_DISTANCE				10
+#macro CARD_Y_POS_WHILE_HOVERING_OVER			display_get_gui_height() - sprite_height
+#macro CARD_ANGLE_WHILE_HOVERING_OVER			0
 #macro CARD_POSITION_ADJUSTMENT_SPEED			0.2
 #macro CARD_ANGLE_ADJUSTMENT_SPEED				0.2
 
@@ -283,11 +284,4 @@ function create_expanded_card() {
 		card_description,
 		card_type
 	})
-}
-
-/// @desc								Adjusts the cards y position to show that the curser is
-///											over top this card
-function indicate_hovering_over_card() {
-	card_can_auto_adjust = false
-	y = global.cards_in_hand_y_pos[card_index_in_hand] - CARD_HOVER_MOVEMENT_DISTANCE * image_yscale	
 }
