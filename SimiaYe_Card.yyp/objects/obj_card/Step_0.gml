@@ -8,24 +8,25 @@ if(card_can_be_moved && visible) {
 		}
 	}
 	else if(card_can_auto_adjust) {
-		if(!global.object_being_clicked && abs(x - card_start_x_position) < 1 && abs(y - card_start_y_position) < 1 &&
-				abs(image_angle - card_start_angle) < 1) {
-			x = card_start_x_position
-			y = card_start_y_position
-			image_angle = card_start_angle
+		if(!global.object_being_clicked && abs(x - global.cards_in_hand_x_pos[card_index_in_hand]) < 1 &&
+				abs(y - global.cards_in_hand_y_pos[card_index_in_hand]) < 1 &&
+				abs(image_angle - global.cards_in_hand_angle[card_index_in_hand]) < 1) {
+			x = global.cards_in_hand_x_pos[card_index_in_hand]
+			y = global.cards_in_hand_y_pos[card_index_in_hand]
+			image_angle = global.cards_in_hand_angle[card_index_in_hand]
 			if(hovering_over_card) {
 				indicate_hovering_over_card()	
 			}
 		}
 		else {
-			if(x != card_start_x_position) {
-				x = lerp(x, card_start_x_position, CARD_POSITION_ADJUSTMENT_SPEED)
+			if(x != global.cards_in_hand_x_pos[card_index_in_hand]) {
+				x = lerp(x, global.cards_in_hand_x_pos[card_index_in_hand], CARD_POSITION_ADJUSTMENT_SPEED)
 			}
-			if(y != card_start_y_position) {
-				y = lerp(y, card_start_y_position, CARD_POSITION_ADJUSTMENT_SPEED)
+			if(y != global.cards_in_hand_y_pos[card_index_in_hand]) {
+				y = lerp(y, global.cards_in_hand_y_pos[card_index_in_hand], CARD_POSITION_ADJUSTMENT_SPEED)
 			}
-			if(image_angle != card_start_angle) {
-				image_angle = lerp(image_angle, card_start_angle, CARD_ANGLE_ADJUSTMENT_SPEED)
+			if(image_angle != global.cards_in_hand_angle[card_index_in_hand]) {
+				image_angle = lerp(image_angle, global.cards_in_hand_angle[card_index_in_hand], CARD_ANGLE_ADJUSTMENT_SPEED)
 			}
 		}
 	}

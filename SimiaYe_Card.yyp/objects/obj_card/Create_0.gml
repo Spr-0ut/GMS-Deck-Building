@@ -13,9 +13,6 @@ flexpanels = create_card_flexpanels(sprite_width, sprite_height, image_xscale, i
 card_elements_data = new card_element_position(flexpanels, sprite_xoffset, sprite_yoffset)
 
 card_selected = false
-card_start_angle = 0
-card_start_x_position = x
-card_start_y_position = y
 error_text = ""
 is_selected = false
 card_played = false
@@ -31,6 +28,18 @@ hovering_over_card = false
 
 if(!variable_global_exists("card_min_y")) {
 	global.card_min_y = infinity
+}
+
+if(!variable_global_exists("cards_in_hand_x_pos")) {
+	global.cards_in_hand_x_pos = array_create(MAX_PLAYER_HAND_SIZE, -1)
+}
+
+if(!variable_global_exists("cards_in_hand_y_pos")) {
+	global.cards_in_hand_y_pos = array_create(MAX_PLAYER_HAND_SIZE, -1)
+}
+
+if(!variable_global_exists("cards_in_hand_angle")) {
+	global.cards_in_hand_angle = array_create(MAX_PLAYER_HAND_SIZE, -1)
 }
 
 #region THIS NEED TO BE LOOKED AT FOR EACH CARD
@@ -109,9 +118,7 @@ function select_card() {
 		global.object_being_clicked	= true
 		card_selected = true
 		if(card_can_be_moved) {
-			card_start_angle = image_angle
 			image_angle = 0
-			card_start_x_position = x
 			x = mouse_x
 			y = mouse_y - (sprite_height / 2)
 		}
@@ -125,7 +132,7 @@ function card_released() {
 	card_selected = false
 	if(array_contains(interaction_type, card_interaction_type.default_card)) {
 		ui_player_hand.card_can_be_selected = true
-		if(y < card_start_y_position - (sprite_height * 0.5)) {
+		if(y < global.cards_in_hand_y_pos[card_index_in_hand] - (sprite_height * 0.5)) {
 			if(energy_cost < 0) {
 				queue_error_message(THIS_CARD_CAN_NOT_BE_PLAYED)
 			}
@@ -169,9 +176,9 @@ function reset_card() {
 	with(obj_card) {
 		card_can_auto_adjust = true
 	}
-	image_angle = card_start_angle
-	x = card_start_x_position
-	y = card_start_y_position
+	image_angle = global.cards_in_hand_angle[card_index_in_hand]
+	x = global.cards_in_hand_x_pos[card_index_in_hand]
+	y = global.cards_in_hand_y_pos[card_index_in_hand]
 	
 	if(collision_point(mouse_x, mouse_y, id, true, false) == noone) {
 		hovering_over_card = false
@@ -282,5 +289,5 @@ function create_expanded_card() {
 ///											over top this card
 function indicate_hovering_over_card() {
 	card_can_auto_adjust = false
-	y = card_start_y_position - CARD_HOVER_MOVEMENT_DISTANCE * image_yscale	
+	y = global.cards_in_hand_y_pos[card_index_in_hand] - CARD_HOVER_MOVEMENT_DISTANCE * image_yscale	
 }
