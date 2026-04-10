@@ -125,6 +125,7 @@
     {"name":"etest","order":2,"path":"sprites/etest/etest.yy",},
     {"name":"spr_ability_symbol","order":3,"path":"sprites/spr_ability_symbol/spr_ability_symbol.yy",},
     {"name":"spr_attack_symbol","order":2,"path":"sprites/spr_attack_symbol/spr_attack_symbol.yy",},
+    {"name":"spr_basic_card","order":7,"path":"sprites/spr_basic_card/spr_basic_card.yy",},
     {"name":"spr_card_sort_button","order":3,"path":"sprites/spr_card_sort_button/spr_card_sort_button.yy",},
     {"name":"spr_card","order":1,"path":"sprites/spr_card/spr_card.yy",},
     {"name":"spr_chara_selected_icon","order":6,"path":"sprites/spr_chara_selected_icon/spr_chara_selected_icon.yy",},

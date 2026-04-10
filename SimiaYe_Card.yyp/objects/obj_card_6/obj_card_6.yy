@@ -40,8 +40,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"spr_damage_card",
-    "path":"sprites/spr_damage_card/spr_damage_card.yy",
+    "name":"spr_basic_card",
+    "path":"sprites/spr_basic_card/spr_basic_card.yy",
   },
   "spriteMaskId":null,
   "visible":true,

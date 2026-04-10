@@ -177,6 +177,7 @@
     {"id":{"name":"etest","path":"sprites/etest/etest.yy",},},
     {"id":{"name":"spr_ability_symbol","path":"sprites/spr_ability_symbol/spr_ability_symbol.yy",},},
     {"id":{"name":"spr_attack_symbol","path":"sprites/spr_attack_symbol/spr_attack_symbol.yy",},},
+    {"id":{"name":"spr_basic_card","path":"sprites/spr_basic_card/spr_basic_card.yy",},},
     {"id":{"name":"spr_battack","path":"sprites/spr_battack/spr_battack.yy",},},
     {"id":{"name":"spr_brick","path":"sprites/spr_brick/spr_brick.yy",},},
     {"id":{"name":"spr_button_test","path":"sprites/spr_button_test/spr_button_test.yy",},},
