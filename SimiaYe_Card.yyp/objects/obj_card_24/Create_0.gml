@@ -1,13 +1,13 @@
 // Inherit the parent event
 event_inherited();
 
-card_description = "Deal 0.2 dmg per Ability card you have in hand."
-/// @desc											A selected chara deal 0.2 dmg per ability card currently
+card_description = "Deal 0.25 dmg per Ability card you have in hand."
+/// @desc											A selected chara deal 0.25 dmg per ability card currently
 ///														in hand
 /// @param {struct_card_action} card_action_struct	The struct that contains all card actions
 card_action = function (card_action_struct) {
 	var num_ability_cards = get_num_ability_cards_in_hand()
-	card_action_struct.charas_attack_enemies(num_ability_cards * 0.2)
+	card_action_struct.charas_attack_enemies(num_ability_cards * 0.25)
 	card_action_struct.end_card_action()
 }
 
