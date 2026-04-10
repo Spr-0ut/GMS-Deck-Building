@@ -63,6 +63,7 @@
         "chara_class.all_chara",
         "chara_class.damage",
         "chara_class.science",
+        "chara_class.tank",
       ],"multiselect":true,"name":"allowed_classes","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"chara_class.all_chara","varType":6,},
     {"$GMObjectProperty":"v2","%Name":"card_type","filters":[],"listItems":[
         "card_type.attack",
