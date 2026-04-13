@@ -307,7 +307,8 @@ function create_card_selection(allowed_cards) {
 	}
 	var spacing_between_cards = 100 / numCards
 	var total_width_of_card_selection = ((allowed_cards[0].sprite_width + spacing_between_cards) * numCards) - spacing_between_cards
-	var xpos = (display_get_gui_width() - total_width_of_card_selection) / 2
+	var xpos = ((display_get_gui_width() - total_width_of_card_selection + allowed_cards[0].sprite_width) / 2) 
+					- allowed_cards[0].sprite_yoffset 
 	var ypos = (display_get_gui_height() - allowed_cards[0].sprite_height) / 2
 	for (var card_index = 0; card_index < numCards; card_index++) {
 		var x_scale = allowed_cards[card_index].image_xscale
