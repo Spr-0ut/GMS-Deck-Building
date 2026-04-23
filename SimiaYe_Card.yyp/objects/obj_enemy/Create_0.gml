@@ -1,6 +1,14 @@
 active_debuffs = {}
 display_next_damage_text = true
 damage_to_display = []
+attack_options = [{attack : method(self, basic_attack), attack_parameters : [], targeting_type : enemy_attack_target.first_closest_chara}]
+next_attack_index = 0
+ordered_player_charas = []
+
+function basic_attack() {
+	//TODO this needs to be updated to be more similar to how the enemy is hit
+	return 1
+}
 
 /// @desc										Handles player attacks by applying debuffs and removing
 ///													attack_data.damage from their health
@@ -27,7 +35,7 @@ function hit_by_player(attacking_chara, damage_multiplyer) {
 	}
 }
 
-/// @description								Debuffs this enemy through the debuff_handler and adds it
+/// @desc										Debuffs this enemy through the debuff_handler and adds it
 ///													to the damage_to_display
 /// @param {card_debuff_effects} debuff_type	The debuff being applied to this enemy
 /// @param {Real} debuff_amount					The amount of the debuff being added
@@ -38,11 +46,86 @@ function apply_debuff_to_enemy(debuff_type, debuff_amount) {
 	}
 }
 
-/// @desc			Damages the player by enemy Attack_damage
+/// @desc							Finds this enemy's next attack and uses it to hit the targeted players
 function attack_player() {
-	obj_player.hit_by_enemy(Attack_damage)
+	var attack_data = select_next_attack()
+	if(attack_data != noone) {
+		var players_selected = get_players_targeted(attack_data.targeting_type)
+		for(var player_index = 0; player_index < array_length(players_selected); player_index++) {
+			var damage_to_player = method_call(attack_data.attack, attack_data.attack_parameters)
+			players_selected[player_index].hit_by_enemy(damage_to_player)
+		}
+
+		next_attack_index++
+		if(next_attack_index >= array_length(attack_options)) {
+			next_attack_index = 0
+		}
+	}
+	else {
+		// NOTE This shouldnt ever happen but the game shouldnt softlock if it does
+		next_attack_index++
+		if(next_attack_index >= array_length(attack_options)) {
+			next_attack_index = 0
+		}
+	}
 }
 
+/// @desc							Finds this enemy's next attack based on next_attack_index
+///										NOTE: This function does NOT handle incrementing next_attack_index
+/// @returns {Struct}				A struct with the attack function and targeting_type for the enemy's
+///										next attack
+function select_next_attack() {
+	if(array_length(attack_options) < 1 || next_attack_index >= array_length(attack_options)) {
+		return noone	
+	}
+	
+	var attack_option = attack_options[next_attack_index]
+	if(attack_option.attack == noone || !is_method(attack_option.attack) || 
+			attack_option.targeting_type < 0) {
+		array_delete(attack_options, next_attack_index, 1)
+		attack_option = select_next_attack()
+	}
+	
+	return attack_option
+}
+
+/// @desc							Finds all the players targeted for the given targeting_type
+/// @param {enemy_attack_target}	The targeting type which determines which player characters
+///										will be hit
+/// @returns {Array<Id.Instance>}	All the players targeted for the given targeting type
+function get_players_targeted(targeting_type) {
+	if(array_length(ordered_player_charas) < 1) {
+		find_player_charas()
+	}
+	
+	switch(targeting_type) {
+		case enemy_attack_target.first_closest_chara :
+			return [array_last(ordered_player_charas)]
+		case enemy_attack_target.second_closest_chara :
+			return [ordered_player_charas[max(array_length(ordered_player_charas) - 2, 0)]]
+		case enemy_attack_target.third_closest_chara :
+			return [ordered_player_charas[max(array_length(ordered_player_charas) - 3, 0)]]
+		case enemy_attack_target.fourth_closest_chara :
+			return [ordered_player_charas[max(array_length(ordered_player_charas) - 4, 0)]]
+		case enemy_attack_target.fifth_closest_chara :
+			return [ordered_player_charas[max(array_length(ordered_player_charas) - 5, 0)]]
+		case enemy_attack_target.random_chara :
+			return [ordered_player_charas[irandom(array_length(ordered_player_charas) - 1)]]
+	}
+}
+
+/// @desc							Finds the player characters and orders them from furthest left to
+///										furthest right in ordered_player_charas
+function find_player_charas() {
+	var num_player_chara = instance_number(obj_player)
+	ordered_player_charas = array_create(num_player_chara)
+	for(var chara_index = 0; chara_index < num_player_chara; chara_index++) {
+		ordered_player_charas[chara_index] = instance_find(obj_player, chara_index)
+	}
+	array_sort(ordered_player_charas, function(current, next) {
+		return current.x - next.x	
+	})
+}
 
 /// @desc							Formats a number by removing any trailing 0s or decimals
 /// @param {Real} num_to_format		The number to be returned after formatting

@@ -165,6 +165,7 @@
     {"id":{"name":"enum_card_selection_target","path":"scripts/enum_card_selection_target/enum_card_selection_target.yy",},},
     {"id":{"name":"enum_card_type","path":"scripts/enum_card_type/enum_card_type.yy",},},
     {"id":{"name":"enum_chara_class","path":"scripts/enum_chara_class/enum_chara_class.yy",},},
+    {"id":{"name":"enum_enemy_attack_target","path":"scripts/enum_enemy_attack_target/enum_enemy_attack_target.yy",},},
     {"id":{"name":"enum_selection_target","path":"scripts/enum_selection_target/enum_selection_target.yy",},},
     {"id":{"name":"find_and_delete_related_layers","path":"scripts/find_and_delete_related_layers/find_and_delete_related_layers.yy",},},
     {"id":{"name":"find_top_layer","path":"scripts/find_top_layer/find_top_layer.yy",},},

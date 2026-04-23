@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"enum_enemy_attack_target",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"enum_enemy_attack_target",
+  "parent":{
+    "name":"Enemy",
+    "path":"folders/Objects/Enemy.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
