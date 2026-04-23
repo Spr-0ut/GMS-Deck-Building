@@ -6,8 +6,7 @@ next_attack_index = 0
 ordered_player_charas = []
 
 function basic_attack() {
-	//TODO this needs to be updated to be more similar to how the enemy is hit
-	return 1
+	return new attack_data_struct(1) 
 }
 
 /// @desc										Handles player attacks by applying debuffs and removing
