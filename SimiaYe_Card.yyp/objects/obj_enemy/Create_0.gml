@@ -3,7 +3,6 @@ display_next_damage_text = true
 damage_to_display = []
 attack_options = [{attack : method(self, basic_attack), attack_parameters : [], targeting_type : enemy_attack_target.first_closest_chara}]
 next_attack_index = 0
-ordered_player_charas = []
 
 function basic_attack() {
 	return new attack_data_struct(1) 
@@ -93,9 +92,7 @@ function select_next_attack() {
 ///										will be hit
 /// @returns {Array<Id.Instance>}	All the players targeted for the given targeting type
 function get_players_targeted(targeting_type) {
-	if(array_length(ordered_player_charas) < 1) {
-		find_player_charas()
-	}
+	var ordered_player_charas = obj_follower_order_manager.find_charas_ordered()
 	
 	switch(targeting_type) {
 		case enemy_attack_target.first_closest_chara :
@@ -111,19 +108,6 @@ function get_players_targeted(targeting_type) {
 		case enemy_attack_target.random_chara :
 			return [ordered_player_charas[irandom(array_length(ordered_player_charas) - 1)]]
 	}
-}
-
-/// @desc							Finds the player characters and orders them from furthest left to
-///										furthest right in ordered_player_charas
-function find_player_charas() {
-	var num_player_chara = instance_number(obj_player)
-	ordered_player_charas = array_create(num_player_chara)
-	for(var chara_index = 0; chara_index < num_player_chara; chara_index++) {
-		ordered_player_charas[chara_index] = instance_find(obj_player, chara_index)
-	}
-	array_sort(ordered_player_charas, function(current, next) {
-		return current.x - next.x	
-	})
 }
 
 /// @desc							Formats a number by removing any trailing 0s or decimals
