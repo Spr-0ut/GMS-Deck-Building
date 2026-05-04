@@ -123,6 +123,7 @@
   },
   "name":"SimiaYe_Card",
   "resources":[
+    {"id":{"name":"fnt_attack_indicator","path":"fonts/fnt_attack_indicator/fnt_attack_indicator.yy",},},
     {"id":{"name":"fnt_attacker_selection_type","path":"fonts/fnt_attacker_selection_type/fnt_attacker_selection_type.yy",},},
     {"id":{"name":"fnt_book_menu_elements","path":"fonts/fnt_book_menu_elements/fnt_book_menu_elements.yy",},},
     {"id":{"name":"fnt_book_menu_header","path":"fonts/fnt_book_menu_header/fnt_book_menu_header.yy",},},
@@ -135,6 +136,7 @@
     {"id":{"name":"fnt_resolution_confirmation","path":"fonts/fnt_resolution_confirmation/fnt_resolution_confirmation.yy",},},
     {"id":{"name":"fnt_resolution","path":"fonts/fnt_resolution/fnt_resolution.yy",},},
     {"id":{"name":"__InputUpdateController","path":"objects/__InputUpdateController/__InputUpdateController.yy",},},
+    {"id":{"name":"obj_attack_indicator","path":"objects/obj_attack_indicator/obj_attack_indicator.yy",},},
     {"id":{"name":"obj_battack","path":"objects/obj_battack/obj_battack.yy",},},
     {"id":{"name":"obj_book_menu","path":"objects/obj_book_menu/obj_book_menu.yy",},},
     {"id":{"name":"obj_bookmark_bottom","path":"objects/obj_bookmark_bottom/obj_bookmark_bottom.yy",},},
@@ -187,6 +189,7 @@
     {"id":{"name":"obj_damageText","path":"objects/obj_damageText/obj_damageText.yy",},},
     {"id":{"name":"obj_display_card","path":"objects/obj_display_card/obj_display_card.yy",},},
     {"id":{"name":"obj_easyenemy","path":"objects/obj_easyenemy/obj_easyenemy.yy",},},
+    {"id":{"name":"obj_enemy_attack_manager","path":"objects/obj_enemy_attack_manager/obj_enemy_attack_manager.yy",},},
     {"id":{"name":"obj_enemy","path":"objects/obj_enemy/obj_enemy.yy",},},
     {"id":{"name":"obj_enter_building_trigger","path":"objects/obj_enter_building_trigger/obj_enter_building_trigger.yy",},},
     {"id":{"name":"obj_flipping_page","path":"objects/obj_flipping_page/obj_flipping_page.yy",},},

@@ -2,10 +2,13 @@ active_debuffs = {}
 display_next_damage_text = true
 damage_to_display = []
 attack_options = [{attack : method(self, basic_attack), attack_parameters : [], targeting_type : enemy_attack_target.first_closest_chara}]
-next_attack_index = 0
+next_attack_index = -1
 
+/// @desc							This is a basic example of an enemy's attack. It is expected that there
+///										will be multiple attack functions implemented in each enemy type
+/// @returns {attack_data_struct}	The return value of attack functions must be an attack_data_struct
 function basic_attack() {
-	return new attack_data_struct(1) 
+	return new attack_data_struct(irandom(10) + 1)
 }
 
 /// @desc										Handles player attacks by applying debuffs and removing
@@ -44,27 +47,18 @@ function apply_debuff_to_enemy(debuff_type, debuff_amount) {
 	}
 }
 
-/// @desc							Finds this enemy's next attack and uses it to hit the targeted players
-function attack_player() {
-	var attack_data = select_next_attack()
-	if(attack_data != noone) {
-		var players_selected = get_players_targeted(attack_data.targeting_type)
-		for(var player_index = 0; player_index < array_length(players_selected); player_index++) {
-			var damage_to_player = method_call(attack_data.attack, attack_data.attack_parameters)
-			players_selected[player_index].hit_by_enemy(damage_to_player)
-		}
-
-		next_attack_index++
-		if(next_attack_index >= array_length(attack_options)) {
-			next_attack_index = 0
-		}
+/// @desc							Increments the next_attack_index, looping back to 0 if required,
+///										and sets the attack intent for this enemy
+function select_next_attack() {
+	next_attack_index++
+	if(next_attack_index >= array_length(attack_options) || next_attack_index < 0) {
+		next_attack_index = 0
 	}
-	else {
-		// NOTE This shouldnt ever happen but the game shouldnt softlock if it does
-		next_attack_index++
-		if(next_attack_index >= array_length(attack_options)) {
-			next_attack_index = 0
-		}
+	
+	if(instance_exists(obj_enemy_attack_manager)) {
+		var enemy_attack_data = get_next_attack()
+		var enemy_attack = method_call(enemy_attack_data.attack, enemy_attack_data.attack_parameters)
+		obj_enemy_attack_manager.add_enemy_intent(id, enemy_attack, enemy_attack_data.targeting_type)
 	}
 }
 
@@ -72,7 +66,7 @@ function attack_player() {
 ///										NOTE: This function does NOT handle incrementing next_attack_index
 /// @returns {Struct}				A struct with the attack function and targeting_type for the enemy's
 ///										next attack
-function select_next_attack() {
+function get_next_attack() {
 	if(array_length(attack_options) < 1 || next_attack_index >= array_length(attack_options)) {
 		return noone	
 	}
@@ -81,33 +75,10 @@ function select_next_attack() {
 	if(attack_option.attack == noone || !is_method(attack_option.attack) || 
 			attack_option.targeting_type < 0) {
 		array_delete(attack_options, next_attack_index, 1)
-		attack_option = select_next_attack()
+		attack_option = get_next_attack()
 	}
 	
 	return attack_option
-}
-
-/// @desc							Finds all the players targeted for the given targeting_type
-/// @param {enemy_attack_target}	The targeting type which determines which player characters
-///										will be hit
-/// @returns {Array<Id.Instance>}	All the players targeted for the given targeting type
-function get_players_targeted(targeting_type) {
-	var ordered_player_charas = obj_follower_order_manager.find_charas_ordered()
-	
-	switch(targeting_type) {
-		case enemy_attack_target.first_closest_chara :
-			return [array_last(ordered_player_charas)]
-		case enemy_attack_target.second_closest_chara :
-			return [ordered_player_charas[max(array_length(ordered_player_charas) - 2, 0)]]
-		case enemy_attack_target.third_closest_chara :
-			return [ordered_player_charas[max(array_length(ordered_player_charas) - 3, 0)]]
-		case enemy_attack_target.fourth_closest_chara :
-			return [ordered_player_charas[max(array_length(ordered_player_charas) - 4, 0)]]
-		case enemy_attack_target.fifth_closest_chara :
-			return [ordered_player_charas[max(array_length(ordered_player_charas) - 5, 0)]]
-		case enemy_attack_target.random_chara :
-			return [ordered_player_charas[irandom(array_length(ordered_player_charas) - 1)]]
-	}
 }
 
 /// @desc							Formats a number by removing any trailing 0s or decimals

@@ -1,4 +1,8 @@
 {
   "FolderOrderSettings":[],
-  "ResourceOrderSettings":[],
+  "ResourceOrderSettings":[
+    {"name":"fnt_attack_indicator","order":1,"path":"fonts/fnt_attack_indicator/fnt_attack_indicator.yy",},
+    {"name":"obj_attack_indicator","order":2,"path":"objects/obj_attack_indicator/obj_attack_indicator.yy",},
+    {"name":"obj_enemy_attack_manager","order":1,"path":"objects/obj_enemy_attack_manager/obj_enemy_attack_manager.yy",},
+  ],
 }
