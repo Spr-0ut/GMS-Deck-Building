@@ -20,10 +20,11 @@ function create_indicators() {
 	}
 	for(var chara_index = 0; chara_index < array_length(ordered_player_charas); chara_index++) {
 		var chara = ordered_player_charas[chara_index]
-		var indicator_x_pos = chara.x - chara.sprite_xoffset + (chara.sprite_width / 2)
+		var indicator_x_pos = chara.x - chara.sprite_xoffset
 		var indicator_y_pos = chara.y - chara.sprite_yoffset - ATTACK_INDICATOR_PADDING
 		var indicator = instance_create_layer(indicator_x_pos, indicator_y_pos, enemy_attack_indicator_layer, obj_attack_indicator, {
-				chara_targeted : chara
+				chara_targeted : chara,
+				target_sprite_width : chara.sprite_width
 		})
 		attack_indicators[$ chara] = indicator
 	}

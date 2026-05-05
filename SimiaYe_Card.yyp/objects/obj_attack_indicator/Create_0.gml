@@ -50,18 +50,31 @@ function clear_attacks() {
 	display_attack_intentions = true
 }
 
-/// @desc										Draws each attack intention, with each one above the
-///													previous one
+/// @desc										Draws each attack intention vertically, with each
+///													attack's damage and debuffs displayed in line
 function draw_attacks_intentions() {
+	draw_set_halign(fa_right)
+	draw_set_valign(fa_bottom)
+	draw_set_font(ATTACK_INDICATOR_TEXT_FONT)
+	
 	var intent_y_pos = y
 	for(var attack_index = 0; attack_index < array_length(attacks_to_display); attack_index++) {
-		if(attacks_to_display[attack_index].attack.damage > 0) {
-			draw_set_halign(fa_center)
-			draw_set_valign(fa_bottom)
-			draw_set_colour(ATTACK_INDICATOR_TEXT_COLOR)
-			draw_set_font(ATTACK_INDICATOR_TEXT_FONT)
-			draw_text(x, intent_y_pos, attacks_to_display[attack_index].attack.damage)
-			intent_y_pos -= string_height(attacks_to_display[attack_index].attack.damage) + ATTACK_INDICATOR_PADDING
+		var attack_data = attacks_to_display[attack_index].attack
+		var x_pos_increment = target_sprite_width / (array_length(attack_data.debuffs) + 2)
+		var intent_x_pos = x + x_pos_increment
+		
+		
+		draw_set_colour(ATTACK_INDICATOR_TEXT_COLOR)
+		draw_text(intent_x_pos, intent_y_pos, attack_data.damage)
+		
+		for(var debuff_index = 0; debuff_index < array_length(attack_data.debuffs); debuff_index++) {
+			draw_set_colour(get_debuff_color(attack_data.debuffs[debuff_index][0]))
+			
+			intent_x_pos += x_pos_increment
+			var debuff_x_pos = intent_x_pos + (string_width(attack_data.debuffs[debuff_index][1]) * 
+								(debuff_index + 2) / (array_length(attack_data.debuffs) + 2))
+			draw_text(debuff_x_pos, intent_y_pos, attack_data.debuffs[debuff_index][1])
 		}
+		intent_y_pos -= string_height(attack_data.damage) + ATTACK_INDICATOR_PADDING
 	}	
 }
