@@ -45,6 +45,7 @@ chara_leaving_room = undefined
 
 class = chara_class.damage
 active_buffs = {}
+active_debuffs = {}
 display_next_effect_text = true
 effect_to_display = []
 chara_shield = 0
@@ -263,25 +264,21 @@ function heal_chara(health_to_add) {
 		player_current_health = clamp(player_current_health + health_to_add, 0, player_max_health)
 }
 
-/// @desc										Applies a buff to this chara and adds them to the 
-///													effect_to_display queue
-/// @param {card_buff_effects} buff_type		The buff being applied
-/// @param {Real} buff_amount					The amount of the buff being added
-function apply_buff(buff_type, buff_amount) {
-	if(active_buffs[$ buff_type] == undefined)
-			active_buffs[$ buff_type] = buff_amount
-	else
-		active_buffs[$ buff_type] += buff_amount
-			
-	switch (buff_type) {
-		case card_buff_effects.Strength:
-			array_push(effect_to_display, [active_buffs[$ buff_type], c_maroon])
-			break;
-		case card_buff_effects.Gain_Strength_On_Any_Attack:
-			array_push(effect_to_display, [active_buffs[$ buff_type], c_fuchsia])
-			turns_since_gain_strength_on_attack = 1
-			break;
+/// @desc											Adds the given buff data to the effect_to_display
+///														queue to be shown to the player
+/// @param {Array<Real, Constant.Color>} buff_data	The amount and color of the buff being displayed
+function display_buff(buff_data) {
+	if(array_length(buff_data) != 2 || 
+		typeof(buff_data[0]) != "number" || 
+		buff_data[0] < 0 || buff_data[0] == NaN || buff_data[0] == infinity ||
+		typeof(buff_data[1]) != "number" ||
+		buff_data[1] == NaN || buff_data[1] == infinity ) {
+			return
 	}
+	
+	var buff_amount = buff_data[0]
+	var buff_color = buff_data[1]
+	array_push(effect_to_display, [buff_amount, buff_color])
 }
 
 /// @desc										Debuffs this character through the debuff_handler and
@@ -291,7 +288,7 @@ function apply_buff(buff_type, buff_amount) {
 function apply_debuff_to_player(debuff_type, debuff_amount) {
 	var debuff_damage = apply_debuff(active_debuffs, debuff_type, debuff_amount)
 	if(array_length(debuff_damage) == 2) {
-		array_push(damage_to_display, debuff_damage)
+		array_push(effect_to_display, debuff_damage)
 	}
 }
 

@@ -23,15 +23,24 @@ function remove_attack(enemy_id) {
 	}
 }
 
-/// @desc										Executes the prepared attacks from the enemy so long as
-///													the enemy and chara are alive and able to attack
+/// @desc										Executes the prepared attacks so long as the entity
+///													preparing the attack and the one being attacked
+///													are alive and able to act
 function attack_target_character() {
-	if(chara_targeted != noone && chara_targeted.player_current_health > 0 && display_attack_intentions) {
+	if(target != noone  && display_attack_intentions) {
 		for(var attack_index = 0; attack_index < array_length(attacks_to_display); attack_index++) {
-			if(attacks_to_display[attack_index].enemy_id.Is_alive) {
-				chara_targeted.hit_by_enemy(attacks_to_display[attack_index].attack)
+			if(object_is_ancestor(target.object_index, obj_player)) {
+				if(target.player_current_health > 0 &&
+						attacks_to_display[attack_index].enemy_id.Is_alive) {
+					target.hit_by_enemy(attacks_to_display[attack_index].attack)
+				}
 			}
-		}
+			else if(object_is_ancestor(target.object_index, obj_enemy)) {
+				if(attacks_to_display[attack_index].enemy_id.Is_alive) {
+					target.hit_by_player(attacks_to_display[attack_index].enemy_id, attacks_to_display[attack_index].attack)
+				}
+			}
+		}	
 	}
 }
 
@@ -60,21 +69,63 @@ function draw_attacks_intentions() {
 	var intent_y_pos = y
 	for(var attack_index = 0; attack_index < array_length(attacks_to_display); attack_index++) {
 		var attack_data = attacks_to_display[attack_index].attack
-		var x_pos_increment = target_sprite_width / (array_length(attack_data.debuffs) + 2)
-		var intent_x_pos = x + x_pos_increment
+		var x_pos_increment = target_sprite_width / 
+					(array_length(attack_data.debuffs) +
+					 array_length(attack_data.buffs) +
+					(attack_data.damage >= 0) + 1)
+		intent_x_pos = x + x_pos_increment
 		
+		draw_damage(attack_data.damage, intent_y_pos, x_pos_increment)
+		draw_debuffs(attack_data.debuffs, intent_y_pos, x_pos_increment)
+		draw_buffs(attack_data.buffs, intent_y_pos, x_pos_increment)
 		
-		draw_set_colour(ATTACK_INDICATOR_TEXT_COLOR)
-		draw_text(intent_x_pos, intent_y_pos, attack_data.damage)
-		
-		for(var debuff_index = 0; debuff_index < array_length(attack_data.debuffs); debuff_index++) {
-			draw_set_colour(get_debuff_color(attack_data.debuffs[debuff_index][0]))
-			
-			intent_x_pos += x_pos_increment
-			var debuff_x_pos = intent_x_pos + (string_width(attack_data.debuffs[debuff_index][1]) * 
-								(debuff_index + 2) / (array_length(attack_data.debuffs) + 2))
-			draw_text(debuff_x_pos, intent_y_pos, attack_data.debuffs[debuff_index][1])
-		}
 		intent_y_pos -= string_height(attack_data.damage) + ATTACK_INDICATOR_PADDING
 	}	
+}
+
+/// @desc								Draws all the damage being applied at intent_x_pos
+///											and adds the x_pos_increment to intent_x_pos
+/// @param {Real} damage_to_draw 		Amount of damage to draw
+/// @param {Real} y_pos 				The y position to draw the damage
+/// @param {Real} x_pos_increment 		The amount to adjust intent_x_pos after drawing damage
+function draw_damage(damage_to_draw, y_pos, x_pos_increment) {
+	if(damage_to_draw > -1) {
+		draw_set_colour(ATTACK_INDICATOR_TEXT_COLOR)
+		draw_text(intent_x_pos, y_pos, damage_to_draw)
+		intent_x_pos += x_pos_increment
+	}
+}
+
+/// @desc									Draws all the given debuffs in line, starting at
+///												intent_x_pos and moving to the right by 
+///												x_pos_increment for each debuff
+/// @param {Array<Array>} debuffs_to_draw 	All of the debuffs and amount of debuff to be drawn
+/// @param {Real} y_pos 					The y position to draw the debuff
+/// @param {Real} x_pos_increment 			The amount to adjust intent_x_pos after drawing debuff
+function draw_debuffs(debuffs_to_draw, y_pos, x_pos_increment) {
+	for(var debuff_index = 0; debuff_index < array_length(debuffs_to_draw); debuff_index++) {
+		draw_set_colour(get_debuff_color(debuffs_to_draw[debuff_index][0]))
+		
+		var debuff_x_pos = intent_x_pos + (string_width(debuffs_to_draw[debuff_index][1]) * 
+							(debuff_index + 2) / (array_length(debuffs_to_draw) + 2))
+		draw_text(debuff_x_pos, y_pos, debuffs_to_draw[debuff_index][1])
+		intent_x_pos += x_pos_increment
+	}
+}
+
+/// @desc									Draws all the given buffs in line, starting at
+///												intent_x_pos and moving to the right by 
+///												x_pos_increment for each debuff
+/// @param {Array<Array>} buffs_to_draw 	All of the buffs and amount of buff to be drawn
+/// @param {Id.Instance} y_pos 				The y position to draw the buff
+/// @param {Id.Instance} x_pos_increment 	The amount to adjust intent_x_pos after drawing buff
+function draw_buffs(buffs_to_draw, y_pos, x_pos_increment) {
+	for(var buff_index = 0; buff_index < array_length(buffs_to_draw); buff_index++) {
+		draw_set_colour(get_buff_color(buffs_to_draw[buff_index][0]))
+			
+		var buff_x_pos = intent_x_pos + (string_width(buffs_to_draw[buff_index][1]) * 
+							(buff_index + 2) / (array_length(buffs_to_draw) + 2))
+		draw_text(buff_x_pos, y_pos, buffs_to_draw[buff_index][1])
+		intent_x_pos += x_pos_increment
+	}
 }

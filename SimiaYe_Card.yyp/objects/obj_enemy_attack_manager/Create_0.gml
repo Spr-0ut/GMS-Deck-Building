@@ -7,13 +7,16 @@ if(instance_number(obj_enemy_attack_manager) > 1) {
 enemy_attack_indicator_layer = noone
 attack_indicators = {}
 ordered_player_charas = []
-create_indicators()
+ordered_enemies = []
 
-/// @desc								Creates an obj_attack_indicator above each character and
+/// @desc								Creates an obj_attack_indicator above each character / enemy and
 ///											saves them into attack_indicators
 function create_indicators() {
 	if(array_length(ordered_player_charas) < 1) {
 		ordered_player_charas = obj_follower_order_manager.find_charas_ordered()
+	}
+	if(array_length(ordered_enemies) < 1) {
+		ordered_enemies = find_enemies_ordered()
 	}
 	if(enemy_attack_indicator_layer == noone || !layer_exists(enemy_attack_indicator_layer)) {
 		enemy_attack_indicator_layer = layer_create(ordered_player_charas[0].depth, "enemy_attack_indicator_layer")
@@ -23,11 +26,37 @@ function create_indicators() {
 		var indicator_x_pos = chara.x - chara.sprite_xoffset
 		var indicator_y_pos = chara.y - chara.sprite_yoffset - ATTACK_INDICATOR_PADDING
 		var indicator = instance_create_layer(indicator_x_pos, indicator_y_pos, enemy_attack_indicator_layer, obj_attack_indicator, {
-				chara_targeted : chara,
+				target : chara,
 				target_sprite_width : chara.sprite_width
 		})
 		attack_indicators[$ chara] = indicator
 	}
+	
+	for(var enemy_index = 0; enemy_index < array_length(ordered_enemies); enemy_index++) {
+		var enemy = ordered_enemies[enemy_index]
+		var indicator_x_pos = enemy.x - enemy.sprite_xoffset
+		var indicator_y_pos = enemy.y - enemy.sprite_yoffset - ATTACK_INDICATOR_PADDING
+		var indicator = instance_create_layer(indicator_x_pos, indicator_y_pos, enemy_attack_indicator_layer, obj_attack_indicator, {
+				target : enemy,
+				target_sprite_width : enemy.sprite_width
+		})
+		attack_indicators[$ enemy] = indicator
+	}
+}
+
+/// @desc								Finds all of the instances obj_enemy and its children
+///											and orders them in a list based on their x position
+/// @returns {Array<Id.Instance>}		All of the enemies order based on their x position
+function find_enemies_ordered() {
+	var enemies = array_create(instance_number(obj_enemy))
+	for(var enemy_index = 0; enemy_index < instance_number(obj_enemy); enemy_index++) {
+		enemies[enemy_index] = instance_find(obj_enemy, enemy_index)
+	}
+	
+	array_sort(enemies, function (current, next) {
+		return 	current.x - next.x
+	})
+	return enemies
 }
 
 /// @desc												Adds an attack to the attack indicator for the
@@ -36,7 +65,7 @@ function create_indicators() {
 /// @param {attack_data_struct} enemy_attack			The struct containing required data for the attack
 /// @param {enemy_attack_target} attack_targeting_type	The targeting type to determine who is targeted
 function add_enemy_intent(enemy_instance_id, enemy_attack, attack_targeting_type) {
-	var charas_to_attack = get_players_targeted(attack_targeting_type)
+	var charas_to_attack = get_players_targeted(attack_targeting_type, enemy_instance_id)
 	if(typeof(enemy_instance_id) != "ref" || !object_is_ancestor(enemy_instance_id.object_index, obj_enemy)) {
 		return
 	}
@@ -57,8 +86,9 @@ function add_enemy_intent(enemy_instance_id, enemy_attack, attack_targeting_type
 ///														targeting_type
 /// @param {enemy_attack_target} targeting_type		The targeting type which determines which player
 ///														characters will be hit
+/// @param {Id.Instance} attacker_instance_id		The entity targeting the players
 /// @returns {Array<Id.Instance>}					All the players targeted for the given targeting type
-function get_players_targeted(targeting_type) {
+function get_players_targeted(targeting_type, attacker_instance_id) {
 	if(array_length(ordered_player_charas) < 1) {
 		ordered_player_charas = obj_follower_order_manager.find_charas_ordered()
 	}
@@ -76,6 +106,12 @@ function get_players_targeted(targeting_type) {
 			return [ordered_player_charas[max(array_length(ordered_player_charas) - 5, 0)]]
 		case enemy_attack_target.random_chara :
 			return [ordered_player_charas[irandom(array_length(ordered_player_charas) - 1)]]
+		case enemy_attack_target.all_chara :
+			return ordered_player_charas
+		case enemy_attack_target.no_target :
+			return []
+		case enemy_attack_target.self :
+			return [attacker_instance_id]
 	}
 }
 

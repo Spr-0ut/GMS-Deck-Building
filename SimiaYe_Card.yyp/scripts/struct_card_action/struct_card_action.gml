@@ -32,7 +32,8 @@ function struct_card_action(_selected_chara, _selected_cards, _selected_enemies,
 		for (var chara_index = 0; chara_index < array_length(selected_chara); chara_index++) {
 			activate_on_attack_buffs()
 			for (var enemy_index = 0; enemy_index < array_length(selected_enemies); enemy_index++) {
-				selected_enemies[enemy_index].hit_by_player(selected_chara[chara_index], attack_multiplier)
+				var attack_data = selected_chara[chara_index].get_attack(attack_multiplier)
+				selected_enemies[enemy_index].hit_by_player(selected_chara[chara_index], attack_data)
 			}
 		}	
 	}
@@ -44,7 +45,8 @@ function struct_card_action(_selected_chara, _selected_cards, _selected_enemies,
 		for (var chara_index = 0; chara_index < array_length(selected_chara); chara_index++) {
 			activate_on_attack_buffs()
 			for (var enemy_index = 0; enemy_index < array_length(selected_enemies); enemy_index++) {
-				selected_enemies[enemy_index].hit_by_player(selected_chara[chara_index], selected_chara[chara_index].chara_shield)
+				var attack_data = selected_chara[chara_index].get_attack(selected_chara[chara_index].chara_shield)
+				selected_enemies[enemy_index].hit_by_player(selected_chara[chara_index], attack_data)
 			}
 		}
 	}
@@ -57,7 +59,7 @@ function struct_card_action(_selected_chara, _selected_cards, _selected_enemies,
 			if(chara.active_buffs[$ card_buff_effects.Gain_Strength_On_Any_Attack] != undefined &&
 				chara.active_buffs[$ card_buff_effects.Gain_Strength_On_Any_Attack] > 0) {
 					if(chara.turns_since_gain_strength_on_attack % 2 == 0) {
-						chara.apply_buff(card_buff_effects.Strength, 1)
+						chara.apply_buff(chara.active_buffs, card_buff_effects.Strength, 1)
 						chara.turns_since_gain_strength_on_attack = 1
 					}
 					else {
@@ -72,7 +74,11 @@ function struct_card_action(_selected_chara, _selected_cards, _selected_enemies,
 	/// @param {Real} buff_amount					The amount of the buff being added
 	static add_buff_to_charas = function (buff_type, buff_amount) {
 		for (var chara_index = 0; chara_index < array_length(selected_chara); chara_index++) {
-			selected_chara[chara_index].apply_buff(buff_type, buff_amount)
+			var buff_data = apply_buff(selected_chara[chara_index].active_buffs, buff_type, buff_amount)
+			selected_chara[chara_index].display_buff(buff_data)
+			if(buff_type == card_buff_effects.Gain_Strength_On_Any_Attack) {
+				selected_chara[chara_index].turns_since_gain_strength_on_attack = 1
+			}
 		}	
 	}
 	

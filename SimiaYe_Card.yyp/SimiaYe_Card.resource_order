@@ -1,8 +1,13 @@
 {
-  "FolderOrderSettings":[],
+  "FolderOrderSettings":[
+    {"name":"Enemy","order":1,"path":"folders/Sprites/Enemy.yy",},
+  ],
   "ResourceOrderSettings":[
     {"name":"fnt_attack_indicator","order":1,"path":"fonts/fnt_attack_indicator/fnt_attack_indicator.yy",},
     {"name":"obj_attack_indicator","order":2,"path":"objects/obj_attack_indicator/obj_attack_indicator.yy",},
     {"name":"obj_enemy_attack_manager","order":1,"path":"objects/obj_enemy_attack_manager/obj_enemy_attack_manager.yy",},
+    {"name":"obj_fuzzy_bee_enemy","order":3,"path":"objects/obj_fuzzy_bee_enemy/obj_fuzzy_bee_enemy.yy",},
+    {"name":"buff_handler","order":1,"path":"scripts/buff_handler/buff_handler.yy",},
+    {"name":"etest","order":1,"path":"sprites/etest/etest.yy",},
   ],
 }

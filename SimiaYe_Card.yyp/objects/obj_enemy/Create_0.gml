@@ -1,4 +1,5 @@
 active_debuffs = {}
+active_buffs = {}
 display_next_damage_text = true
 damage_to_display = []
 attack_options = [{attack : method(self, basic_attack), attack_parameters : [], targeting_type : enemy_attack_target.first_closest_chara}]
@@ -14,10 +15,10 @@ function basic_attack() {
 /// @desc										Handles player attacks by applying debuffs and removing
 ///													attack_data.damage from their health
 /// @param {Id.Instance} attacking_chara		The character attacking this enemy			
-/// @param {Real} damage_multiplyer				The amount that the character's damage will be multiplied by	
-function hit_by_player(attacking_chara, damage_multiplyer) {
-	var attack_data = attacking_chara.get_attack(damage_multiplyer)
-	if(struct_exists(attack_data, "damage")) {
+/// @param {stuct} attack_data					The struct containting the "damage", "debuffs", and buffs
+///													from the character's attack
+function hit_by_player(attacking_chara, attack_data) {
+	if(struct_exists(attack_data, "damage") && attack_data.damage > -1) {
 		take_damage(attack_data.damage)
 		array_push(damage_to_display, [attack_data.damage, c_white])
 		
@@ -34,6 +35,14 @@ function hit_by_player(attacking_chara, damage_multiplyer) {
 			apply_debuff_to_enemy(debuff_type, debuff_amount)
 		}
 	}
+	
+	if(struct_exists(attack_data, "buffs")) {
+		for(var attack_buff_index = 0; attack_buff_index < array_length(attack_data.buffs); attack_buff_index++) {
+			var buff_type = attack_data.buffs[attack_buff_index][0]
+			var buff_amount = attack_data.buffs[attack_buff_index][1]
+			apply_buff_to_enemy(buff_type, buff_amount)
+		}
+	}
 }
 
 /// @desc										Debuffs this enemy through the debuff_handler and adds it
@@ -44,6 +53,17 @@ function apply_debuff_to_enemy(debuff_type, debuff_amount) {
 	var debuff_damage = apply_debuff(active_debuffs, debuff_type, debuff_amount)
 	if(array_length(debuff_damage) == 2) {
 		array_push(damage_to_display, debuff_damage)
+	}
+}
+
+/// @desc										Applies, or adds to, a buff for this character and
+///													displays it
+/// @param {card_debuff_effects} debuff_type	The buff being applied to this enemy
+/// @param {Real} debuff_amount					The amount of the buff being added
+function apply_buff_to_enemy(buff_type, buff_amount) {
+	var buff_damage = apply_buff(active_buffs, buff_type, buff_amount)
+	if(array_length(buff_damage) == 2) {
+		array_push(damage_to_display, buff_damage)
 	}
 }
 

@@ -109,7 +109,7 @@ function find_charas_ordered(next_chara = noone, chara_list = []) {
 	
 	array_push(chara_list, next_chara)
 	if(next_chara.follower != noone) {
-		find_charas_ordered(next_chara.follower)
+		return find_charas_ordered(next_chara.follower, chara_list)
 	}
 	return chara_list
 }
