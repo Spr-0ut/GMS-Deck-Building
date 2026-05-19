@@ -149,5 +149,8 @@ function take_damage(health_damage) {
 	if(Health <= 0 && Is_alive) {
 		Is_alive = false
 		show_debug_message("This enemy is dead")
+		if(instance_exists(obj_enemy_attack_manager)) {
+			obj_enemy_attack_manager.remove_enemy_intent(id)
+		}
 	}
 }

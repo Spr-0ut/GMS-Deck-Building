@@ -127,9 +127,10 @@ function remove_enemy_intent(enemy_instance_id) {
 		return
 	}
 
-	struct_foreach(attack_indicators, function (_name, _value) {
-		_value.remove_attack(enemy_instance_id)
-	})
+	for(var indicator_index = 0; indicator_index < struct_names_count(attack_indicators); indicator_index++) {
+		var indicator_key = struct_get_names(attack_indicators)[indicator_index]
+		attack_indicators[$ indicator_key].remove_attack(enemy_instance_id)
+	}
 }
 
 /// @desc								Loops through all the indicators and completes their attack
