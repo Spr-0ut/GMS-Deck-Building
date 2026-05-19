@@ -110,9 +110,11 @@ function draw_target_selection_background() {
 /// @desc									Runs each of the chara_targeted's draw and draw GUI events
 function draw_charas() {
 	for(var chara_index = 0; chara_index < array_length(chara_targeted); chara_index++) {
-		with(chara_targeted[chara_index]) {
-			event_perform(ev_draw, ev_draw_normal)
-			event_perform(ev_draw, ev_gui)
+		if(chara_targeted[chara_index] != enemy_attacking) {
+			with(chara_targeted[chara_index]) {
+				event_perform(ev_draw, ev_draw_normal)
+				event_perform(ev_draw, ev_gui)
+			}
 		}
 	}
 }
