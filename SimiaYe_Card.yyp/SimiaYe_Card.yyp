@@ -137,6 +137,7 @@
     {"id":{"name":"fnt_resolution_confirmation","path":"fonts/fnt_resolution_confirmation/fnt_resolution_confirmation.yy",},},
     {"id":{"name":"fnt_resolution","path":"fonts/fnt_resolution/fnt_resolution.yy",},},
     {"id":{"name":"__InputUpdateController","path":"objects/__InputUpdateController/__InputUpdateController.yy",},},
+    {"id":{"name":"obj_attack_highlight","path":"objects/obj_attack_highlight/obj_attack_highlight.yy",},},
     {"id":{"name":"obj_attack_indicator","path":"objects/obj_attack_indicator/obj_attack_indicator.yy",},},
     {"id":{"name":"obj_battack","path":"objects/obj_battack/obj_battack.yy",},},
     {"id":{"name":"obj_book_menu","path":"objects/obj_book_menu/obj_book_menu.yy",},},

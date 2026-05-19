@@ -5,9 +5,13 @@ if(instance_number(obj_enemy_attack_manager) > 1) {
 }
 
 enemy_attack_indicator_layer = noone
+attack_highlight_layer = layer_create(layer_get_depth(find_top_layer()) - 1, "attack_highlight_layer")
 attack_indicators = {}
 ordered_player_charas = []
 ordered_enemies = []
+attack_highlighter = instance_find(obj_attack_highlight, 0)
+enemy_to_highlight_attack = noone
+highlight_enemy_attack = false
 
 /// @desc								Creates an obj_attack_indicator above each character / enemy and
 ///											saves them into attack_indicators
@@ -156,5 +160,67 @@ function clear_intents(charas_to_clear = []) {
 	
 	for(var chara_index = 0; chara_index < array_length(charas_to_clear); chara_index++) {
 		attack_indicators[$ charas_to_clear[chara_index]].clear_attacks()
+	}
+}
+
+/// @desc								Sets the given enemy's attack to be highlighted
+/// @param {Id.Instance} enemy_id		The enemy who will be highlighted along with their
+//											attack and attack target
+function highlight_attack(enemy_id) {
+	highlight_enemy_attack = true
+	
+	if (!instance_exists(attack_highlighter)) {
+		attack_highlighter = instance_find(obj_attack_highlight, 0)
+	}
+	if(attack_highlighter != noone) {
+		attack_highlighter.add_attack_highlight()	
+	}
+	
+	if(enemy_to_highlight_attack != enemy_id || attack_highlighter == noone) {
+		enemy_to_highlight_attack = enemy_id
+		var targets = find_targeted_chara_and_indicators()
+		
+		if(attack_highlighter == noone) {
+			instance_create_layer(0, 0, attack_highlight_layer, obj_attack_highlight, {
+				chara_targeted : targets.charas_targeted,
+				enemy_attacking : enemy_to_highlight_attack,
+				attack_indicators : targets.indicators_used
+			})
+		}
+		else {
+			if(attack_highlighter.enemy_attacking != enemy_to_highlight_attack) {
+				attack_highlighter.set_chara_targeted(targets.charas_targeted)
+				attack_highlighter.set_enemy_attacking(enemy_to_highlight_attack)
+				attack_highlighter.set_attack_indicators(targets.indicators_used)
+			}
+		}
+	}
+}
+
+/// @desc								Finds all of the entities that are targeted by 
+///											enemy_to_highlight_attack and their associated
+///											indicators
+/// @returns {Struct}					A struct containing the charas_targeted and
+///											indicators_used arrays
+function find_targeted_chara_and_indicators() {
+	var indicator_ids = struct_get_names(attack_indicators)
+	var charas_targeted = []
+	var indicators_used = []
+
+	for(var indicator_index = 0; indicator_index < variable_struct_names_count(attack_indicators); indicator_index++) {
+		var attack_indicator = attack_indicators[$ indicator_ids[indicator_index]]
+		var attack_index = attack_indicator.find_enemy_attack(enemy_to_highlight_attack)
+		if(attack_index != undefined) {
+			array_push(charas_targeted, attack_indicator.target)
+			array_push(indicators_used, attack_indicator)
+		}
+	}
+	return {charas_targeted, indicators_used}
+}
+
+/// @desc								Removes the highlighting of the attack
+function remove_attack_highlight() {
+	if(instance_exists(obj_attack_highlight)) {
+		obj_attack_highlight.remove_attack_highlight()
 	}
 }
