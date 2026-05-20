@@ -10,5 +10,6 @@
     {"name":"obj_fuzzy_bee_enemy","order":3,"path":"objects/obj_fuzzy_bee_enemy/obj_fuzzy_bee_enemy.yy",},
     {"name":"buff_handler","order":1,"path":"scripts/buff_handler/buff_handler.yy",},
     {"name":"etest","order":1,"path":"sprites/etest/etest.yy",},
+    {"name":"spr_charge_attack_symbol","order":2,"path":"sprites/spr_charge_attack_symbol/spr_charge_attack_symbol.yy",},
   ],
 }

@@ -597,6 +597,7 @@
     {"id":{"name":"spr_cards_bookmark_top","path":"sprites/spr_cards_bookmark_top/spr_cards_bookmark_top.yy",},},
     {"id":{"name":"spr_chara_portrait","path":"sprites/spr_chara_portrait/spr_chara_portrait.yy",},},
     {"id":{"name":"spr_characters_bookmark_top","path":"sprites/spr_characters_bookmark_top/spr_characters_bookmark_top.yy",},},
+    {"id":{"name":"spr_charge_attack_symbol","path":"sprites/spr_charge_attack_symbol/spr_charge_attack_symbol.yy",},},
     {"id":{"name":"spr_close_layer","path":"sprites/spr_close_layer/spr_close_layer.yy",},},
     {"id":{"name":"spr_cover","path":"sprites/spr_cover/spr_cover.yy",},},
     {"id":{"name":"spr_default_button","path":"sprites/spr_default_button/spr_default_button.yy",},},

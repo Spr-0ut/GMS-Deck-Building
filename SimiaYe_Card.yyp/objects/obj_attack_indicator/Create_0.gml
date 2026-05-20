@@ -109,12 +109,14 @@ function draw_attacks_intentions(enemy_id = noone) {
 			var x_pos_increment = target_sprite_width / 
 						(array_length(attack_data.debuffs) +
 						 array_length(attack_data.buffs) +
-						(attack_data.damage >= 0) + 1)
+						(attack_data.damage >= 0) +
+						(attack_data.charging_up_attack) + 1)
 			intent_x_pos = x + x_pos_increment
 		
 			draw_damage(attack_data.damage, intent_y_pos, x_pos_increment)
 			draw_debuffs(attack_data.debuffs, intent_y_pos, x_pos_increment)
 			draw_buffs(attack_data.buffs, intent_y_pos, x_pos_increment)
+			draw_attack_charge(attack_data.charging_up_attack, intent_y_pos, x_pos_increment)
 		}
 		
 		intent_y_pos -= string_height(attack_data.damage) + ATTACK_INDICATOR_PADDING
@@ -164,6 +166,17 @@ function draw_buffs(buffs_to_draw, y_pos, x_pos_increment) {
 		var buff_x_pos = intent_x_pos + (string_width(buffs_to_draw[buff_index][1]) * 
 							(buff_index + 2) / (array_length(buffs_to_draw) + 2))
 		draw_text(buff_x_pos, y_pos, buffs_to_draw[buff_index][1])
+		intent_x_pos += x_pos_increment
+	}
+}
+
+/// @desc								Draws the charging attack symbol at the given position
+/// @param {Bool} is_charging_attack 	Flag determining if the charging symbol should be drawn
+/// @param {Real} y_pos 				The y position to draw the charging attack symbol
+/// @param {Real} x_pos_increment 		The amount to adjust intent_x_pos after drawing the symbol
+function draw_attack_charge(is_charging_attack, y_pos, x_pos_increment) {
+	if(is_charging_attack) {
+		draw_sprite(spr_charge_attack_symbol, 0, intent_x_pos, y_pos)
 		intent_x_pos += x_pos_increment
 	}
 }

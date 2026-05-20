@@ -5,10 +5,16 @@
 /// @param {Array<Array<card_debuff_effects, Real>>} _debuffs	Optional paramater containing the 
 ///																	initial debuffs to be applied
 ///																	to the target
-function attack_data_struct(_damage = -1, _debuffs = [], _buffs = []) constructor{
+/// @param {Array<Array<card_debuff_effects, Real>>} _buffs		Optional paramater containing the 
+///																	initial buffs to be applied
+///																	to the target
+/// @param {Bool} _charging_up_attack				Optional flag to determine if this attack is
+///														charging up for a stronger attack later
+function attack_data_struct(_damage = -1, _debuffs = [], _buffs = [], _charging_up_attack = false) constructor{
 	damage = max(_damage, -1)
 	debuffs = _debuffs
 	buffs = _buffs
+	charging_up_attack = _charging_up_attack
 	
 	#region damage
 		/// @desc						Sets the damage to the given value
@@ -115,6 +121,16 @@ function attack_data_struct(_damage = -1, _debuffs = [], _buffs = []) constructo
 				}
 			}
 		}
+	
+	#endregion
+	
+	#region charging attack
+	
+	/// @desc								Sets the charging_up_attack flag to the given value
+	/// @param {bool} is_charging_attack	The flag determining if this attack will be a charge turn
+	static set_charging_up_attack = function(is_charging_attack) {
+		charging_up_attack = is_charging_attack
+	}
 	
 	#endregion
 }

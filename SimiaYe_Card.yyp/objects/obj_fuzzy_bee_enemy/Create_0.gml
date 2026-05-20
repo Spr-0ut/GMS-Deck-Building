@@ -17,7 +17,7 @@ attack_options = [
 	{
 		attack : method(self, charge_up_attack),
 		attack_parameters : [],
-		targeting_type : enemy_attack_target.no_target
+		targeting_type : enemy_attack_target.self
 	},
 	{
 		attack : method(self, charge_up_attack),
@@ -38,9 +38,9 @@ function stinger_attack() {
 
 /// @desc						A large attack that takes a turn to charge up
 function charge_up_attack() {
-	if(attack_charged) {
+	if(!attack_charged) {
 		attack_charged = true
-		return new attack_data_struct()
+		return new attack_data_struct(-1, [], [], true)
 	}
 	else {
 		attack_charged = false
