@@ -76,7 +76,7 @@ function clear_attacks() {
 ///												by this indicator, and tells obj_enemy_attack_manager
 ///												to highlight the attack
 function check_for_mouse_hover() {
-	var text_height = (string_height(attacks_to_display[0].attack.damage) + ATTACK_INDICATOR_PADDING)
+	var text_height = (string_height(attacks_to_display[0].attack.damage) + ATTACK_INDICATOR_Y_PADDING)
 	var mouse_within_indicator_x = mouse_x >= x && mouse_x < x + target_sprite_width
 	var mouse_within_indicator_y = mouse_y < y && mouse_y > y - (text_height * array_length(attacks_to_display))
 	
@@ -119,7 +119,7 @@ function draw_attacks_intentions(enemy_id = noone) {
 			draw_attack_charge(attack_data.charging_up_attack, intent_y_pos, x_pos_increment)
 		}
 		
-		intent_y_pos -= string_height(attack_data.damage) + ATTACK_INDICATOR_PADDING
+		intent_y_pos -= string_height(attack_data.damage) + ATTACK_INDICATOR_Y_PADDING
 	}	
 }
 

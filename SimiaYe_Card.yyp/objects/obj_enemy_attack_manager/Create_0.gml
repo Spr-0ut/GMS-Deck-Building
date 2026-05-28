@@ -1,51 +1,78 @@
-#macro ATTACK_INDICATOR_PADDING 15
+#macro ATTACK_INDICATOR_GROUP_PADDING 100
+#macro ATTACK_INDICATOR_Y_PADDING 15
+#macro MAX_NUM_CHARA 5
+#macro MAX_NUM_ENEMIES 5
 
 if(instance_number(obj_enemy_attack_manager) > 1) {
 	instance_destroy()
 }
 
-enemy_attack_indicator_layer = noone
 attack_highlight_layer = layer_create(layer_get_depth(find_top_layer()) - 1, "attack_highlight_layer")
-attack_indicators = {}
+attack_indicators = array_create(MAX_NUM_CHARA + MAX_NUM_ENEMIES, noone)
 ordered_player_charas = []
 ordered_enemies = []
 attack_highlighter = instance_find(obj_attack_highlight, 0)
 enemy_to_highlight_attack = noone
 highlight_enemy_attack = false
 
-/// @desc								Creates an obj_attack_indicator above each character / enemy and
-///											saves them into attack_indicators
+/// @desc								Creates an obj_attack_indicator for each character / enemy then
+///											position each character / enemy below the indicator and save
+///											it into attack_indicators
 function create_indicators() {
+	var enemy_attack_indicator_layer = layer_get_id("enemy_attack_indicator_layer")
+	if(enemy_attack_indicator_layer == -1) {
+		var first_enemy = instance_find(obj_enemy, 0)
+		if(first_enemy == noone) {
+			return
+		}
+		enemy_attack_indicator_layer = layer_create(first_enemy.depth, "enemy_attack_indicator_layer")
+	}
+	
+	var indicator_x_pos = ATTACK_INDICATOR_GROUP_PADDING
+	var indicator_y_pos = room_height / 2
+	var x_dist_to_add = ((room_width / 2) - (2 * ATTACK_INDICATOR_GROUP_PADDING)) / MAX_NUM_CHARA
+	for(var indicator_index = 0; indicator_index < array_length(attack_indicators); indicator_index++) {
+		var indicator = instance_create_layer(indicator_x_pos, indicator_y_pos, enemy_attack_indicator_layer, obj_attack_indicator)
+		var indicator_target = find_indicator_target(indicator_index)
+		
+		if(indicator_target != noone) {
+			indicator.target = indicator_target
+			indicator.target_sprite_width = indicator_target.sprite_width
+			
+			indicator_target.x = indicator_x_pos + indicator_target.sprite_xoffset
+			indicator_target.y = indicator_y_pos + indicator_target.sprite_yoffset + ATTACK_INDICATOR_Y_PADDING
+		}
+		
+		attack_indicators[indicator_index] = indicator
+		indicator_x_pos += x_dist_to_add
+		
+		if(indicator_index == MAX_NUM_CHARA - 1) {
+			indicator_x_pos += 2 * ATTACK_INDICATOR_GROUP_PADDING
+		}
+	}
+}
+
+/// @desc								Finds which entity should be assigned to the given
+///											indicator, if any at all
+/// @param {Real} indicator_index		The index of the indicator in attack_indicators.
+///											NOTE: The indicator does not need to exist yet
+/// @returns {Id.Instance}				The entity to be put into the attack indicator's "target"
+///											variable, or noone if the target should remain empty
+function find_indicator_target(indicator_index) {
 	if(array_length(ordered_player_charas) < 1) {
 		ordered_player_charas = obj_follower_order_manager.find_charas_ordered()
 	}
 	if(array_length(ordered_enemies) < 1) {
 		ordered_enemies = find_enemies_ordered()
 	}
-	if(enemy_attack_indicator_layer == noone || !layer_exists(enemy_attack_indicator_layer)) {
-		enemy_attack_indicator_layer = layer_create(ordered_player_charas[0].depth, "enemy_attack_indicator_layer")
-	}
-	for(var chara_index = 0; chara_index < array_length(ordered_player_charas); chara_index++) {
-		var chara = ordered_player_charas[chara_index]
-		var indicator_x_pos = chara.x - chara.sprite_xoffset
-		var indicator_y_pos = chara.y - chara.sprite_yoffset - ATTACK_INDICATOR_PADDING
-		var indicator = instance_create_layer(indicator_x_pos, indicator_y_pos, enemy_attack_indicator_layer, obj_attack_indicator, {
-				target : chara,
-				target_sprite_width : chara.sprite_width
-		})
-		attack_indicators[$ chara] = indicator
-	}
 	
-	for(var enemy_index = 0; enemy_index < array_length(ordered_enemies); enemy_index++) {
-		var enemy = ordered_enemies[enemy_index]
-		var indicator_x_pos = enemy.x - enemy.sprite_xoffset
-		var indicator_y_pos = enemy.y - enemy.sprite_yoffset - ATTACK_INDICATOR_PADDING
-		var indicator = instance_create_layer(indicator_x_pos, indicator_y_pos, enemy_attack_indicator_layer, obj_attack_indicator, {
-				target : enemy,
-				target_sprite_width : enemy.sprite_width
-		})
-		attack_indicators[$ enemy] = indicator
+	if(indicator_index >= MAX_NUM_CHARA - array_length(ordered_player_charas) && indicator_index < MAX_NUM_CHARA) {
+		return ordered_player_charas[(MAX_NUM_CHARA - 1) - indicator_index]
 	}
+	else if(indicator_index > MAX_NUM_CHARA - 1 && indicator_index < MAX_NUM_CHARA + array_length(ordered_enemies)) {
+		return ordered_enemies[indicator_index - MAX_NUM_CHARA]
+	}
+	return noone
 }
 
 /// @desc								Finds all of the instances obj_enemy and its children
@@ -80,9 +107,11 @@ function add_enemy_intent(enemy_instance_id, enemy_attack, attack_targeting_type
 		return
 	}
 	
-	for(var chara_index = 0; chara_index < array_length(charas_to_attack); chara_index++) {
-		var chara_instance_id = charas_to_attack[chara_index]
-		attack_indicators[$ chara_instance_id].add_attack(enemy_instance_id, enemy_attack)
+	for(var indicator_index = 0; indicator_index < array_length(attack_indicators); indicator_index++) {
+		var indicator = attack_indicators[indicator_index]
+		if(indicator != noone && array_contains(charas_to_attack, indicator.target)) {
+			indicator.add_attack(enemy_instance_id, enemy_attack)
+		}
 	}
 }
 
@@ -127,17 +156,19 @@ function remove_enemy_intent(enemy_instance_id) {
 		return
 	}
 
-	for(var indicator_index = 0; indicator_index < struct_names_count(attack_indicators); indicator_index++) {
-		var indicator_key = struct_get_names(attack_indicators)[indicator_index]
-		attack_indicators[$ indicator_key].remove_attack(enemy_instance_id)
+	for(var indicator_index = 0; indicator_index < array_length(attack_indicators); indicator_index++) {
+		if(attack_indicators[indicator_index] != noone) {
+			attack_indicators[indicator_index].remove_attack(enemy_instance_id)
+		}
 	}
 }
 
 /// @desc								Loops through all the indicators and completes their attack
 function perform_attacks() {
-	var charas_to_attack = struct_get_names(attack_indicators)
-	for(var chara_index = 0; chara_index < array_length(charas_to_attack); chara_index++) {
-		attack_indicators[$ charas_to_attack[chara_index]].attack_target_character()
+	for(var indicator_index = 0; indicator_index < array_length(attack_indicators); indicator_index++) {
+		if(attack_indicators[indicator_index] != noone) {
+			attack_indicators[indicator_index].attack_target_character()
+		}
 	}
 }
 
@@ -147,7 +178,12 @@ function perform_attacks() {
 ///													still be present
 /// @param {Id.Instance} chara_instance_id		The character to hide the attack intents for
 function hide_chara_intents(chara_instance_id) {
-	attack_indicators[$ chara_instance_id].hide_attack_intents()
+	for(var indicator_index = 0; indicator_index < array_length(attack_indicators); indicator_index++) {
+		if(attack_indicators[indicator_index] != noone &&
+				attack_indicators[indicator_index].target == chara_instance_id) {
+			attack_indicators[indicator_index].hide_attack_intents()
+		}
+	}
 }
 
 /// @desc										Clears the attack indicators so that they no
@@ -155,12 +191,16 @@ function hide_chara_intents(chara_instance_id) {
 /// @param {Array<String>} charas_to_clear		An optional array of the charas to clear the
 ///													intents for. Defaults to all charas
 function clear_intents(charas_to_clear = []) {
+	var clear_all = false
 	if(typeof(charas_to_clear) != "array" || array_length(charas_to_clear) < 1) {
-		charas_to_clear = struct_get_names(attack_indicators)
+		clear_all = true
 	}
 	
-	for(var chara_index = 0; chara_index < array_length(charas_to_clear); chara_index++) {
-		attack_indicators[$ charas_to_clear[chara_index]].clear_attacks()
+	for(var indicator_index = 0; indicator_index < array_length(attack_indicators); indicator_index++) {
+		if(attack_indicators[indicator_index] != noone && 
+				(clear_all || array_contains(charas_to_clear, attack_indicators[indicator_index]))) {
+			attack_indicators[indicator_index].clear_attacks()
+		}
 	}
 }
 
@@ -204,16 +244,16 @@ function highlight_attack(enemy_id) {
 /// @returns {Struct}					A struct containing the charas_targeted and
 ///											indicators_used arrays
 function find_targeted_chara_and_indicators() {
-	var indicator_ids = struct_get_names(attack_indicators)
 	var charas_targeted = []
 	var indicators_used = []
 
-	for(var indicator_index = 0; indicator_index < variable_struct_names_count(attack_indicators); indicator_index++) {
-		var attack_indicator = attack_indicators[$ indicator_ids[indicator_index]]
-		var attack_index = attack_indicator.find_enemy_attack(enemy_to_highlight_attack)
-		if(attack_index != undefined) {
-			array_push(charas_targeted, attack_indicator.target)
-			array_push(indicators_used, attack_indicator)
+	for(var indicator_index = 0; indicator_index < array_length(attack_indicators); indicator_index++) {
+		if(attack_indicators[indicator_index] != noone) {
+			var attack_index = attack_indicators[indicator_index].find_enemy_attack(enemy_to_highlight_attack)
+			if(attack_index != undefined) {
+				array_push(charas_targeted, attack_indicators[indicator_index].target)
+				array_push(indicators_used, attack_indicators[indicator_index])
+			}
 		}
 	}
 	return {charas_targeted, indicators_used}
