@@ -58,22 +58,14 @@ function start_enemy_turn() {
 	alarm[0] = 60
 }
 
-/// @desc			Finds all the enemies that currently exist and triggers end of turn actions
+/// @desc			Triggers end of turn for the enemies and prepare to start the players turn
 function end_enemy_turn() {
-	if(instance_exists(obj_enemy_attack_manager)) {
-		obj_enemy_attack_manager.clear_intents()
+	if(instance_exists(obj_enemy_manager)) {
+		obj_enemy_manager.end_enemies_turn()
 	}
-	
-	var num_enemies = instance_number(obj_enemy)
-	var enemies = array_create(num_enemies)
-	for(var enemy_index = 0; enemy_index < num_enemies; enemy_index++) {
-		enemies[enemy_index] = instance_find(obj_enemy, enemy_index)
-	}
-	
-	array_sort(enemies, sort_enemies)
-	for(var enemy_index = 0; enemy_index < num_enemies; enemy_index++) {
-		enemies[enemy_index].trigger_end_of_turn_debuffs()
-		enemies[enemy_index].select_next_attack()
+	else {
+		var enemy_manager_layer = layer_create(0, "enemy_manager_layer")
+		instance_create_layer(0, 0, enemy_manager_layer, obj_enemy_manager)
 	}
 	
 	if(skip_players_next_turn) {

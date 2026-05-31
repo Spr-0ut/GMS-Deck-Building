@@ -7,9 +7,11 @@
     {"name":"obj_attack_highlight","order":4,"path":"objects/obj_attack_highlight/obj_attack_highlight.yy",},
     {"name":"obj_attack_indicator","order":2,"path":"objects/obj_attack_indicator/obj_attack_indicator.yy",},
     {"name":"obj_enemy_attack_manager","order":1,"path":"objects/obj_enemy_attack_manager/obj_enemy_attack_manager.yy",},
+    {"name":"obj_enemy_manager","order":5,"path":"objects/obj_enemy_manager/obj_enemy_manager.yy",},
     {"name":"obj_fuzzy_bee_enemy","order":3,"path":"objects/obj_fuzzy_bee_enemy/obj_fuzzy_bee_enemy.yy",},
     {"name":"buff_handler","order":1,"path":"scripts/buff_handler/buff_handler.yy",},
     {"name":"etest","order":1,"path":"sprites/etest/etest.yy",},
     {"name":"spr_charge_attack_symbol","order":2,"path":"sprites/spr_charge_attack_symbol/spr_charge_attack_symbol.yy",},
+    {"name":"spr_summon_enemies_symbol","order":3,"path":"sprites/spr_summon_enemies_symbol/spr_summon_enemies_symbol.yy",},
   ],
 }

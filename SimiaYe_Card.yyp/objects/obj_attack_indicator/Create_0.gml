@@ -50,10 +50,32 @@ function attack_target_character() {
 			}
 			else if(object_is_ancestor(target.object_index, obj_enemy)) {
 				if(attacks_to_display[attack_index].enemy_id.Is_alive) {
+					if(array_length(attacks_to_display[attack_index].attack.enemies_to_spawn) > 0) {
+						summon_enemies(attacks_to_display[attack_index].attack.enemies_to_spawn)
+					}
 					target.hit_by_player(attacks_to_display[attack_index].enemy_id, attacks_to_display[attack_index].attack)
 				}
 			}
 		}	
+	}
+}
+
+/// @desc												Creates an instance of each of the given
+///															enemies through obj_enemy_manager
+/// @param {Array<Asset.GMObject>} enemies_to_spawn		An array of all the enemies that need to
+///															be created
+function summon_enemies(enemies_to_spawn) {
+	if(instance_exists(obj_enemy_manager)) {
+		for(var enemy_index = 0; enemy_index < array_length(enemies_to_spawn); enemy_index++) {
+			var enemy_instance = obj_enemy_manager.create_new_enemy(enemies_to_spawn[enemy_index])
+			if(enemy_instance == noone) {
+				break	
+			}
+		}
+	}
+	else {
+		var enemy_manager_layer = layer_create(0, "enemy_manager_layer")
+		instance_create_layer(0, 0, enemy_manager_layer, obj_enemy_manager)	
 	}
 }
 
@@ -110,13 +132,15 @@ function draw_attacks_intentions(enemy_id = noone) {
 						(array_length(attack_data.debuffs) +
 						 array_length(attack_data.buffs) +
 						(attack_data.damage >= 0) +
-						(attack_data.charging_up_attack) + 1)
+						(attack_data.charging_up_attack) +
+						(array_length(attack_data.enemies_to_spawn) > 0) + 1)
 			intent_x_pos = x + x_pos_increment
 		
 			draw_damage(attack_data.damage, intent_y_pos, x_pos_increment)
 			draw_debuffs(attack_data.debuffs, intent_y_pos, x_pos_increment)
 			draw_buffs(attack_data.buffs, intent_y_pos, x_pos_increment)
 			draw_attack_charge(attack_data.charging_up_attack, intent_y_pos, x_pos_increment)
+			draw_summon_enemy(attack_data.enemies_to_spawn, intent_y_pos, x_pos_increment)
 		}
 		
 		intent_y_pos -= string_height(attack_data.damage) + ATTACK_INDICATOR_Y_PADDING
@@ -177,6 +201,17 @@ function draw_buffs(buffs_to_draw, y_pos, x_pos_increment) {
 function draw_attack_charge(is_charging_attack, y_pos, x_pos_increment) {
 	if(is_charging_attack) {
 		draw_sprite(spr_charge_attack_symbol, 0, intent_x_pos, y_pos)
+		intent_x_pos += x_pos_increment
+	}
+}
+
+/// @desc								Draws the summon enemies symbol at the given position
+/// @param {Bool} enemies_to_spawn	 	Flag determining if the summon enemies symbol should be drawn
+/// @param {Real} y_pos 				The y position to draw the summon enemies symbol
+/// @param {Real} x_pos_increment 		The amount to adjust intent_x_pos after drawing the symbol
+function draw_summon_enemy(enemies_to_spawn, y_pos, x_pos_increment) {
+	if(typeof(enemies_to_spawn) == "array" && array_length(enemies_to_spawn) > 0) {
+		draw_sprite(spr_summon_enemies_symbol, 0, intent_x_pos, y_pos)
 		intent_x_pos += x_pos_increment
 	}
 }

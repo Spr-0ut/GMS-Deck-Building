@@ -1,20 +1,25 @@
 /// @desc											The struct containing the data required to hit an
 ///														enemy or player
-/// @param {Real} _damage							Optional paramater containing the initial flat
+/// @param {Real} _damage							Optional parameter containing the initial flat
 ///														damage the target will take
-/// @param {Array<Array<card_debuff_effects, Real>>} _debuffs	Optional paramater containing the 
+/// @param {Array<Array<card_debuff_effects, Real>>} _debuffs	Optional parameter containing the 
 ///																	initial debuffs to be applied
 ///																	to the target
-/// @param {Array<Array<card_debuff_effects, Real>>} _buffs		Optional paramater containing the 
+/// @param {Array<Array<card_debuff_effects, Real>>} _buffs		Optional parameter containing the 
 ///																	initial buffs to be applied
 ///																	to the target
 /// @param {Bool} _charging_up_attack				Optional flag to determine if this attack is
 ///														charging up for a stronger attack later
-function attack_data_struct(_damage = -1, _debuffs = [], _buffs = [], _charging_up_attack = false) constructor{
+/// @param {Array<Asset.GMObject>} _enemies_to_spawn			Optional parameter containing the
+///																	enemies that will spawn from
+///																	this attack
+function attack_data_struct(_damage = -1, _debuffs = [], _buffs = [], _charging_up_attack = false,
+							_enemies_to_spawn = []) constructor{
 	damage = max(_damage, -1)
 	debuffs = _debuffs
 	buffs = _buffs
 	charging_up_attack = _charging_up_attack
+	enemies_to_spawn = _enemies_to_spawn
 	
 	#region damage
 		/// @desc						Sets the damage to the given value
@@ -130,6 +135,18 @@ function attack_data_struct(_damage = -1, _debuffs = [], _buffs = [], _charging_
 	/// @param {bool} is_charging_attack	The flag determining if this attack will be a charge turn
 	static set_charging_up_attack = function(is_charging_attack) {
 		charging_up_attack = is_charging_attack
+	}
+	
+	#endregion
+	
+	#region spawn enemy
+	
+	/// @desc									Sets the enemies_to_spawn array to the given value
+	/// @param {Array<Asset.GMObject>} enemy	The enemies to be spawned in for this attack
+	static set_enemy_to_spawn = function(enemy) {
+		if(typeof(enemy) == "array") {
+			enemies_to_spawn = enemy
+		}
 	}
 	
 	#endregion

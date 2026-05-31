@@ -52,42 +52,64 @@ function create_indicators() {
 	}
 }
 
-/// @desc								Finds which entity should be assigned to the given
-///											indicator, if any at all
+/// @desc								Finds the entity assigned to the indicator at the
+///											given index, if any at all
 /// @param {Real} indicator_index		The index of the indicator in attack_indicators.
 ///											NOTE: The indicator does not need to exist yet
 /// @returns {Id.Instance}				The entity to be put into the attack indicator's "target"
 ///											variable, or noone if the target should remain empty
 function find_indicator_target(indicator_index) {
-	if(array_length(ordered_player_charas) < 1) {
-		ordered_player_charas = obj_follower_order_manager.find_charas_ordered()
+	if(instance_exists(obj_follower_order_manager)) {
+		if(array_length(ordered_player_charas) < 1) {
+			ordered_player_charas = obj_follower_order_manager.find_charas_ordered()
+		}
 	}
-	if(array_length(ordered_enemies) < 1) {
-		ordered_enemies = find_enemies_ordered()
+	else {
+		var follower_order_manager_layer = layer_create(0, "follower_order_manager_layer")
+		instance_create_layer(0, 0, follower_order_manager_layer, obj_follower_order_manager)
 	}
 	
 	if(indicator_index >= MAX_NUM_CHARA - array_length(ordered_player_charas) && indicator_index < MAX_NUM_CHARA) {
 		return ordered_player_charas[(MAX_NUM_CHARA - 1) - indicator_index]
 	}
-	else if(indicator_index > MAX_NUM_CHARA - 1 && indicator_index < MAX_NUM_CHARA + array_length(ordered_enemies)) {
-		return ordered_enemies[indicator_index - MAX_NUM_CHARA]
+	
+	if(instance_exists(obj_enemy_manager)) {
+		var ordered_enemies = obj_enemy_manager.get_ordered_enemies_array()
+		if(indicator_index > MAX_NUM_CHARA - 1 && indicator_index < MAX_NUM_CHARA + array_length(ordered_enemies)) {
+			return ordered_enemies[indicator_index - MAX_NUM_CHARA]
+		}
+	}
+	else {
+		var enemy_manager_layer = layer_create(0, "enemy_manager_layer")
+		instance_create_layer(0, 0, enemy_manager_layer, obj_enemy_manager)
+	}
+	
+	return noone
+}
+
+
+/// @desc								Searches through the enemy's attack indicators to find
+///											an indicator without a target assigned
+/// @returns {Id.Instance}				The first indicator without a target or noone if none exist
+function find_open_enemy_indicator() {
+	for(var indicator_index = MAX_NUM_CHARA - 1; indicator_index < array_length(attack_indicators); indicator_index++) {
+		if(attack_indicators[indicator_index] != noone && attack_indicators[indicator_index].target == noone) {
+			return attack_indicators[indicator_index]
+		}
 	}
 	return noone
 }
 
-/// @desc								Finds all of the instances obj_enemy and its children
-///											and orders them in a list based on their x position
-/// @returns {Array<Id.Instance>}		All of the enemies order based on their x position
-function find_enemies_ordered() {
-	var enemies = array_create(instance_number(obj_enemy))
-	for(var enemy_index = 0; enemy_index < instance_number(obj_enemy); enemy_index++) {
-		enemies[enemy_index] = instance_find(obj_enemy, enemy_index)
+/// @desc								Searches through the chara's attack indicators to find
+///											an indicator without a target assigned
+/// @returns {Id.Instance}				The first indicator without a target or noone if none exist
+function find_open_chara_indicator() {
+	for(var indicator_index = MAX_NUM_CHARA - 1; indicator_index >= 0; indicator_index--) {
+		if(attack_indicators[indicator_index] != noone && attack_indicators[indicator_index].target == noone) {
+			return attack_indicators[indicator_index]
+		}
 	}
-	
-	array_sort(enemies, function (current, next) {
-		return 	current.x - next.x
-	})
-	return enemies
+	return noone
 }
 
 /// @desc												Adds an attack to the attack indicator for the
@@ -144,6 +166,8 @@ function get_players_targeted(targeting_type, attacker_instance_id) {
 		case enemy_attack_target.no_target :
 			return []
 		case enemy_attack_target.self :
+			return [attacker_instance_id]
+		case enemy_attack_target.summon_enemy :
 			return [attacker_instance_id]
 	}
 }

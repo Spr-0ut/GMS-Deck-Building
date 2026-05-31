@@ -2,8 +2,17 @@ active_debuffs = {}
 active_buffs = {}
 display_next_damage_text = true
 damage_to_display = []
+next_attack_index = 0
+
+#region Implement in each enemy type
 attack_options = [{attack : method(self, basic_attack), attack_parameters : [], targeting_type : enemy_attack_target.first_closest_chara}]
-next_attack_index = -1
+
+/// @desc							Assesses the current state of the fight and determines if an
+///										attack should be added or not
+check_for_conditional_attack = function () {
+	// Only add an implement if the enemy can change or add an attack immediately before declaring it
+}
+#endregion
 
 /// @desc							This is a basic example of an enemy's attack. It is expected that there
 ///										will be multiple attack functions implemented in each enemy type
@@ -67,10 +76,21 @@ function apply_buff_to_enemy(buff_type, buff_amount) {
 	}
 }
 
-/// @desc							Increments the next_attack_index, looping back to 0 if required,
-///										and sets the attack intent for this enemy
+/// @desc							Determines if the previous attack was a temporary attack,
+///										and if so it removes the attack from attack_options
+function remove_temporary_attack() {
+	if(next_attack_index >= 0 &&
+			next_attack_index < array_length(attack_options) &&
+			struct_exists(attack_options[next_attack_index], "is_temporary_attack") &&
+			attack_options[next_attack_index].is_temporary_attack) {
+		array_delete(attack_options, next_attack_index, 1)
+		next_attack_index--
+	}
+}
+
+/// @desc							Determines the current attack and sets the it as the
+///										attack intent for this enemy
 function select_next_attack() {
-	next_attack_index++
 	if(next_attack_index >= array_length(attack_options) || next_attack_index < 0) {
 		next_attack_index = 0
 	}
