@@ -1,5 +1,5 @@
 #macro ATTACK_INDICATOR_GROUP_PADDING 100
-#macro ATTACK_INDICATOR_Y_PADDING 15
+#macro ATTACK_INDICATOR_Y_PADDING 3
 #macro MAX_NUM_CHARA 5
 #macro MAX_NUM_ENEMIES 5
 
@@ -10,10 +10,12 @@ if(instance_number(obj_enemy_attack_manager) > 1) {
 attack_highlight_layer = layer_create(layer_get_depth(find_top_layer()) - 1, "attack_highlight_layer")
 attack_indicators = array_create(MAX_NUM_CHARA + MAX_NUM_ENEMIES, noone)
 ordered_player_charas = []
-ordered_enemies = []
 attack_highlighter = instance_find(obj_attack_highlight, 0)
 enemy_to_highlight_attack = noone
 highlight_enemy_attack = false
+
+player_attack_num = 0
+enemy_attack_num = 1
 
 /// @desc								Creates an obj_attack_indicator for each character / enemy then
 ///											position each character / enemy below the indicator and save
@@ -52,8 +54,8 @@ function create_indicators() {
 	}
 }
 
-/// @desc								Finds the entity assigned to the indicator at the
-///											given index, if any at all
+/// @desc								Finds the entity to be assigned to the indicator
+///											 at the given index, if any at all
 /// @param {Real} indicator_index		The index of the indicator in attack_indicators.
 ///											NOTE: The indicator does not need to exist yet
 /// @returns {Id.Instance}				The entity to be put into the attack indicator's "target"
@@ -129,11 +131,32 @@ function add_enemy_intent(enemy_instance_id, enemy_attack, attack_targeting_type
 		return
 	}
 	
+	var player_attacked = false
+	var enemy_attacked = false
 	for(var indicator_index = 0; indicator_index < array_length(attack_indicators); indicator_index++) {
 		var indicator = attack_indicators[indicator_index]
 		if(indicator != noone && array_contains(charas_to_attack, indicator.target)) {
-			indicator.add_attack(enemy_instance_id, enemy_attack)
+			if(object_is_ancestor(indicator.target.object_index, obj_player)) {
+				indicator.add_attack(enemy_instance_id, enemy_attack, player_attack_num)
+				player_attacked = true
+			}
+			else {
+				if(indicator.target == enemy_instance_id) {
+					indicator.add_attack(enemy_instance_id, enemy_attack, 0)
+				}
+				else {
+					indicator.add_attack(enemy_instance_id, enemy_attack, enemy_attack_num)
+					enemy_attacked = true
+				}
+			}
 		}
+	}
+	
+	if(player_attacked) {
+		player_attack_num++
+	}
+	if(enemy_attacked) {
+		enemy_attack_num++
 	}
 }
 
@@ -183,6 +206,14 @@ function remove_enemy_intent(enemy_instance_id) {
 	for(var indicator_index = 0; indicator_index < array_length(attack_indicators); indicator_index++) {
 		if(attack_indicators[indicator_index] != noone) {
 			attack_indicators[indicator_index].remove_attack(enemy_instance_id)
+			
+			if(attack_indicators[indicator_index].target != noone &&
+				object_is_ancestor(attack_indicators[indicator_index].target.object_index, obj_player)) {
+				player_attack_num = min(player_attack_num--, 0)
+			}
+			else {
+				enemy_attack_num = min(enemy_attack_num--, 0)
+			}
 		}
 	}
 }
@@ -224,6 +255,13 @@ function clear_intents(charas_to_clear = []) {
 		if(attack_indicators[indicator_index] != noone && 
 				(clear_all || array_contains(charas_to_clear, attack_indicators[indicator_index]))) {
 			attack_indicators[indicator_index].clear_attacks()
+			if(attack_indicators[indicator_index].target != noone &&
+				object_is_ancestor(attack_indicators[indicator_index].target.object_index, obj_player)) {
+				player_attack_num = min(player_attack_num--, 0)
+			}
+			else {
+				enemy_attack_num = min(enemy_attack_num--, 0)
+			}
 		}
 	}
 }

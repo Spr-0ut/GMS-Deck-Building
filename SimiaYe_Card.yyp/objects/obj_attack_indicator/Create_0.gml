@@ -8,9 +8,12 @@ display_attack_intentions = true
 ///													and adds the given attack to display
 /// @param {Id.Instance} enemy_id 				The enemy preparing this attack
 /// @param {attack_data_struct} enemy_attack 	The struct containing the required data for this attack
-function add_attack(enemy_id, enemy_attack) {
+function add_attack(enemy_id, enemy_attack, enemy_index) {
+	if(enemy_index < 0) {
+		enemy_index = array_length(attacks_to_display) - 1
+	}
 	remove_attack(enemy_id)
-	array_push(attacks_to_display, { enemy_id, attack : enemy_attack })
+	array_push(attacks_to_display, { enemy_id, enemy_index, attack : enemy_attack })
 }
 
 /// @desc										Removes the given enemy's attack so it's no longer shown
@@ -100,11 +103,10 @@ function clear_attacks() {
 function check_for_mouse_hover() {
 	var text_height = (string_height(attacks_to_display[0].attack.damage) + ATTACK_INDICATOR_Y_PADDING)
 	var mouse_within_indicator_x = mouse_x >= x && mouse_x < x + target_sprite_width
-	var mouse_within_indicator_y = mouse_y < y && mouse_y > y - (text_height * array_length(attacks_to_display))
 	
-	if(mouse_within_indicator_x && mouse_within_indicator_y) {
+	if(mouse_within_indicator_x) {
 		for(var attack_index = 0; attack_index < array_length(attacks_to_display); attack_index++) {
-			var attack_text_bottom = y - (text_height * attack_index)
+			var attack_text_bottom = y - (text_height * attacks_to_display[attack_index].enemy_index)
 			var attack_text_top = attack_text_bottom - text_height
 			if(mouse_y <= attack_text_bottom && mouse_y > attack_text_top) {
 				obj_enemy_attack_manager.highlight_attack(attacks_to_display[attack_index].enemy_id)
@@ -124,13 +126,14 @@ function draw_attacks_intentions(enemy_id = noone) {
 	draw_set_valign(fa_bottom)
 	draw_set_font(ATTACK_INDICATOR_TEXT_FONT)
 	
-	var intent_y_pos = y
 	for(var attack_index = 0; attack_index < array_length(attacks_to_display); attack_index++) {
-		var attack_data = attacks_to_display[attack_index].attack
 		if(enemy_id == noone || attacks_to_display[attack_index].enemy_id == enemy_id) {
+			var attack_data = attacks_to_display[attack_index].attack
+			var text_height = string_height(attack_data.damage) + ATTACK_INDICATOR_Y_PADDING
+			var intent_y_pos = y - (text_height * attacks_to_display[attack_index].enemy_index)
 			var x_pos_increment = target_sprite_width / 
 						(array_length(attack_data.debuffs) +
-						 array_length(attack_data.buffs) +
+						array_length(attack_data.buffs) +
 						(attack_data.damage >= 0) +
 						(attack_data.charging_up_attack) +
 						(array_length(attack_data.enemies_to_spawn) > 0) + 1)
@@ -142,9 +145,7 @@ function draw_attacks_intentions(enemy_id = noone) {
 			draw_attack_charge(attack_data.charging_up_attack, intent_y_pos, x_pos_increment)
 			draw_summon_enemy(attack_data.enemies_to_spawn, intent_y_pos, x_pos_increment)
 		}
-		
-		intent_y_pos -= string_height(attack_data.damage) + ATTACK_INDICATOR_Y_PADDING
-	}	
+	}
 }
 
 /// @desc								Draws all the damage being applied at intent_x_pos
