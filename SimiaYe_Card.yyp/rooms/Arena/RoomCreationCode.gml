@@ -1,0 +1,1 @@
+global.room_is_arena = true
