@@ -100,9 +100,8 @@ function fade_background() {
 function draw_target_selection_background() {
 	draw_set_colour(c_black)
 	draw_set_alpha(current_background_alpha)
-	var default_camera_id = camera_get_default()
-	var screen_width = camera_get_view_width(default_camera_id)
-	var screen_height = camera_get_view_height(default_camera_id)
+	var screen_width = room_width
+	var screen_height = room_height
 	draw_rectangle(0, 0, screen_width, screen_height, false)
 	draw_set_alpha(1)
 }
