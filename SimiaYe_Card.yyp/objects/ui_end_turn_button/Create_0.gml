@@ -43,6 +43,7 @@ function trigger_player_end_of_turn_effects() {
 	
 	for(var chara_index = 0; chara_index < num_player_charas; chara_index++) {
 		player_charas[chara_index].trigger_end_of_turn_buffs()
+		player_charas[chara_index].trigger_end_of_turn_debuffs()
 	}
 	
 	start_enemy_turn()

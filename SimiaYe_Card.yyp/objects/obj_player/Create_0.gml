@@ -158,19 +158,7 @@ function hit_by_enemy(enemy_attack) {
 	if(struct_exists(enemy_attack, "damage")) {
 		var damage_taken = clamp(enemy_attack.damage - chara_shield, 0, enemy_attack.damage)
 		array_push(effect_to_display, [damage_taken, c_white])
-		player_current_health = clamp(player_current_health - damage_taken, 0, player_max_health)
-		if(instance_number(ui_health_bar) > 0) {
-			for(var health_bar_index = 0; health_bar_index < instance_number(ui_health_bar); health_bar_index++) {
-				var health_bar_instance = instance_find(ui_health_bar, health_bar_index)
-				if(health_bar_instance.associated_chara == object_index) {
-					health_bar_instance.find_chara_health_x_scale()
-				}
-			}
-		}
-		
-		show_debug_message(player_current_health)
-		if(player_current_health <= 0)
-			show_debug_message("Player is dead")
+		take_damage(damage_taken)
 	}
 	
 	if(struct_exists(enemy_attack, "debuffs")) {
@@ -180,6 +168,25 @@ function hit_by_enemy(enemy_attack) {
 			apply_debuff_to_player(debuff_type, debuff_amount)
 		}
 	}
+}
+
+/// @desc								Removes the given damage from the player's health and
+///											checks if it was enough damage to kill them
+/// @param {Real} damage_taken			The amount of health to remove from this character
+function take_damage(damage_taken) {
+	player_current_health = clamp(player_current_health - damage_taken, 0, player_max_health)
+	if(instance_number(ui_health_bar) > 0) {
+		for(var health_bar_index = 0; health_bar_index < instance_number(ui_health_bar); health_bar_index++) {
+			var health_bar_instance = instance_find(ui_health_bar, health_bar_index)
+			if(health_bar_instance.associated_chara == object_index) {
+				health_bar_instance.find_chara_health_x_scale()
+			}
+		}
+	}
+		
+	show_debug_message(player_current_health)
+	if(player_current_health <= 0)
+		show_debug_message("Player is dead")
 }
 
 /// @desc								Displays the damage, buffs, and debuffs applied to the chara, 
@@ -316,12 +323,24 @@ function multiply_buff(buff_type, amount_multiplied) {
 ///													what should happen with it at the end of the
 ///													player's turn
 function trigger_end_of_turn_buffs() {
-	struct_foreach(active_buffs, function (debuff_name, debuff_amount) {
-		switch (debuff_name) {
+	struct_foreach(active_buffs, function (buff_name, buff_amount) {
+		switch (buff_name) {
 			case card_buff_effects.Gain_Strength_On_Any_Attack:
-				struct_remove(active_buffs, debuff_name)
+				struct_remove(active_buffs, buff_name)
 				turns_since_gain_strength_on_attack = 1
 				break
+		}
+	})
+}
+
+/// @desc							Loops through the debuffs currently active on this player and
+///										applys the damage
+function trigger_end_of_turn_debuffs() {
+	struct_foreach(active_debuffs, function (debuff_name, debuff_amount) {
+		var debuff_data = get_debuff_damage(active_debuffs, debuff_name)
+		if(array_length(debuff_data) == 2) {
+			array_push(effect_to_display, debuff_data)
+			take_damage(debuff_data[0])
 		}
 	})
 }
