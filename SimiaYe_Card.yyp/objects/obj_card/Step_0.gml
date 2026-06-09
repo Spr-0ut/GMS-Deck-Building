@@ -8,7 +8,11 @@ if(card_can_be_moved && visible) {
 		}
 	}
 	else if(card_can_auto_adjust) {
-		if(!global.object_being_clicked && hovering_over_card) {
+		if(global.card_being_hovered == noone && !global.object_being_clicked && hovering_over_card) {
+			mask_index = spr_card_hover_mask
+			global.card_being_hovered = id
+		}
+		if(global.card_being_hovered == id) {
 			x = lerp(x, global.cards_in_hand_x_pos[card_index_in_hand], CARD_POSITION_ADJUSTMENT_SPEED)
 			y = lerp(y, CARD_Y_POS_WHILE_HOVERING_OVER, CARD_POSITION_ADJUSTMENT_SPEED)
 			image_angle = lerp(image_angle, CARD_ANGLE_WHILE_HOVERING_OVER, CARD_ANGLE_ADJUSTMENT_SPEED)

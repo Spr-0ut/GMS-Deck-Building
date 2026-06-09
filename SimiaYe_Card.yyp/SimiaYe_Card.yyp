@@ -182,6 +182,7 @@
     {"id":{"name":"spr_battack","path":"sprites/spr_battack/spr_battack.yy",},},
     {"id":{"name":"spr_brick","path":"sprites/spr_brick/spr_brick.yy",},},
     {"id":{"name":"spr_button_test","path":"sprites/spr_button_test/spr_button_test.yy",},},
+    {"id":{"name":"spr_card_hover_mask","path":"sprites/spr_card_hover_mask/spr_card_hover_mask.yy",},},
     {"id":{"name":"spr_card_sort_button","path":"sprites/spr_card_sort_button/spr_card_sort_button.yy",},},
     {"id":{"name":"spr_card","path":"sprites/spr_card/spr_card.yy",},},
     {"id":{"name":"spr_chara_selected_icon","path":"sprites/spr_chara_selected_icon/spr_chara_selected_icon.yy",},},
