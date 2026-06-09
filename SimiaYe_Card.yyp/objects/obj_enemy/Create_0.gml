@@ -5,20 +5,43 @@ damage_to_display = []
 next_attack_index = 0
 
 #region Implement in each enemy type
+
 attack_options = [{attack : method(self, basic_attack), attack_parameters : [], targeting_type : enemy_attack_target.first_closest_chara}]
 
 /// @desc							Assesses the current state of the fight and determines if an
 ///										attack should be added or not
-check_for_conditional_attack = function () {
+check_for_conditional_attack = function() {
 	// Only add an implement if the enemy can change or add an attack immediately before declaring it
 }
-#endregion
 
 /// @desc							This is a basic example of an enemy's attack. It is expected that there
 ///										will be multiple attack functions implemented in each enemy type
 /// @returns {attack_data_struct}	The return value of attack functions must be an attack_data_struct
 function basic_attack() {
 	return new attack_data_struct(irandom(10) + 1)
+}
+
+#endregion
+
+
+/// @desc							Checks if this enemy has summon sickness from just being summoned
+///										and adds a temporary attack that clears the summon sickness
+function check_for_summon_sickness() {
+	if(has_summon_sickness) {
+		array_insert(attack_options, next_attack_index + 1, 
+		{
+			attack : method(self, summon_sickness_attack),
+			attack_parameters : [],
+			targeting_type : enemy_attack_target.self_target,
+			is_temporary_attack : true
+		})
+	}
+}
+
+/// @desc						Clears the enemy's summon sickness
+function summon_sickness_attack() {
+	has_summon_sickness = false
+	return new attack_data_struct(-1, [], [], false, [], true)
 }
 
 /// @desc										Handles player attacks by applying debuffs and removing

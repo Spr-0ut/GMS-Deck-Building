@@ -629,6 +629,7 @@
     {"id":{"name":"spr_selectable_chara_back_button","path":"sprites/spr_selectable_chara_back_button/spr_selectable_chara_back_button.yy",},},
     {"id":{"name":"spr_settings_bookmark_top","path":"sprites/spr_settings_bookmark_top/spr_settings_bookmark_top.yy",},},
     {"id":{"name":"spr_summon_enemies_symbol","path":"sprites/spr_summon_enemies_symbol/spr_summon_enemies_symbol.yy",},},
+    {"id":{"name":"spr_summon_sickness_symbol","path":"sprites/spr_summon_sickness_symbol/spr_summon_sickness_symbol.yy",},},
     {"id":{"name":"spr_test_building","path":"sprites/spr_test_building/spr_test_building.yy",},},
     {"id":{"name":"tls_grass","path":"tilesets/tls_grass/tls_grass.yy",},},
   ],

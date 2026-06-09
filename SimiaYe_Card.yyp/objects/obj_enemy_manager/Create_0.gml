@@ -51,7 +51,9 @@ function create_new_enemy(enemy) {
 				var x_pos = enemy_indicator.x + sprite_get_xoffset(object_get_sprite(enemy))
 				var y_pos = enemy_indicator.y + sprite_get_yoffset(object_get_sprite(enemy)) + ATTACK_INDICATOR_Y_PADDING
 				
-				var enemy_instance = instance_create_layer(x_pos, y_pos, enemy_instance_layer, enemy)
+				var enemy_instance = instance_create_layer(x_pos, y_pos, enemy_instance_layer, enemy, { 
+					has_summon_sickness : true
+				})
 				add_existing_enemy(enemy_instance)
 				enemy_indicator.target = enemy_instance
 				enemy_indicator.target_sprite_width = enemy_instance.sprite_width
@@ -89,6 +91,7 @@ function end_enemies_turn() {
 	
 	for(var enemy_index = 0; enemy_index < array_length(ordered_enemies); enemy_index++) {
 		ordered_enemies[enemy_index].check_for_conditional_attack()
+		ordered_enemies[enemy_index].check_for_summon_sickness()
 	}
 	
 	for(var enemy_index = 0; enemy_index < array_length(ordered_enemies); enemy_index++) {

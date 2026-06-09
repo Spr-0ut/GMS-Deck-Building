@@ -14,12 +14,13 @@
 ///																	enemies that will spawn from
 ///																	this attack
 function attack_data_struct(_damage = -1, _debuffs = [], _buffs = [], _charging_up_attack = false,
-							_enemies_to_spawn = []) constructor{
+							_enemies_to_spawn = [], _has_summon_sickness = false) constructor{
 	damage = max(_damage, -1)
 	debuffs = _debuffs
 	buffs = _buffs
 	charging_up_attack = _charging_up_attack
 	enemies_to_spawn = _enemies_to_spawn
+	has_summon_sickness = _has_summon_sickness
 	
 	#region damage
 		/// @desc						Sets the damage to the given value
@@ -146,6 +147,18 @@ function attack_data_struct(_damage = -1, _debuffs = [], _buffs = [], _charging_
 	static set_enemy_to_spawn = function(enemy) {
 		if(typeof(enemy) == "array") {
 			enemies_to_spawn = enemy
+		}
+	}
+	
+	#endregion
+	
+	#region summon sickness
+	
+	/// @desc									Sets the has_summon_sickness flag to the given value
+	/// @param {Boolean} _has_summon_sickness	The flag to determine if this attack is summon sickness
+	static set_summon_sickness = function(_has_summon_sickness) {
+		if(typeof(_has_summon_sickness) == "bool") {
+			has_summon_sickness = _has_summon_sickness
 		}
 	}
 	

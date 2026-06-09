@@ -13,5 +13,6 @@
     {"name":"etest","order":1,"path":"sprites/etest/etest.yy",},
     {"name":"spr_charge_attack_symbol","order":2,"path":"sprites/spr_charge_attack_symbol/spr_charge_attack_symbol.yy",},
     {"name":"spr_summon_enemies_symbol","order":3,"path":"sprites/spr_summon_enemies_symbol/spr_summon_enemies_symbol.yy",},
+    {"name":"spr_summon_sickness_symbol","order":4,"path":"sprites/spr_summon_sickness_symbol/spr_summon_sickness_symbol.yy",},
   ],
 }

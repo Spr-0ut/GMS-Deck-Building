@@ -45,18 +45,20 @@ function find_enemy_attack(enemy_id) {
 function attack_target_character() {
 	if(target != noone  && display_attack_intentions) {
 		for(var attack_index = 0; attack_index < array_length(attacks_to_display); attack_index++) {
-			if(object_is_ancestor(target.object_index, obj_player)) {
-				if(target.player_current_health > 0 &&
-						attacks_to_display[attack_index].enemy_id.Is_alive) {
-					target.hit_by_enemy(attacks_to_display[attack_index].attack)
-				}
-			}
-			else if(object_is_ancestor(target.object_index, obj_enemy)) {
-				if(attacks_to_display[attack_index].enemy_id.Is_alive) {
-					if(array_length(attacks_to_display[attack_index].attack.enemies_to_spawn) > 0) {
-						summon_enemies(attacks_to_display[attack_index].attack.enemies_to_spawn)
+			if(!attacks_to_display[attack_index].attack.has_summon_sickness) {
+				if(object_is_ancestor(target.object_index, obj_player)) {
+					if(target.player_current_health > 0 &&
+							attacks_to_display[attack_index].enemy_id.Is_alive) {
+						target.hit_by_enemy(attacks_to_display[attack_index].attack)
 					}
-					target.hit_by_player(attacks_to_display[attack_index].enemy_id, attacks_to_display[attack_index].attack)
+				}
+				else if(object_is_ancestor(target.object_index, obj_enemy)) {
+					if(attacks_to_display[attack_index].enemy_id.Is_alive) {
+						if(array_length(attacks_to_display[attack_index].attack.enemies_to_spawn) > 0) {
+							summon_enemies(attacks_to_display[attack_index].attack.enemies_to_spawn)
+						}
+						target.hit_by_player(attacks_to_display[attack_index].enemy_id, attacks_to_display[attack_index].attack)
+					}
 				}
 			}
 		}	
@@ -131,21 +133,33 @@ function draw_attacks_intentions(enemy_id = noone) {
 			var attack_data = attacks_to_display[attack_index].attack
 			var text_height = string_height(attack_data.damage) + ATTACK_INDICATOR_Y_PADDING
 			var intent_y_pos = y - (text_height * attacks_to_display[attack_index].enemy_index)
-			var x_pos_increment = target_sprite_width / 
-						(array_length(attack_data.debuffs) +
-						array_length(attack_data.buffs) +
-						(attack_data.damage >= 0) +
-						(attack_data.charging_up_attack) +
-						(array_length(attack_data.enemies_to_spawn) > 0) + 1)
-			intent_x_pos = x + x_pos_increment
-		
-			draw_damage(attack_data.damage, intent_y_pos, x_pos_increment)
-			draw_debuffs(attack_data.debuffs, intent_y_pos, x_pos_increment)
-			draw_buffs(attack_data.buffs, intent_y_pos, x_pos_increment)
-			draw_attack_charge(attack_data.charging_up_attack, intent_y_pos, x_pos_increment)
-			draw_summon_enemy(attack_data.enemies_to_spawn, intent_y_pos, x_pos_increment)
+			if(attack_data.has_summon_sickness) {
+				intent_x_pos = x + (target_sprite_width / 2)
+				draw_summon_sickness(intent_y_pos)
+			}
+			else {
+				var x_pos_increment = target_sprite_width / 
+							(array_length(attack_data.debuffs) +
+							array_length(attack_data.buffs) +
+							(attack_data.damage >= 0) +
+							(attack_data.charging_up_attack) +
+							(array_length(attack_data.enemies_to_spawn) > 0) + 1)
+				intent_x_pos = x + x_pos_increment
+
+				draw_damage(attack_data.damage, intent_y_pos, x_pos_increment)
+				draw_debuffs(attack_data.debuffs, intent_y_pos, x_pos_increment)
+				draw_buffs(attack_data.buffs, intent_y_pos, x_pos_increment)
+				draw_attack_charge(attack_data.charging_up_attack, intent_y_pos, x_pos_increment)
+				draw_summon_enemy(attack_data.enemies_to_spawn, intent_y_pos, x_pos_increment)
+			}
 		}
 	}
+}
+
+/// @desc								Draws the summon sickness symbol at the given position
+/// @param {Real} y_pos 				The y position to draw the summon sickness symbol
+function draw_summon_sickness(y_pos) {
+	draw_sprite(spr_summon_sickness_symbol, 0, intent_x_pos, y_pos)
 }
 
 /// @desc								Draws all the damage being applied at intent_x_pos
