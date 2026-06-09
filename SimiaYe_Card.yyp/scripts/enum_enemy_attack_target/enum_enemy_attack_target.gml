@@ -7,6 +7,6 @@ enum enemy_attack_target{
 	random_chara,
 	all_chara,
 	no_target,
-	self,
+	self_target,
 	summon_enemy
 }

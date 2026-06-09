@@ -18,7 +18,7 @@ attack_options = [
 	{
 		attack : method(self, charge_up_attack),
 		attack_parameters : [],
-		targeting_type : enemy_attack_target.self
+		targeting_type : enemy_attack_target.self_target
 	},
 	{
 		attack : method(self, charge_up_attack),
@@ -28,7 +28,7 @@ attack_options = [
 	{
 		attack : method(self, eat_honey),
 		attack_parameters : [],
-		targeting_type : enemy_attack_target.self
+		targeting_type : enemy_attack_target.self_target
 	}]
 
 /// @desc						Determines if a bee can be spawned and if so randomly selects one

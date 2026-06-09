@@ -6,7 +6,6 @@
   "inheritCreationOrder":false,
   "inheritLayers":false,
   "instanceCreationOrder":[
-    {"name":"inst_1AABC171","path":"rooms/Arena/Arena.yy",},
     {"name":"inst_4A8DBE48","path":"rooms/Arena/Arena.yy",},
     {"name":"inst_4D7A1004","path":"rooms/Arena/Arena.yy",},
     {"name":"inst_2A8E91D","path":"rooms/Arena/Arena.yy",},
@@ -29,7 +28,6 @@
         {"$GMRInstance":"v4","%Name":"inst_77586E49","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_77586E49","objectId":{"name":"ui_player_hand","path":"objects/ui_player_hand/ui_player_hand.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":0.0,"y":0.0,},
         {"$GMRInstance":"v4","%Name":"inst_2E2B9A75","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_2E2B9A75","objectId":{"name":"obj_enemy_attack_manager","path":"objects/obj_enemy_attack_manager/obj_enemy_attack_manager.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":32.0,"y":0.0,},
         {"$GMRInstance":"v4","%Name":"inst_3B2FDA8","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_3B2FDA8","objectId":{"name":"obj_enemy_manager","path":"objects/obj_enemy_manager/obj_enemy_manager.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":64.0,"y":0.0,},
-        {"$GMRInstance":"v4","%Name":"inst_1AABC171","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":true,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_1AABC171","objectId":{"name":"obj_easyenemy","path":"objects/obj_easyenemy/obj_easyenemy.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.5,"scaleY":1.5,"x":1456.0,"y":528.0,},
         {"$GMRInstance":"v4","%Name":"inst_4A8DBE48","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_4A8DBE48","objectId":{"name":"obj_main","path":"objects/obj_main/obj_main.yy",},"properties":[
             {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"obj_player","path":"objects/obj_player/obj_player.yy",},"propertyId":{"name":"is_controlled_chara","path":"objects/obj_player/obj_player.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"False",},
           ],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.5,"scaleY":1.5,"x":464.0,"y":528.0,},

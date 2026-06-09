@@ -188,7 +188,7 @@ function get_players_targeted(targeting_type, attacker_instance_id) {
 			return ordered_player_charas
 		case enemy_attack_target.no_target :
 			return []
-		case enemy_attack_target.self :
+		case enemy_attack_target.self_target :
 			return [attacker_instance_id]
 		case enemy_attack_target.summon_enemy :
 			return [attacker_instance_id]
