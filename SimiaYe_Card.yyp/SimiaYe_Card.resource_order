@@ -1,5 +1,7 @@
 {
   "FolderOrderSettings":[
+    {"name":"Music","order":1,"path":"folders/Sounds/Music.yy",},
+    {"name":"Arena","order":1,"path":"folders/Sounds/Music/Arena.yy",},
     {"name":"Enemy","order":1,"path":"folders/Sprites/Enemy.yy",},
   ],
   "ResourceOrderSettings":[
@@ -9,7 +11,9 @@
     {"name":"obj_enemy_attack_manager","order":1,"path":"objects/obj_enemy_attack_manager/obj_enemy_attack_manager.yy",},
     {"name":"obj_enemy_manager","order":5,"path":"objects/obj_enemy_manager/obj_enemy_manager.yy",},
     {"name":"obj_fuzzy_bee_enemy","order":3,"path":"objects/obj_fuzzy_bee_enemy/obj_fuzzy_bee_enemy.yy",},
+    {"name":"obj_sound_controller","order":1,"path":"objects/obj_sound_controller/obj_sound_controller.yy",},
     {"name":"buff_handler","order":1,"path":"scripts/buff_handler/buff_handler.yy",},
+    {"name":"sound_effect_struct","order":2,"path":"scripts/sound_effect_struct/sound_effect_struct.yy",},
     {"name":"etest","order":1,"path":"sprites/etest/etest.yy",},
     {"name":"spr_charge_attack_symbol","order":2,"path":"sprites/spr_charge_attack_symbol/spr_charge_attack_symbol.yy",},
     {"name":"spr_summon_enemies_symbol","order":3,"path":"sprites/spr_summon_enemies_symbol/spr_summon_enemies_symbol.yy",},
