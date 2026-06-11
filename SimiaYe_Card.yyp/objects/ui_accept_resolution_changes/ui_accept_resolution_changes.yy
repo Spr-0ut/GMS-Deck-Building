@@ -11,8 +11,8 @@
   "name":"ui_accept_resolution_changes",
   "overriddenProperties":[],
   "parent":{
-    "name":"UI",
-    "path":"folders/Objects/UI.yy",
+    "name":"Resolution_Updater",
+    "path":"folders/Objects/UI/Resolution_Updater.yy",
   },
   "parentObjectId":null,
   "persistent":false,

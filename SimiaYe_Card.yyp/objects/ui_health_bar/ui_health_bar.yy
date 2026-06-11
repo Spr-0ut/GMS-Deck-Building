@@ -11,8 +11,8 @@
   "name":"ui_health_bar",
   "overriddenProperties":[],
   "parent":{
-    "name":"UI",
-    "path":"folders/Objects/UI.yy",
+    "name":"Character_Info",
+    "path":"folders/Objects/UI/Character_Info.yy",
   },
   "parentObjectId":null,
   "persistent":false,

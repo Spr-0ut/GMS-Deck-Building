@@ -26,7 +26,7 @@
   "origin":4,
   "parent":{
     "name":"Energy",
-    "path":"folders/Sprites/Energy.yy",
+    "path":"folders/Sprites/UI_Elements/Energy.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",
