@@ -11,6 +11,10 @@ function sound_effect_struct(_sound_effect, _loop_sound_effect = false, _loop_st
 		return
 	}
 	
+	if(!variable_global_exists("main_volume_percent")) {
+		global.main_volume_percent = 1	
+	}
+	
 	sound_effect = _sound_effect
 	loop_start = clamp(_loop_start, 0, audio_sound_length(sound_effect))
 	loop_end = clamp(_loop_end, loop_start, audio_sound_length(sound_effect))
@@ -23,13 +27,13 @@ function sound_effect_struct(_sound_effect, _loop_sound_effect = false, _loop_st
 	/// @param {bool} fade_in	Optional flag to determines if the audio is faded in when played
 	static play_sound_effect = function(priority, fade_in = false) {
 		if(is_real(priority)) {
-			sound_id = audio_play_sound(sound_effect, priority, loop_sound_effect)
+			sound_id = audio_play_sound(sound_effect, priority, loop_sound_effect, global.main_volume_percent)
 			audio_sound_loop_start(sound_id, loop_start)
 			audio_sound_loop_end(sound_id, loop_end)
 			
 			if(fade_in) {
 				audio_sound_gain(sound_id, 0)
-				audio_sound_gain(sound_id, 1, TIME_TO_FADE_SOUND_EFFECTS)
+				audio_sound_gain(sound_id, global.main_volume_percent, TIME_TO_FADE_SOUND_EFFECTS)
 			}
 		}
 	}
