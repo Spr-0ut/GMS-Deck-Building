@@ -123,11 +123,11 @@ player_turn_end_action = function (on_end_turn_action, on_end_turn_action_args) 
 /// @description							Checks to see if no other cards are selected then allows this
 ///												card to be selected
 function select_card() {
-	if(!card_selected && !global.object_being_clicked && visible && global.card_being_hovered == id
+	if(!card_selected && !global.object_being_clicked && visible 
 			&& is_top_layer(layer, mouse_x, mouse_y)) {
 		global.object_being_clicked	= true
 		card_selected = true
-		if(card_can_be_moved) {
+		if(card_can_be_moved && global.card_being_hovered == id) {
 			image_angle = 0
 			x = mouse_x
 			y = mouse_y - (sprite_height / 2)
