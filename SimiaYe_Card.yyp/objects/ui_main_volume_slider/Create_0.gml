@@ -1,3 +1,7 @@
+#macro VOLUME_TEXT_COLOR c_white
+#macro VOLUME_TEXT_FONT fnt_volume_controls
+#macro VOLUME_TEXT_PADDING 10
+
 // Inherit the parent event
 event_inherited();
 

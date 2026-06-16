@@ -144,6 +144,7 @@
     {"id":{"name":"fnt_interactable","path":"fonts/fnt_interactable/fnt_interactable.yy",},},
     {"id":{"name":"fnt_resolution_confirmation","path":"fonts/fnt_resolution_confirmation/fnt_resolution_confirmation.yy",},},
     {"id":{"name":"fnt_resolution","path":"fonts/fnt_resolution/fnt_resolution.yy",},},
+    {"id":{"name":"fnt_volume_controls","path":"fonts/fnt_volume_controls/fnt_volume_controls.yy",},},
     {"id":{"name":"__InputUpdateController","path":"objects/__InputUpdateController/__InputUpdateController.yy",},},
     {"id":{"name":"obj_attack_highlight","path":"objects/obj_attack_highlight/obj_attack_highlight.yy",},},
     {"id":{"name":"obj_attack_indicator","path":"objects/obj_attack_indicator/obj_attack_indicator.yy",},},
