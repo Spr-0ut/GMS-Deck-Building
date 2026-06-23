@@ -57,3 +57,16 @@ function set_party_chara_card_pos(chara_card, index_to_replace) {
 		chara_card.chara_card_start_y_position = chara_card.y
 	}
 }
+
+/// @desc									Removes the given card from the current_party_chara array
+///												and places it back in the chara grid
+/// @param {Id.Instance} chara_card			The chara card to remove from the party
+function remove_from_party(chara_card) {
+	var party_index = check_for_chara_card_in_party(chara_card)
+	if(party_index != -1) {
+		if(instance_exists(obj_chara_card_grid)) {
+			obj_chara_card_grid.add_chara_card_to_grid(chara_card)
+		}
+		current_party_chara[party_index] = noone
+	}
+}
