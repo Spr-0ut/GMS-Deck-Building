@@ -38,8 +38,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"spr_chara_card",
-    "path":"sprites/spr_chara_card/spr_chara_card.yy",
+    "name":"spr_expanded_chara_card",
+    "path":"sprites/spr_expanded_chara_card/spr_expanded_chara_card.yy",
   },
   "spriteMaskId":null,
   "visible":true,
