@@ -1,11 +1,14 @@
 {
   "FolderOrderSettings":[
     {"name":"Chara Select","order":1,"path":"folders/Objects/Chara Select.yy",},
+    {"name":"Scrollbar","order":1,"path":"folders/Objects/UI/Scrollbar.yy",},
     {"name":"Chara_Select","order":1,"path":"folders/Sprites/Chara_Select.yy",},
   ],
   "ResourceOrderSettings":[
     {"name":"obj_chara_card_grid","order":2,"path":"objects/obj_chara_card_grid/obj_chara_card_grid.yy",},
     {"name":"obj_chara_card","order":1,"path":"objects/obj_chara_card/obj_chara_card.yy",},
+    {"name":"ui_obj_grid_scroll_thumb","order":3,"path":"objects/ui_obj_grid_scroll_thumb/ui_obj_grid_scroll_thumb.yy",},
+    {"name":"ui_obj_grid_scrollbar","order":2,"path":"objects/ui_obj_grid_scrollbar/ui_obj_grid_scrollbar.yy",},
     {"name":"rm_chara_select","order":1,"path":"rooms/rm_chara_select/rm_chara_select.yy",},
     {"name":"spr_expanded_chara_card","order":1,"path":"sprites/spr_expanded_chara_card/spr_expanded_chara_card.yy",},
     {"name":"spr_expanded_chara_select_grid","order":2,"path":"sprites/spr_expanded_chara_select_grid/spr_expanded_chara_select_grid.yy",},

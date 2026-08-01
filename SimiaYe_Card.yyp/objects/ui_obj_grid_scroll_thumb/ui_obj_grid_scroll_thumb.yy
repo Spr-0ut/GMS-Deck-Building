@@ -1,16 +1,16 @@
 {
   "$GMObject":"",
-  "%Name":"ui_player_deck_scroll_thumb",
+  "%Name":"ui_obj_grid_scroll_thumb",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":64,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"ui_player_deck_scroll_thumb",
+  "name":"ui_obj_grid_scroll_thumb",
   "overriddenProperties":[],
   "parent":{
-    "name":"UI",
-    "path":"folders/Objects/UI.yy",
+    "name":"Scrollbar",
+    "path":"folders/Objects/UI/Scrollbar.yy",
   },
   "parentObjectId":null,
   "persistent":false,

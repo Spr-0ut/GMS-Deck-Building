@@ -63,10 +63,8 @@ function create_card_grid_view() {
 			})
 			display_cards[card_index] = display_card
 		}
+		create_scroll_bar(display_cards, num_columns)
 		set_deck_default_sort()
-		set_cards_initial_pos(display_cards)
-		
-		create_scroll_bar(display_cards)
 	}
 }
 
@@ -93,7 +91,7 @@ function set_cards_initial_pos(display_cards) {
 	
 	if(scroll_bar != noone) {
 		scroll_bar.objects_to_move = display_cards
-		scroll_bar.set_card_to_scroll_pos()
+		scroll_bar.set_objects_to_scroll_pos()
 	}
 }
 
@@ -111,7 +109,7 @@ function draw_card_grid_background() {
 }
 
 /// @desc									Creates a scroll bar to move all display cards
-function create_scroll_bar(objects_to_move) {
+function create_scroll_bar(objects_to_move, num_columns) {
 	if((bottom_of_header + height_of_card_list) > display_get_gui_height()) {
 		var scroll_bar_layer_name = "scroll_bar_instance"
 		var scroll_bar_instance_id = layer_get_id(scroll_bar_layer_name)
@@ -119,16 +117,21 @@ function create_scroll_bar(objects_to_move) {
 			var scroll_bar_grid_depth = layer_get_depth(layer) - 1
 			scroll_bar_instance_id = layer_create(scroll_bar_grid_depth, scroll_bar_layer_name)
 		}
-		var bar_sprite_width = sprite_get_width(object_get_sprite(ui_player_deck_scrollbar))
-		var bar_sprite_height = sprite_get_height(object_get_sprite(ui_player_deck_scrollbar))
+		
+		var bar_sprite_width = sprite_get_width(object_get_sprite(ui_obj_grid_scrollbar))
+		var bar_sprite_height = sprite_get_height(object_get_sprite(ui_obj_grid_scrollbar))
 		var bar_x_pos = display_get_gui_width() - SCROLL_BAR_PADDING - bar_sprite_width
 		var bar_y_pos = bottom_of_header + SCROLL_BAR_PADDING
 		var bar_sprite_y_scale = (display_get_gui_height() - bar_y_pos -  SCROLL_BAR_PADDING) / bar_sprite_height
-		scroll_bar = instance_create_layer(bar_x_pos, bar_y_pos, scroll_bar_instance_id, ui_player_deck_scrollbar, {
+		var row_height = objects_to_move[0].sprite_height + (CARD_PADDING * objects_to_move[0].image_yscale)
+		
+		scroll_bar = instance_create_layer(bar_x_pos, bar_y_pos, scroll_bar_instance_id, ui_obj_grid_scrollbar, {
 			image_yscale : bar_sprite_y_scale,
-			header_bottom_y : bottom_of_header,
+			objects_to_move,
 			scrollable_list_height : height_of_card_list,
-			objects_to_move
+			row_height,
+			num_columns,
+			viewable_window_height : display_get_gui_height() - bottom_of_header
 		})
 	}
 }
