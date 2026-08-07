@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"data_main",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"data_main",
+  "parent":{
+    "name":"obj_main",
+    "path":"folders/Objects/Characters/obj_main.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

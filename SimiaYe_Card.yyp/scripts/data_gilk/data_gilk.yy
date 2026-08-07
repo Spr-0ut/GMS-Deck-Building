@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"data_gilk",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"data_gilk",
+  "parent":{
+    "name":"Gilk",
+    "path":"folders/Objects/Characters/Gilk.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"data_chara",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"data_chara",
+  "parent":{
+    "name":"Characters",
+    "path":"folders/Objects/Characters.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

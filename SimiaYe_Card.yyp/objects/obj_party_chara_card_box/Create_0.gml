@@ -16,10 +16,10 @@ is_expanded_party_box = true
 function add_party_memeber(chara_card_to_add) {
 	if(typeof(chara_card_to_add) == "ref") {
 		if(is_expanded_party_box) {
-			chara_card_to_add.sprite_index	= spr_expanded_chara_card
+			chara_card_to_add.sprite_index	= chara_card_to_add.chara_card_data.expanded_card_sprite
 		}
 		else {
-			chara_card_to_add.sprite_index	= spr_shrunk_chara_card
+			chara_card_to_add.sprite_index	= chara_card_to_add.chara_card_data.shrunk_card_sprite
 		}
 		
 		var chara_slot_width = sprite_width / MAX_PARTY_SIZE
@@ -32,8 +32,24 @@ function add_party_memeber(chara_card_to_add) {
 		shift_party_chara_cards(chara_card_to_add, index_to_replace)
 		current_party_chara[index_to_replace] = chara_card_to_add
 		set_party_chara_card_pos(chara_card_to_add, index_to_replace)
+		
 		if(instance_exists(obj_chara_card_grid)) {
 			obj_chara_card_grid.empty_card_slot(chara_card_to_add)	
+		}
+		
+		if(instance_exists(obj_follower_order_manager)) {
+			var new_chara_order = []
+			for(var chara_index = 0; chara_index < array_length(current_party_chara); chara_index++) {
+				if(current_party_chara[chara_index] != noone) {
+					var current_chara_data = current_party_chara[chara_index].chara_card_data
+					current_chara_data.is_controlled_chara = false
+					array_push(new_chara_order, current_chara_data)
+				}
+			}
+			if(array_length(new_chara_order) > 0) {
+				new_chara_order[0].is_controlled_chara = true
+				obj_follower_order_manager.update_chara_order(new_chara_order)
+			}
 		}
 	}
 }
@@ -157,16 +173,19 @@ function party_box_resize_completed() {
 	target_y_scale = starting_y_scale
 	image_yscale = starting_y_scale
 	sprite_index = spr_shrunk_party_select_slots
-		
-	var chara_card_sprite = spr_shrunk_chara_card
 	if(is_expanded_party_box) {
 		sprite_index = spr_expanded_party_select_slots
-		chara_card_sprite = spr_expanded_chara_card
 	}
 		
 	for(var party_index = 0; party_index < array_length(current_party_chara); party_index++) {
 		if(current_party_chara[party_index] != noone) {
-			current_party_chara[party_index].sprite_index = chara_card_sprite
+			var chara_data = current_party_chara[party_index].chara_card_data
+			if(is_expanded_party_box) {
+				current_party_chara[party_index].sprite_index = chara_data.expanded_card_sprite
+			}
+			else {
+				current_party_chara[party_index].sprite_index = chara_data.shrunk_card_sprite
+			}
 			current_party_chara[party_index].image_yscale = starting_y_scale
 		}
 	}

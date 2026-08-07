@@ -2,7 +2,7 @@
 #macro CHARA_CARD_X_PADDING			6
 #macro CHARA_CARD_Y_PADDING			6
 
-chara_cards_to_display = array_create(10, obj_chara_card)
+chara_cards_to_display = [obj_gilk_chara_card, obj_gilk_chara_card, obj_main_chara_card]
 chara_card_instances = []
 chara_card_grid_layer = layer_create(layer_get_depth(layer) - 1, "chara_card_grid_instance")
 is_expanded_grid = false
@@ -45,11 +45,17 @@ function create_chara_card_grid_view() {
 			}
 
 			var display_card = instance_create_layer(card_x_pos, card_y_pos, chara_card_grid_layer, chara_cards_to_display[card_index], {
-				sprite_index : spr_shrunk_chara_card,
 				image_xscale,
 				image_yscale,
 				grid_index : card_index
 			})
+			
+			if(display_card.chara_card_data.shrunk_card_sprite != noone) {
+				display_card.sprite_index = display_card.chara_card_data.shrunk_card_sprite
+			}
+			else {
+				display_card.sprite_index = spr_shrunk_chara_card
+			}
 			chara_card_instances[card_index] = display_card
 			
 			card_x_pos += chara_card_width + (chara_card_grid_width % chara_card_width / num_columns)
@@ -65,7 +71,15 @@ function return_chara_card_to_grid(chara_card) {
 	if(typeof(chara_card) == "ref" && chara_card != noone && instance_exists(chara_card)) {
 		var chara_card_sprite = spr_shrunk_chara_card
 		if(is_expanded_grid) {
-			chara_card_sprite	= spr_expanded_chara_card
+			if(chara_card.chara_card_data.expanded_card_sprite != noone) {
+				chara_card_sprite = chara_card.chara_card_data.expanded_card_sprite
+			}
+			else {
+				chara_card_sprite = spr_expanded_chara_card
+			}
+		}
+		else if(chara_card.chara_card_data.shrunk_card_sprite != noone) {
+			chara_card_sprite = chara_card.chara_card_data.shrunk_card_sprite
 		}
 		chara_card.sprite_index	= chara_card_sprite
 		
@@ -158,7 +172,10 @@ function set_chara_cards_pos(shrunk_cards, grid_y_pos) {
 		}
 
 		if(chara_card_instances[card_index] != noone) {
-			chara_card_instances[card_index].sprite_index = chara_card_sprite
+			var card_data = chara_card_instances[card_index].chara_card_data
+			chara_card_instances[card_index].sprite_index = shrunk_cards ? 
+																card_data.shrunk_card_sprite : 
+																card_data.expanded_card_sprite
 			chara_card_instances[card_index].y = card_y_pos
 		}
 	}

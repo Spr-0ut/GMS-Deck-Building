@@ -8,8 +8,8 @@
   "name":"obj_gilk",
   "overriddenProperties":[],
   "parent":{
-    "name":"Characters",
-    "path":"folders/Objects/Characters.yy",
+    "name":"Gilk",
+    "path":"folders/Objects/Characters/Gilk.yy",
   },
   "parentObjectId":{
     "name":"obj_player",

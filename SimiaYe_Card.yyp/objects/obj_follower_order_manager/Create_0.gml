@@ -12,6 +12,66 @@ if(!variable_global_exists("followers_being_added")) {
 followers_to_add = ds_queue_create()
 room_has_started = false
 
+/// @desc												Creates an instance of each of the characters given
+/// @param {Array<data_chara>} sorted_chara_to_create	The array of data_chara to create instances of
+function create_chara_instances(sorted_chara_to_create) {
+	var chara_layer = layer_get_id("Instances")
+	if(chara_layer == noone) {
+		chara_layer = layer_create(0, "Instances")	
+	}
+	var x_pos = 192
+	var y_pos = 576
+	
+	var previous_chara = noone
+	for(var chara_index = 0; chara_index < array_length(sorted_chara_to_create); chara_index++) {
+		if(is_instanceof(sorted_chara_to_create[chara_index], data_chara)) {
+			var cur_chara = sorted_chara_to_create[chara_index]
+			var chara_instance = instance_create_layer(x_pos, y_pos, chara_layer, cur_chara.object_index, {
+				player_max_health : cur_chara.player_max_health,
+				is_controlled_chara : cur_chara.is_controlled_chara,
+			})
+		
+			if(previous_chara != noone) {
+				previous_chara.follower = chara_instance
+			}
+			previous_chara = chara_instance
+		}
+	}
+}
+
+/// @desc										Updates the order of the character instances to the
+///													given array order
+/// @param {Array<data_chara>} new_chara_order	The array of data_chara to determines the character
+///													instances order
+function update_chara_order(new_chara_order) {
+	if(global.player_chara == noone ||
+		!instance_exists(global.player_chara) ||
+		new_chara_order[0].chara_id != global.player_chara.chara_id) {
+			for(var chara_index = 0; chara_index < instance_number(obj_player); chara_index++) {
+				var chara = instance_find(obj_player, chara_index)
+				if(chara.chara_id == new_chara_order[0].chara_id) {
+					global.player_chara = chara
+					break
+				}
+		}
+	}
+	
+	if(global.player_chara != noone) {
+		var previous_chara = global.player_chara
+		for(var new_chara_index = 1; new_chara_index < array_length(new_chara_order); new_chara_index++) {
+			for(var chara_index = 0; chara_index < instance_number(obj_player); chara_index++) {
+				var chara = instance_find(obj_player, chara_index)
+				if(chara.chara_id == new_chara_order[new_chara_index].chara_id) {
+					previous_chara.follower = chara
+					previous_chara = chara
+					break
+				}
+			}
+		}	
+	}
+	chara_order = new_chara_order
+}
+
 /// @desc							Finds the current player controlled character and assigns it to
 ///										player_chara or set it to noone if no player character is found
 ///										NOTE: This assumes there is only 1 controlled chara and will
@@ -66,12 +126,12 @@ function add_queue_to_follower_chain() {
 ///											loop to the end of the chain to add the new character
 /// @param {Id.Instance} chara_to_add	The character instance to add to the end of the chain
 function add_chara_to_follower_chain_end(leader_chara, chara_to_add) {
-	if(leader_chara != noone && leader_chara.follower == noone) {
+	if(leader_chara == chara_to_add) {
+		return false
+	}
+	else if(leader_chara != noone && leader_chara.follower == noone) {
 		leader_chara.follower = chara_to_add
 		return true
-	}
-	else if(leader_chara == chara_to_add) {
-		return false
 	}
 	else {
 		return add_chara_to_follower_chain_end(leader_chara.follower, chara_to_add)	
@@ -84,7 +144,10 @@ function add_chara_to_follower_chain_end(leader_chara, chara_to_add) {
 /// @param {Id.Instance} leader_chara	The character instance to set the follower of
 /// @param {Id.Instance} chara_to_add	The character instance to set as leader_chara's follower
 function add_follower_chain_to_leader(leader_chara, chara_to_add) {
-	if(leader_chara.follower != noone) {
+	if(leader_chara == chara_to_add) {
+		return	
+	}
+	else if(leader_chara.follower != noone) {
 		var temp = leader_chara.follower
 		leader_chara.follower = chara_to_add
 		add_chara_to_follower_chain_end(chara_to_add, temp)
