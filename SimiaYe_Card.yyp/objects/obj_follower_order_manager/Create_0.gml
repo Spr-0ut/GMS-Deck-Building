@@ -93,3 +93,23 @@ function add_follower_chain_to_leader(leader_chara, chara_to_add) {
 		leader_chara.follower = chara_to_add
 	}
 }
+
+/// @desc									Finds the player characters in their follower order
+/// @param {Id.Instance} next_chara			The next character to be added to the ordered array
+/// @param {Array<Id.Instance>} chara_list	The ordered array that will eventually be returned
+/// @returns {Array<Id.Instance>}			An array of characters in order starting at the player
+///												chara and stepping through each of their followers
+function find_charas_ordered(next_chara = noone, chara_list = []) {
+	if(!variable_global_exists("player_chara") || global.player_chara == noone) {
+		obj_follower_order_manager.find_player_chara()
+	}
+	if(typeof(next_chara) != "ref" || next_chara == noone) {
+		next_chara = global.player_chara
+	}
+	
+	array_push(chara_list, next_chara)
+	if(next_chara.follower != noone) {
+		return find_charas_ordered(next_chara.follower, chara_list)
+	}
+	return chara_list
+}

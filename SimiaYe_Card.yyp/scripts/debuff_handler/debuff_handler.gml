@@ -12,12 +12,13 @@ function get_debuff_damage(debuffs, debuff_name) {
 		return []
 	}
 	
+	var debuff_color = get_debuff_color(debuff_name)
 	switch (debuff_name) {
 		case card_debuff_effects.Poison:
-			return [debuffs[$ debuff_name], c_purple]
+			return [debuffs[$ debuff_name], debuff_color]
 			
 		case card_debuff_effects.Weakness:
-			return [debuffs[$ debuff_name], c_dkgrey]
+			return [debuffs[$ debuff_name], debuff_color]
 			
 		case card_debuff_effects.Mark:
 			debuffs[$ debuff_name] -= 1
@@ -25,7 +26,7 @@ function get_debuff_damage(debuffs, debuff_name) {
 				struct_remove(debuffs, debuff_name)
 				return []
 			}
-			return [debuffs[$ debuff_name], c_green]
+			return [debuffs[$ debuff_name], debuff_color]
 			
 		case card_debuff_effects.Wound:
 			debuffs[$ debuff_name] -= 1
@@ -33,10 +34,10 @@ function get_debuff_damage(debuffs, debuff_name) {
 				struct_remove(debuffs, debuff_name)
 				return []
 			}
-			return [debuffs[$ debuff_name] + 1, c_red]
+			return [debuffs[$ debuff_name] + 1, debuff_color]
 			
 		default:
-			return [debuffs[$ debuff_name], c_orange]
+			return [debuffs[$ debuff_name], debuff_color]
 	}
 }
 
@@ -46,26 +47,7 @@ function get_debuff_damage(debuffs, debuff_name) {
 /// @param {Real} debuff_amount		Amount of the debuff being applied (This should be >0)
 /// @returns {Array<Any>, Array}	The amount and color of the debuff
 function apply_debuff(debuffs, debuff_name, debuff_amount) {
-	var debuff_color = c_orange
-	
-	switch (debuff_name) {
-		case card_debuff_effects.Poison:
-			debuff_color = c_purple
-			break
-			
-		case card_debuff_effects.Weakness:
-			debuff_color = c_dkgrey
-			break
-			
-		case card_debuff_effects.Mark:
-			debuff_color = c_green
-			break
-			
-		case card_debuff_effects.Wound:
-			debuff_color = c_red
-			break
-	}
-	
+	var debuff_color = get_debuff_color(debuff_name)
 	if(debuff_amount <= 0) {
 		return [0, debuff_color]
 	}
@@ -77,4 +59,26 @@ function apply_debuff(debuffs, debuff_name, debuff_amount) {
 	}
 		
 	return [debuff_amount, debuff_color]
+}
+
+/// @desc							Finds the color to be used when displaying the given debuff
+/// @param {string} debuff_name		The debuff being applied
+/// @returns {Constant.Color}		The color of the given debuff
+function get_debuff_color(debuff_name) {
+	switch (debuff_name) {
+		case card_debuff_effects.Poison:
+			return c_purple
+			
+		case card_debuff_effects.Weakness:
+			return c_dkgrey
+			
+		case card_debuff_effects.Mark:
+			return c_green
+			
+		case card_debuff_effects.Wound:
+			return c_red
+			
+		default:
+			return c_orange
+	}
 }

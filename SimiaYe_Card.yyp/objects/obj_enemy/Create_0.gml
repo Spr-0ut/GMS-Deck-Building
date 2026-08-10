@@ -1,14 +1,56 @@
 active_debuffs = {}
+active_buffs = {}
 display_next_damage_text = true
 damage_to_display = []
+next_attack_index = 0
+
+#region Implement in each enemy type
+
+attack_options = [{attack : method(self, basic_attack), attack_parameters : [], targeting_type : enemy_attack_target.first_closest_chara}]
+
+/// @desc							Assesses the current state of the fight and determines if an
+///										attack should be added or not
+check_for_conditional_attack = function() {
+	// Only add an implement if the enemy can change or add an attack immediately before declaring it
+}
+
+/// @desc							This is a basic example of an enemy's attack. It is expected that there
+///										will be multiple attack functions implemented in each enemy type
+/// @returns {attack_data_struct}	The return value of attack functions must be an attack_data_struct
+function basic_attack() {
+	return new attack_data_struct(irandom(10) + 1)
+}
+
+#endregion
+
+
+/// @desc							Checks if this enemy has summon sickness from just being summoned
+///										and adds a temporary attack that clears the summon sickness
+function check_for_summon_sickness() {
+	if(has_summon_sickness) {
+		array_insert(attack_options, next_attack_index + 1, 
+		{
+			attack : method(self, summon_sickness_attack),
+			attack_parameters : [],
+			targeting_type : enemy_attack_target.self_target,
+			is_temporary_attack : true
+		})
+	}
+}
+
+/// @desc						Clears the enemy's summon sickness
+function summon_sickness_attack() {
+	has_summon_sickness = false
+	return new attack_data_struct(-1, [], [], false, [], true)
+}
 
 /// @desc										Handles player attacks by applying debuffs and removing
 ///													attack_data.damage from their health
 /// @param {Id.Instance} attacking_chara		The character attacking this enemy			
-/// @param {Real} damage_multiplyer				The amount that the character's damage will be multiplied by	
-function hit_by_player(attacking_chara, damage_multiplyer) {
-	var attack_data = attacking_chara.get_attack(damage_multiplyer)
-	if(struct_exists(attack_data, "damage")) {
+/// @param {stuct} attack_data					The struct containting the "damage", "debuffs", and buffs
+///													from the character's attack
+function hit_by_player(attacking_chara, attack_data) {
+	if(struct_exists(attack_data, "damage") && attack_data.damage > -1) {
 		take_damage(attack_data.damage)
 		array_push(damage_to_display, [attack_data.damage, c_white])
 		
@@ -25,9 +67,17 @@ function hit_by_player(attacking_chara, damage_multiplyer) {
 			apply_debuff_to_enemy(debuff_type, debuff_amount)
 		}
 	}
+	
+	if(struct_exists(attack_data, "buffs")) {
+		for(var attack_buff_index = 0; attack_buff_index < array_length(attack_data.buffs); attack_buff_index++) {
+			var buff_type = attack_data.buffs[attack_buff_index][0]
+			var buff_amount = attack_data.buffs[attack_buff_index][1]
+			apply_buff_to_enemy(buff_type, buff_amount)
+		}
+	}
 }
 
-/// @description								Debuffs this enemy through the debuff_handler and adds it
+/// @desc										Debuffs this enemy through the debuff_handler and adds it
 ///													to the damage_to_display
 /// @param {card_debuff_effects} debuff_type	The debuff being applied to this enemy
 /// @param {Real} debuff_amount					The amount of the debuff being added
@@ -38,11 +88,61 @@ function apply_debuff_to_enemy(debuff_type, debuff_amount) {
 	}
 }
 
-/// @desc			Damages the player by enemy Attack_damage
-function attack_player() {
-	obj_player.hit_by_enemy(Attack_damage)
+/// @desc										Applies, or adds to, a buff for this character and
+///													displays it
+/// @param {card_debuff_effects} debuff_type	The buff being applied to this enemy
+/// @param {Real} debuff_amount					The amount of the buff being added
+function apply_buff_to_enemy(buff_type, buff_amount) {
+	var buff_damage = apply_buff(active_buffs, buff_type, buff_amount)
+	if(array_length(buff_damage) == 2) {
+		array_push(damage_to_display, buff_damage)
+	}
 }
 
+/// @desc							Determines if the previous attack was a temporary attack,
+///										and if so it removes the attack from attack_options
+function remove_temporary_attack() {
+	if(next_attack_index >= 0 &&
+			next_attack_index < array_length(attack_options) &&
+			struct_exists(attack_options[next_attack_index], "is_temporary_attack") &&
+			attack_options[next_attack_index].is_temporary_attack) {
+		array_delete(attack_options, next_attack_index, 1)
+		next_attack_index--
+	}
+}
+
+/// @desc							Determines the current attack and sets the it as the
+///										attack intent for this enemy
+function select_next_attack() {
+	if(next_attack_index >= array_length(attack_options) || next_attack_index < 0) {
+		next_attack_index = 0
+	}
+	
+	if(instance_exists(obj_enemy_attack_manager)) {
+		var enemy_attack_data = get_next_attack()
+		var enemy_attack = method_call(enemy_attack_data.attack, enemy_attack_data.attack_parameters)
+		obj_enemy_attack_manager.add_enemy_intent(id, enemy_attack, enemy_attack_data.targeting_type)
+	}
+}
+
+/// @desc							Finds this enemy's next attack based on next_attack_index
+///										NOTE: This function does NOT handle incrementing next_attack_index
+/// @returns {Struct}				A struct with the attack function and targeting_type for the enemy's
+///										next attack
+function get_next_attack() {
+	if(array_length(attack_options) < 1 || next_attack_index >= array_length(attack_options)) {
+		return noone	
+	}
+	
+	var attack_option = attack_options[next_attack_index]
+	if(attack_option.attack == noone || !is_method(attack_option.attack) || 
+			attack_option.targeting_type < 0) {
+		array_delete(attack_options, next_attack_index, 1)
+		attack_option = get_next_attack()
+	}
+	
+	return attack_option
+}
 
 /// @desc							Formats a number by removing any trailing 0s or decimals
 /// @param {Real} num_to_format		The number to be returned after formatting
@@ -92,5 +192,8 @@ function take_damage(health_damage) {
 	if(Health <= 0 && Is_alive) {
 		Is_alive = false
 		show_debug_message("This enemy is dead")
+		if(instance_exists(obj_enemy_attack_manager)) {
+			obj_enemy_attack_manager.remove_enemy_intent(id)
+		}
 	}
 }

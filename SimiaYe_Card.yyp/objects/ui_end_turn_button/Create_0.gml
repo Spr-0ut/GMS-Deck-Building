@@ -43,6 +43,7 @@ function trigger_player_end_of_turn_effects() {
 	
 	for(var chara_index = 0; chara_index < num_player_charas; chara_index++) {
 		player_charas[chara_index].trigger_end_of_turn_buffs()
+		player_charas[chara_index].trigger_end_of_turn_debuffs()
 	}
 	
 	start_enemy_turn()
@@ -50,34 +51,22 @@ function trigger_player_end_of_turn_effects() {
 
 /// @desc			Finds all the enemies that currently exist and allows them to take their turn
 function start_enemy_turn() {
-	var num_enemies = instance_number(obj_enemy)
-	var enemies = array_create(num_enemies)
-	for(var enemy_index = 0; enemy_index < num_enemies; enemy_index++) {
-		enemies[enemy_index] = instance_find(obj_enemy, enemy_index)
-	}
-	
-	array_sort(enemies, sort_enemies)
-	
-	for(var enemy_index = 0; enemy_index < num_enemies; enemy_index++) {
-		enemies[enemy_index].attack_player()
+	if(instance_exists(obj_enemy_attack_manager)) {
+		obj_enemy_attack_manager.perform_attacks()
 	}
 	//This is a temporary solution to stop the player pressing the button multiple times.
 	//Eventually this should be replaced with waiting for the enemy to finish their animation
 	alarm[0] = 60
 }
 
-/// @desc			Finds all the enemies that currently exist and triggers end of turn actions
+/// @desc			Triggers end of turn for the enemies and prepare to start the players turn
 function end_enemy_turn() {
-	var num_enemies = instance_number(obj_enemy)
-	var enemies = array_create(num_enemies)
-	for(var enemy_index = 0; enemy_index < num_enemies; enemy_index++) {
-		enemies[enemy_index] = instance_find(obj_enemy, enemy_index)
+	if(instance_exists(obj_enemy_manager)) {
+		obj_enemy_manager.end_enemies_turn()
 	}
-	
-	array_sort(enemies, sort_enemies)
-	
-	for(var enemy_index = 0; enemy_index < num_enemies; enemy_index++) {
-		enemies[enemy_index].trigger_end_of_turn_debuffs()
+	else {
+		var enemy_manager_layer = layer_create(0, "enemy_manager_layer")
+		instance_create_layer(0, 0, enemy_manager_layer, obj_enemy_manager)
 	}
 	
 	if(skip_players_next_turn) {
