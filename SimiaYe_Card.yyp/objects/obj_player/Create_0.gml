@@ -52,6 +52,10 @@ chara_shield = 0
 player_current_health = player_max_health
 turns_since_gain_strength_on_attack = 1
 
+if(!is_real(chara_id) || chara_id < 0) {
+	chara_id = create_chara_id()	
+}
+
 /// @desc								Sets the controlled character's initial position so they are
 ///											next to the obj_room_change_trigger with pos_num equal to
 ///											pos_num_to_swap_to and in the direction of place_player_dir

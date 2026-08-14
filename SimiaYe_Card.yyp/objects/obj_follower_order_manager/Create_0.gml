@@ -29,6 +29,7 @@ function create_chara_instances(sorted_chara_to_create) {
 			var chara_instance = instance_create_layer(x_pos, y_pos, chara_layer, cur_chara.object_index, {
 				player_max_health : cur_chara.player_max_health,
 				is_controlled_chara : cur_chara.is_controlled_chara,
+				chara_id : cur_chara.chara_id
 			})
 		
 			if(previous_chara != noone) {
@@ -62,6 +63,7 @@ function update_chara_order(new_chara_order) {
 			for(var chara_index = 0; chara_index < instance_number(obj_player); chara_index++) {
 				var chara = instance_find(obj_player, chara_index)
 				if(chara.chara_id == new_chara_order[new_chara_index].chara_id) {
+					chara.follower = noone
 					previous_chara.follower = chara
 					previous_chara = chara
 					break

@@ -13,7 +13,7 @@ is_expanded_party_box = true
 /// @desc									Sets the given character card to the slot they were closest
 ///												to and saves it as one of the party members
 /// @param {Id.Instance} chara_card_to_add	The card of the character to add to the player's party
-function add_party_memeber(chara_card_to_add) {
+function add_party_memeber(chara_card_to_add, index_to_replace = -1) {
 	if(typeof(chara_card_to_add) == "ref") {
 		if(is_expanded_party_box) {
 			chara_card_to_add.sprite_index	= chara_card_to_add.chara_card_data.expanded_card_sprite
@@ -22,36 +22,42 @@ function add_party_memeber(chara_card_to_add) {
 			chara_card_to_add.sprite_index	= chara_card_to_add.chara_card_data.shrunk_card_sprite
 		}
 		
-		var chara_slot_width = sprite_width / MAX_PARTY_SIZE
-		var index_to_replace = clamp(floor((chara_card_to_add.x - x) / chara_slot_width), 0, MAX_PARTY_SIZE)
-		
-		if(current_party_chara[index_to_replace] == chara_card_to_add) {
-			return	
+		if(typeof(index_to_replace) != "number" || index_to_replace < 0 || index_to_replace >= MAX_PARTY_SIZE) {
+			var chara_slot_width = sprite_width / MAX_PARTY_SIZE
+			index_to_replace = clamp(floor((chara_card_to_add.x - x) / chara_slot_width), 0, MAX_PARTY_SIZE)
 		}
 		
-		shift_party_chara_cards(chara_card_to_add, index_to_replace)
-		current_party_chara[index_to_replace] = chara_card_to_add
-		set_party_chara_card_pos(chara_card_to_add, index_to_replace)
+		if(current_party_chara[index_to_replace] != chara_card_to_add) {
+			shift_party_chara_cards(chara_card_to_add, index_to_replace)
+			current_party_chara[index_to_replace] = chara_card_to_add
+			set_party_chara_card_pos(chara_card_to_add, index_to_replace)
 		
-		if(instance_exists(obj_chara_card_grid)) {
-			obj_chara_card_grid.empty_card_slot(chara_card_to_add)	
-		}
+			if(instance_exists(obj_chara_card_grid)) {
+				obj_chara_card_grid.empty_card_slot(chara_card_to_add)	
+			}
 		
-		if(instance_exists(obj_follower_order_manager)) {
-			var new_chara_order = []
-			for(var chara_index = 0; chara_index < array_length(current_party_chara); chara_index++) {
-				if(current_party_chara[chara_index] != noone) {
-					var current_chara_data = current_party_chara[chara_index].chara_card_data
-					current_chara_data.is_controlled_chara = false
-					array_push(new_chara_order, current_chara_data)
-				}
-			}
-			if(array_length(new_chara_order) > 0) {
-				new_chara_order[0].is_controlled_chara = true
-				obj_follower_order_manager.update_chara_order(new_chara_order)
-			}
+			update_follower_order()
 		}
 	}
+}
+
+/// @desc							Alerts the obj_follower_order_manager that the party has changed
+///										to ensure the changes are used outside of the chara select
+function update_follower_order() {
+	if(instance_exists(obj_follower_order_manager)) {
+		var new_chara_order = []
+		for(var chara_index = 0; chara_index < array_length(current_party_chara); chara_index++) {
+			if(current_party_chara[chara_index] != noone) {
+				var current_chara_data = current_party_chara[chara_index].chara_card_data
+				current_chara_data.is_controlled_chara = false
+				array_push(new_chara_order, current_chara_data)
+			}
+		}
+		if(array_length(new_chara_order) > 0) {
+			new_chara_order[0].is_controlled_chara = true
+			obj_follower_order_manager.update_chara_order(new_chara_order)
+		}
+	}	
 }
 
 /// @desc									Checks if any existing character cards in the party need
@@ -134,6 +140,23 @@ function remove_from_party(chara_card) {
 		}
 		current_party_chara[party_index] = noone
 	}
+}
+
+/// @desc							Finds if there was a party previously created and if so sets
+///										their cards in the correct order in the party box
+function find_current_party() {
+	if(instance_exists(obj_follower_order_manager)) {
+		var charas_ordered = obj_follower_order_manager.chara_order
+		if(array_length(charas_ordered) > 0 && instance_exists(obj_chara_card_grid)) {
+			var party_chara_cards = obj_chara_card_grid.find_chara_cards_by_chara_id(charas_ordered)
+			var max_index = min(array_length(party_chara_cards), MAX_PARTY_SIZE)
+			for(var chara_card_index = 0; chara_card_index < max_index; chara_card_index++) {
+				if(party_chara_cards[chara_card_index] != noone) {
+					add_party_memeber(party_chara_cards[chara_card_index], chara_card_index)
+				}
+			}
+		}
+	}	
 }
 
 /// @desc							Alerts the party character card box to begin expanding

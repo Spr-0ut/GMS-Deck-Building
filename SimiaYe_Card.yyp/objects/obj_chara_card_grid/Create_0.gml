@@ -2,13 +2,29 @@
 #macro CHARA_CARD_X_PADDING			6
 #macro CHARA_CARD_Y_PADDING			6
 
-chara_cards_to_display = [obj_gilk_chara_card, obj_gilk_chara_card, obj_main_chara_card]
+chara_cards_to_display = get_unlocked_chara_cards()
 chara_card_instances = []
 chara_card_grid_layer = layer_create(layer_get_depth(layer) - 1, "chara_card_grid_instance")
 is_expanded_grid = false
 grid_is_moving = false
 target_grid_y = y
 create_chara_card_grid_view()
+
+/// @desc							Finds if there has been any data_chara created before, and if so returns
+///										the chara's data. Otherwise returns a default set of data
+/// @returns {Array<data_chara>}	The data structs for the currently unlocked characters
+function get_unlocked_chara_cards() {
+	var chara_data_struct = new data_chara(-1)
+	var unlocked_chara_cards = []
+	if(struct_exists(chara_data_struct, "chara") && array_length(chara_data_struct.get_all_chara_data()) > 0) {
+		unlocked_chara_cards = chara_data_struct.get_all_chara_data()
+	}
+	else {
+		unlocked_chara_cards = [new data_gilk(), new data_gilk(), new data_main()]
+	}
+	
+	return unlocked_chara_cards
+}
 
 /// @desc							Creates a grid of the character cards in chara_cards_to_display
 ///										and saves them to chara_card_instances
@@ -44,14 +60,16 @@ function create_chara_card_grid_view() {
 				card_y_pos += chara_card_height
 			}
 
-			var display_card = instance_create_layer(card_x_pos, card_y_pos, chara_card_grid_layer, chara_cards_to_display[card_index], {
+			var chara_card_data = chara_cards_to_display[card_index]
+			var display_card = instance_create_layer(card_x_pos, card_y_pos, chara_card_grid_layer, chara_card_data.chara_card_index, {
 				image_xscale,
 				image_yscale,
-				grid_index : card_index
+				grid_index : card_index,
+				chara_card_data
 			})
 			
-			if(display_card.chara_card_data.shrunk_card_sprite != noone) {
-				display_card.sprite_index = display_card.chara_card_data.shrunk_card_sprite
+			if(chara_card_data.shrunk_card_sprite != noone) {
+				display_card.sprite_index = chara_card_data.shrunk_card_sprite
 			}
 			else {
 				display_card.sprite_index = spr_shrunk_chara_card
@@ -61,6 +79,23 @@ function create_chara_card_grid_view() {
 			card_x_pos += chara_card_width + (chara_card_grid_width % chara_card_width / num_columns)
 		}
 	}
+}
+
+/// @desc									Searches the chara_card_instances to find any character cards
+///												with this given character ids
+/// @param {Array<Real>} chara_ids_to_find	The ids of the character to match the card to
+/// @returns {Array<Id.Instance>}			An array of all the character cards that match the given ids
+function find_chara_cards_by_chara_id(chara_ids_to_find) {
+	var chara_cards_found = array_create(array_length(chara_ids_to_find), noone)
+	for(var chara_card_index = 0; chara_card_index < array_length(chara_card_instances); chara_card_index++) {
+		var cur_chara_card = chara_card_instances[chara_card_index]
+		for(var chara_id_index = 0; chara_id_index < array_length(chara_ids_to_find); chara_id_index++) {
+			if(chara_ids_to_find[chara_id_index].chara_id == cur_chara_card.chara_card_data.chara_id) {
+				chara_cards_found[chara_id_index] = cur_chara_card
+			}
+		}
+	}
+	return chara_cards_found
 }
 
 /// @desc								Returns the given card back into the chara card grid display.

@@ -4,9 +4,7 @@
   "eventList":[],
   "managed":true,
   "name":"obj_main_chara_card",
-  "overriddenProperties":[
-    {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"obj_chara_card","path":"objects/obj_chara_card/obj_chara_card.yy",},"propertyId":{"name":"chara_card_data","path":"objects/obj_chara_card/obj_chara_card.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"new data_main()",},
-  ],
+  "overriddenProperties":[],
   "parent":{
     "name":"Chara Select",
     "path":"folders/Objects/Chara Select.yy",
