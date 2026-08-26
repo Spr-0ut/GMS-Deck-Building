@@ -3,6 +3,16 @@ event_inherited();
 
 button_can_be_pressed = true
 
+/// @desc								Handles ending the player's turn and locking the button from
+///											being pressed again before their turn starts again
+function handle_mouse_left_button_release() {
+	if(button_can_be_pressed) {
+		button_can_be_pressed = false
+		image_alpha = 1
+		end_player_turn()
+	}
+}
+
 /// @desc								Starts the end turn process by looping through all the cards
 ///											and running their player_turn_end_action
 /// @param {Real} card_index			The index of the card in the player's hand to run the 

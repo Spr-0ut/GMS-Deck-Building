@@ -139,6 +139,7 @@ function remove_from_party(chara_card) {
 			obj_chara_card_grid.return_chara_card_to_grid(chara_card)
 		}
 		current_party_chara[party_index] = noone
+		update_follower_order()
 	}
 }
 

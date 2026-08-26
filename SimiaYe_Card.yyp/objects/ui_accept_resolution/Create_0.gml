@@ -1,4 +1,8 @@
-if(button_clicked && is_top_layer(layer)) {
+// Inherit the parent event
+event_inherited();
+
+/// @desc						Handles accepting the resolution changes
+function handle_mouse_left_button_release() {
 	button_clicked = false
 	global.object_being_clicked = false
 	ui_window_settings_updater.accept_resolution_changes()

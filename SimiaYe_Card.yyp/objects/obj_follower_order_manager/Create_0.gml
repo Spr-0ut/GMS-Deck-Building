@@ -12,6 +12,15 @@ if(!variable_global_exists("followers_being_added")) {
 followers_to_add = ds_queue_create()
 room_has_started = false
 
+/// @desc							Shows the button for the character select room when the player
+///										is in the rm_forest
+function show_chara_select_button() {
+	if(layer_exists("chara_select_button")) {
+		var chara_select_button_layer = layer_get_id("chara_select_button")
+		layer_set_visible(chara_select_button_layer, room == rm_forest)
+	}
+}
+
 /// @desc												Creates an instance of each of the characters given
 /// @param {Array<data_chara>} sorted_chara_to_create	The array of data_chara to create instances of
 function create_chara_instances(sorted_chara_to_create) {

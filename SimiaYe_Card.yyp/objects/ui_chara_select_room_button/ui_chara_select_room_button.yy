@@ -1,13 +1,13 @@
 {
   "$GMObject":"",
-  "%Name":"ui_room_switch_button",
+  "%Name":"ui_chara_select_room_button",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"ui_room_switch_button",
+  "name":"ui_chara_select_room_button",
   "overriddenProperties":[
-    {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"ui_button","path":"objects/ui_button/ui_button.yy",},"propertyId":{"name":"button_text","path":"objects/ui_button/ui_button.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"Default Text",},
+    {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"ui_button","path":"objects/ui_button/ui_button.yy",},"propertyId":{"name":"button_text","path":"objects/ui_button/ui_button.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"C",},
   ],
   "parent":{
     "name":"Button",
@@ -30,17 +30,13 @@
   "physicsShape":1,
   "physicsShapePoints":[],
   "physicsStartAwake":true,
-  "properties":[
-    {"$GMObjectProperty":"v2","%Name":"new_room","filters":[
-        "GMRoom",
-      ],"listItems":[],"multiselect":false,"name":"new_room","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resource":{"name":"rm_main_menu","path":"rooms/rm_main_menu/rm_main_menu.yy",},"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"rm_main_menu","varType":5,},
-  ],
+  "properties":[],
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"spr_default_button",
-    "path":"sprites/spr_default_button/spr_default_button.yy",
+    "name":"spr_chara_select_room_button",
+    "path":"sprites/spr_chara_select_room_button/spr_chara_select_room_button.yy",
   },
   "spriteMaskId":null,
   "visible":true,

@@ -5,16 +5,20 @@ event_inherited();
 
 is_sort_selected = false
 is_sort_ascending = true
-alpha = 1
 
 draw_set_font(font)
 setup_triangle()
 set_bounding_box()
 
+/// @desc								Handles changing the sort direction of the card grid
+function handle_mouse_left_button_release() {
+	change_sort_direction()
+}
+
 /// @desc								Sets the draw variables and draws the button text
 function draw_button_text() {
 	draw_set_font(font)
-	draw_set_alpha(alpha)
+	draw_set_alpha(image_alpha)
 	draw_set_colour(text_color)
 	draw_text(x, y, button_text);
 }
