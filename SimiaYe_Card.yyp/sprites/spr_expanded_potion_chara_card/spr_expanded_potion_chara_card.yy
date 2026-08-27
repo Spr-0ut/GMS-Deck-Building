@@ -1,6 +1,6 @@
 {
   "$GMSprite":"v2",
-  "%Name":"spr_expanded_chara_card",
+  "%Name":"spr_expanded_potion_chara_card",
   "bboxMode":0,
   "bbox_bottom":331,
   "bbox_left":0,
@@ -12,16 +12,16 @@
   "edgeFiltering":false,
   "For3D":false,
   "frames":[
-    {"$GMSpriteFrame":"v1","%Name":"2c9316d2-8352-4ab0-830d-2040730503ba","name":"2c9316d2-8352-4ab0-830d-2040730503ba","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"3f97fec2-b3ab-42ee-b1e4-83a2764d9725","name":"3f97fec2-b3ab-42ee-b1e4-83a2764d9725","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
   ],
   "gridX":0,
   "gridY":0,
   "height":332,
   "HTile":false,
   "layers":[
-    {"$GMImageLayer":"","%Name":"cbf9a20c-7438-4bc4-901d-dcef6bda2d54","blendMode":0,"displayName":"default","isLocked":false,"name":"cbf9a20c-7438-4bc4-901d-dcef6bda2d54","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
+    {"$GMImageLayer":"","%Name":"c1b32a7f-d4ab-4a3b-8065-702e8a828700","blendMode":0,"displayName":"default","isLocked":false,"name":"c1b32a7f-d4ab-4a3b-8065-702e8a828700","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
   ],
-  "name":"spr_expanded_chara_card",
+  "name":"spr_expanded_potion_chara_card",
   "nineSlice":{
     "$GMNineSliceData":"",
     "bottom":0,
@@ -44,15 +44,15 @@
   },
   "origin":0,
   "parent":{
-    "name":"Chara",
-    "path":"folders/Sprites/Chara.yy",
+    "name":"Chara_Cards_Expanded",
+    "path":"folders/Sprites/Chara/Chara_Cards_Expanded.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",
   "resourceVersion":"2.0",
   "sequence":{
     "$GMSequence":"v1",
-    "%Name":"spr_expanded_chara_card",
+    "%Name":"spr_expanded_potion_chara_card",
     "autoRecord":true,
     "backdropHeight":768,
     "backdropImageOpacity":0.5,
@@ -76,7 +76,7 @@
       "resourceType":"KeyframeStore<MomentsEventKeyframe>",
       "resourceVersion":"2.0",
     },
-    "name":"spr_expanded_chara_card",
+    "name":"spr_expanded_potion_chara_card",
     "playback":1,
     "playbackSpeed":30.0,
     "playbackSpeedType":0,
@@ -88,8 +88,8 @@
     "tracks":[
       {"$GMSpriteFramesTrack":"","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"$KeyframeStore<SpriteFrameKeyframe>":"","Keyframes":[
             {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
-                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"2c9316d2-8352-4ab0-830d-2040730503ba","path":"sprites/spr_expanded_chara_card/spr_expanded_chara_card.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
-              },"Disabled":false,"id":"291639fd-1153-4fe2-be04-0042ec4821bd","IsCreationKey":false,"Key":0.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"3f97fec2-b3ab-42ee-b1e4-83a2764d9725","path":"sprites/spr_expanded_potion_chara_card/spr_expanded_potion_chara_card.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+              },"Disabled":false,"id":"1f71b3c2-3038-4989-b413-e43515e8ec0e","IsCreationKey":false,"Key":0.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
           ],"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"2.0",},"modifiers":[],"name":"frames","resourceType":"GMSpriteFramesTrack","resourceVersion":"2.0","spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange":null,

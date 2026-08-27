@@ -15,12 +15,7 @@ is_expanded_party_box = true
 /// @param {Id.Instance} chara_card_to_add	The card of the character to add to the player's party
 function add_party_memeber(chara_card_to_add, index_to_replace = -1) {
 	if(typeof(chara_card_to_add) == "ref") {
-		if(is_expanded_party_box) {
-			chara_card_to_add.sprite_index	= chara_card_to_add.chara_card_data.expanded_card_sprite
-		}
-		else {
-			chara_card_to_add.sprite_index	= chara_card_to_add.chara_card_data.shrunk_card_sprite
-		}
+		chara_card_to_add.sprite_index = find_chara_card_sprite(chara_card_to_add.chara_card_data.class, is_expanded_party_box)
 		
 		if(typeof(index_to_replace) != "number" || index_to_replace < 0 || index_to_replace >= MAX_PARTY_SIZE) {
 			var chara_slot_width = sprite_width / MAX_PARTY_SIZE
@@ -204,12 +199,7 @@ function party_box_resize_completed() {
 	for(var party_index = 0; party_index < array_length(current_party_chara); party_index++) {
 		if(current_party_chara[party_index] != noone) {
 			var chara_data = current_party_chara[party_index].chara_card_data
-			if(is_expanded_party_box) {
-				current_party_chara[party_index].sprite_index = chara_data.expanded_card_sprite
-			}
-			else {
-				current_party_chara[party_index].sprite_index = chara_data.shrunk_card_sprite
-			}
+			current_party_chara[party_index].sprite_index = find_chara_card_sprite(chara_data.class, is_expanded_party_box)
 			current_party_chara[party_index].image_yscale = starting_y_scale
 		}
 	}

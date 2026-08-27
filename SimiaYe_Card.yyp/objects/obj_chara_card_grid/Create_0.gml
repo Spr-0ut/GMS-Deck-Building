@@ -40,9 +40,9 @@ function create_chara_card_grid_view() {
 		
 		//This assumes the cards will always be the same size. As of right now that's true and to make it
 		//	more generic would result in a potentially worse solution
-		var chara_card_width = (sprite_get_width(spr_shrunk_chara_card) +
+		var chara_card_width = (sprite_get_width(spr_shrunk_mech_chara_card) +
 									(2 * CHARA_CARD_X_PADDING)) * image_xscale
-		var chara_card_height = (sprite_get_height(spr_shrunk_chara_card) +
+		var chara_card_height = (sprite_get_height(spr_shrunk_mech_chara_card) +
 									(2 * CHARA_CARD_Y_PADDING)) * image_yscale
 		var chara_card_grid_width = sprite_width - (2 * CHARA_CARD_GRID_PADDING * image_xscale)
 		var num_columns = floor(chara_card_grid_width / chara_card_width)
@@ -62,20 +62,14 @@ function create_chara_card_grid_view() {
 
 			var chara_card_data = chara_cards_to_display[card_index]
 			var display_card = instance_create_layer(card_x_pos, card_y_pos, chara_card_grid_layer, chara_card_data.chara_card_index, {
+				sprite_index : find_chara_card_sprite(chara_card_data.class, false),
 				image_xscale,
 				image_yscale,
 				grid_index : card_index,
 				chara_card_data
 			})
 			
-			if(chara_card_data.shrunk_card_sprite != noone) {
-				display_card.sprite_index = chara_card_data.shrunk_card_sprite
-			}
-			else {
-				display_card.sprite_index = spr_shrunk_chara_card
-			}
 			chara_card_instances[card_index] = display_card
-			
 			card_x_pos += chara_card_width + (chara_card_grid_width % chara_card_width / num_columns)
 		}
 	}
@@ -104,22 +98,10 @@ function find_chara_cards_by_chara_id(chara_ids_to_find) {
 /// @param {Id.Instance} chara_card		The chara card to be placed in the grid
 function return_chara_card_to_grid(chara_card) {
 	if(typeof(chara_card) == "ref" && chara_card != noone && instance_exists(chara_card)) {
-		var chara_card_sprite = spr_shrunk_chara_card
-		if(is_expanded_grid) {
-			if(chara_card.chara_card_data.expanded_card_sprite != noone) {
-				chara_card_sprite = chara_card.chara_card_data.expanded_card_sprite
-			}
-			else {
-				chara_card_sprite = spr_expanded_chara_card
-			}
-		}
-		else if(chara_card.chara_card_data.shrunk_card_sprite != noone) {
-			chara_card_sprite = chara_card.chara_card_data.shrunk_card_sprite
-		}
-		chara_card.sprite_index	= chara_card_sprite
+		chara_card.sprite_index	= find_chara_card_sprite(chara_card.chara_card_data.class, is_expanded_grid)
+		var chara_card_width = (sprite_get_width(chara_card.sprite_index) + (2 * CHARA_CARD_X_PADDING)) * image_xscale
+		var chara_card_height = (sprite_get_height(chara_card.sprite_index) + (2 * CHARA_CARD_Y_PADDING)) * image_yscale
 		
-		var chara_card_width = (sprite_get_width(chara_card_sprite) + (2 * CHARA_CARD_X_PADDING)) * image_xscale
-		var chara_card_height = (sprite_get_height(chara_card_sprite) + (2 * CHARA_CARD_Y_PADDING)) * image_yscale
 		var chara_card_grid_width = sprite_width - (2 * CHARA_CARD_GRID_PADDING * image_xscale)
 		var num_columns = floor(chara_card_grid_width / chara_card_width)
 		
@@ -191,7 +173,7 @@ function shrink_chara_card_grid() {
 /// @param {Bool} shrunk_cards	Flag to determine if the cards will be the shrunk version or not
 /// @param {Real} grid_y_pos		The vertical position of the character card grid
 function set_chara_cards_pos(shrunk_cards, grid_y_pos) {
-	var chara_card_sprite = shrunk_cards ? spr_shrunk_chara_card : spr_expanded_chara_card
+	var chara_card_sprite = shrunk_cards ? spr_shrunk_mech_chara_card : spr_expanded_mech_chara_card
 	
 	//This assumes the cards will always be the same size. As of right now that's true and to make it
 	//	more generic would result in a potentially worse solution
@@ -208,9 +190,7 @@ function set_chara_cards_pos(shrunk_cards, grid_y_pos) {
 
 		if(chara_card_instances[card_index] != noone) {
 			var card_data = chara_card_instances[card_index].chara_card_data
-			chara_card_instances[card_index].sprite_index = shrunk_cards ? 
-																card_data.shrunk_card_sprite : 
-																card_data.expanded_card_sprite
+			chara_card_instances[card_index].sprite_index = find_chara_card_sprite(card_data.class, !shrunk_cards)
 			chara_card_instances[card_index].y = card_y_pos
 		}
 	}
