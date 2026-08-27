@@ -3,6 +3,8 @@
   "%Name":"ui_close_chara_select",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":64,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
   "name":"ui_close_chara_select",
@@ -35,8 +37,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"spr_close_layer",
-    "path":"sprites/spr_close_layer/spr_close_layer.yy",
+    "name":"spr_close_chara_select_button",
+    "path":"sprites/spr_close_chara_select_button/spr_close_chara_select_button.yy",
   },
   "spriteMaskId":null,
   "visible":true,

@@ -31,6 +31,7 @@
     {"name":"etest","order":1,"path":"sprites/etest/etest.yy",},
     {"name":"spr_chara_select_room_button","order":1,"path":"sprites/spr_chara_select_room_button/spr_chara_select_room_button.yy",},
     {"name":"spr_charge_attack_symbol","order":2,"path":"sprites/spr_charge_attack_symbol/spr_charge_attack_symbol.yy",},
+    {"name":"spr_close_chara_select_button","order":5,"path":"sprites/spr_close_chara_select_button/spr_close_chara_select_button.yy",},
     {"name":"spr_expanded_chara_card","order":1,"path":"sprites/spr_expanded_chara_card/spr_expanded_chara_card.yy",},
     {"name":"spr_expanded_chara_select_grid","order":2,"path":"sprites/spr_expanded_chara_select_grid/spr_expanded_chara_select_grid.yy",},
     {"name":"spr_expanded_party_select_slots","order":1,"path":"sprites/spr_expanded_party_select_slots/spr_expanded_party_select_slots.yy",},
