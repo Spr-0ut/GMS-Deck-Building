@@ -51,6 +51,8 @@ function create_chara_card_grid_view() {
 								(chara_card_grid_width % chara_card_width / num_columns)
 		var initial_y_pos = y + (CHARA_CARD_GRID_PADDING + CHARA_CARD_Y_PADDING) * image_yscale
 		chara_card_instances = array_create(array_length(chara_cards_to_display))
+		
+		var chara_card_flexpanels = create_chara_card_flexpanels(image_xscale, image_yscale)
 	
 		var card_x_pos = initial_x_pos
 		var card_y_pos = initial_y_pos - chara_card_height
@@ -67,6 +69,7 @@ function create_chara_card_grid_view() {
 				image_yscale,
 				grid_index : card_index,
 				chara_card_data
+				flexpanels : chara_card_flexpanels
 			})
 			
 			chara_card_instances[card_index] = display_card
