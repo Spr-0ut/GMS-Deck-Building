@@ -1,6 +1,1 @@
-draw_chara_card_portrait(flexpanels, chara_card_data.chara_portrait)
-draw_self()
-draw_chara_card_potion_slots(flexpanels, chara_card_data.num_potion_slots)
-draw_chara_card_health(flexpanels, chara_card_data.player_max_health, chara_card_data.player_max_health)
-draw_chara_card_attack(flexpanels, chara_card_data.chara_attack)
-draw_chara_card_description(flexpanels, chara_card_data.chara_description)
+flexpanels.draw_chara_card(method(self, draw_self))
