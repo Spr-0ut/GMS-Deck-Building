@@ -252,33 +252,37 @@ function chara_card_drawn_elements(card_xscale = 1, card_yscale = 1) constructor
 	///												card's portrait
 	/// @param {Asset.GMSprite} portrait		The portrait sprite to show on the character card
 	function set_chara_card_portrait(portrait) {
-		portrait_sprite = portrait
-		var image_box_layout = flexpanel_node_layout_get_position(flexpanel_node_get_child(chara_card_flexpanels, "image_box"), false)
-		find_chara_card_portrait_scaling(portrait)
-		portrait_x_in_card = image_box_layout.left + image_box_layout.paddingLeft +
-								((image_box_layout.width +
-								sprite_get_width(portrait) * portrait_scale) / 2) -
-								sprite_get_xoffset(portrait) * portrait_scale
-		portrait_y_in_card = image_box_layout.top + image_box_layout.height - image_box_layout.paddingBottom -
-								(sprite_get_height(portrait) - sprite_get_yoffset(portrait)) * portrait_scale
+		if(typeof(portrait) == "ref" && sprite_exists(portrait)) {
+			portrait_sprite = portrait
+			var image_box_layout = flexpanel_node_layout_get_position(flexpanel_node_get_child(chara_card_flexpanels, "image_box"), false)
+			find_chara_card_portrait_scaling(portrait)
+			portrait_x_in_card = image_box_layout.left + image_box_layout.paddingLeft +
+									((image_box_layout.width +
+									sprite_get_width(portrait) * portrait_scale) / 2) -
+									sprite_get_xoffset(portrait) * portrait_scale
+			portrait_y_in_card = image_box_layout.top + image_box_layout.height - image_box_layout.paddingBottom -
+									(sprite_get_height(portrait) - sprite_get_yoffset(portrait)) * portrait_scale
+		}
 	}
 
 	/// @desc									Finds the portrait_scale needed to fill the image_box
 	///												with the given portrait sprite
 	/// @param {Asset.GMSprite} portrait		The portrait sprite being scaled
 	function find_chara_card_portrait_scaling(portrait) {
-		var image_box_layout = flexpanel_node_layout_get_position(flexpanel_node_get_child(chara_card_flexpanels, "image_box"), false)
-		var portrait_horizontal_space = image_box_layout.width - image_box_layout.paddingLeft - 
-											image_box_layout.paddingRight
-		var portrait_vertical_space = image_box_layout.height - image_box_layout.paddingTop - 
-											image_box_layout.paddingBottom
+		if(sprite_get_width(portrait) != 0 && sprite_get_height(portrait) != 0) {
+			var image_box_layout = flexpanel_node_layout_get_position(flexpanel_node_get_child(chara_card_flexpanels, "image_box"), false)
+			var portrait_horizontal_space = image_box_layout.width - image_box_layout.paddingLeft - 
+												image_box_layout.paddingRight
+			var portrait_vertical_space = image_box_layout.height - image_box_layout.paddingTop - 
+												image_box_layout.paddingBottom
 	
-		if(portrait_horizontal_space - sprite_get_width(portrait) < 
-			portrait_vertical_space - sprite_get_height(portrait)) {
-				portrait_scale = portrait_horizontal_space / sprite_get_width(portrait)
-		}
-		else {
-				portrait_scale = portrait_vertical_space / sprite_get_height(portrait)
+			if(portrait_horizontal_space - sprite_get_width(portrait) < 
+				portrait_vertical_space - sprite_get_height(portrait)) {
+					portrait_scale = portrait_horizontal_space / sprite_get_width(portrait)
+			}
+			else {
+					portrait_scale = portrait_vertical_space / sprite_get_height(portrait)
+			}
 		}
 	}
 #endregion
@@ -293,11 +297,14 @@ function chara_card_drawn_elements(card_xscale = 1, card_yscale = 1) constructor
 	///												to draw the card's potion slots
 	/// @param {Real} num_potion_slots			The number of potion slots this character has
 	function set_chara_card_potion_slots(num_potion_slots) {
-		set_potion_slot_width(num_potion_slots)
-		var potions_box_layout = flexpanel_node_layout_get_position(flexpanel_node_get_child(chara_card_flexpanels, "potions_box"), false)
+		if(is_numeric(num_potion_slots)) {
+			num_potion_slots = clamp(num_potion_slots, MIN_POTION_SLOTS, MAX_POTION_SLOTS)
+			set_potion_slot_width(num_potion_slots)
+			var potions_box_layout = flexpanel_node_layout_get_position(flexpanel_node_get_child(chara_card_flexpanels, "potions_box"), false)
 		
-		potion_slots_x_in_card = potions_box_layout.left + potions_box_layout.paddingLeft
-		potion_slots_y_in_card = potions_box_layout.top + potions_box_layout.paddingTop
+			potion_slots_x_in_card = potions_box_layout.left + potions_box_layout.paddingLeft
+			potion_slots_y_in_card = potions_box_layout.top + potions_box_layout.paddingTop
+		}
 	}
 
 	
@@ -344,31 +351,37 @@ function chara_card_drawn_elements(card_xscale = 1, card_yscale = 1) constructor
 	/// @param {Real} chara_current_health		The amount of health the character currently has
 	/// @param {Real} chara_max_health			The max amount of health the character can have
 	function set_chara_card_health(chara_current_health, chara_max_health) {
-		health_text = $"{chara_current_health} / {chara_max_health}"
-		find_chara_card_health_text_scaling(health_text)
-		var health_box_layout = flexpanel_node_layout_get_position(flexpanel_node_get_child(chara_card_flexpanels, "health_box"), false)
-		health_x_in_card = health_box_layout.left + health_box_layout.paddingLeft
-		health_y_in_card = health_box_layout.top + health_box_layout.paddingTop + (health_box_layout.height / 2)
+		if(is_numeric(chara_current_health) && is_numeric(chara_max_health)) {
+			var health_box_layout = flexpanel_node_layout_get_position(flexpanel_node_get_child(chara_card_flexpanels, "health_box"), false)
+			chara_current_health = max(chara_current_health, 0)
+			chara_max_health = max(chara_max_health, 0)
+			health_text = $"{chara_current_health} / {chara_max_health}"
+			find_chara_card_health_text_scaling(health_text)
+			health_x_in_card = health_box_layout.left + health_box_layout.paddingLeft
+			health_y_in_card = health_box_layout.top + health_box_layout.paddingTop + (health_box_layout.height / 2)
+		}
 	}
 
 	/// @desc									Finds the health_text_scale to fit the given text
 	///												 into the health_box panel
 	/// @param {string} health_display_text		The text being displayed in the health box
 	function find_chara_card_health_text_scaling(health_display_text) {
-		draw_set_font(CHARA_CARD_HEALTH_FONT)
-		draw_set_halign(fa_left)
-		draw_set_valign(fa_middle)
-		var health_box_layout = flexpanel_node_layout_get_position(flexpanel_node_get_child(chara_card_flexpanels, "health_box"), false)
-		var max_string_width = health_box_layout.width - health_box_layout.paddingLeft - health_box_layout.paddingRight
-		var max_string_height = health_box_layout.height - health_box_layout.paddingTop - health_box_layout.paddingBottom
+		if(is_string(health_display_text) && string_width(health_display_text) != 0 && string_height(health_display_text) != 0) {
+			draw_set_font(CHARA_CARD_HEALTH_FONT)
+			draw_set_halign(fa_left)
+			draw_set_valign(fa_middle)
+			var health_box_layout = flexpanel_node_layout_get_position(flexpanel_node_get_child(chara_card_flexpanels, "health_box"), false)
+			var max_string_width = health_box_layout.width - health_box_layout.paddingLeft - health_box_layout.paddingRight
+			var max_string_height = health_box_layout.height - health_box_layout.paddingTop - health_box_layout.paddingBottom
 
-		var text_size_x_scale = max_string_width / string_width(health_display_text)
-		var text_size_y_scale = max_string_height / string_height(health_display_text)
-		if (text_size_x_scale > text_size_y_scale) {
-		    health_text_scale = text_size_y_scale
-		}
-		else {
-			health_text_scale = text_size_x_scale	
+			var text_size_x_scale = max_string_width / string_width(health_display_text)
+			var text_size_y_scale = max_string_height / string_height(health_display_text)
+			if (text_size_x_scale > text_size_y_scale) {
+			    health_text_scale = text_size_y_scale
+			}
+			else {
+				health_text_scale = text_size_x_scale	
+			}
 		}
 	}
 #endregion
@@ -389,31 +402,36 @@ function chara_card_drawn_elements(card_xscale = 1, card_yscale = 1) constructor
 	///												character's attack
 	/// @param {Real} chara_arrack				The character's current attack
 	function set_chara_card_attack(chara_attack) {
-		attack_text = $"{chara_attack}"
-		find_chara_card_attack_text_scaling(attack_text)
-		var attack_box_layout = flexpanel_node_layout_get_position(flexpanel_node_get_child(chara_card_flexpanels, "attack_box"), false)
-		attack_x_in_card = attack_box_layout.left + attack_box_layout.paddingLeft
-		attack_y_in_card =  attack_box_layout.top + attack_box_layout.paddingTop + (attack_box_layout.height / 2)
+		if(is_numeric(chara_attack)) {
+			chara_attack = max(chara_attack, 0)
+			attack_text = $"{chara_attack}"
+			find_chara_card_attack_text_scaling(attack_text)
+			var attack_box_layout = flexpanel_node_layout_get_position(flexpanel_node_get_child(chara_card_flexpanels, "attack_box"), false)
+			attack_x_in_card = attack_box_layout.left + attack_box_layout.paddingLeft
+			attack_y_in_card =  attack_box_layout.top + attack_box_layout.paddingTop + (attack_box_layout.height / 2)
+		}
 	}
 
 	/// @desc									Finds the attack_text_scale to fit the given text
 	///												 into the attack_box panel
 	/// @param {string} attack_display_text		The text being displayed in the attack box
 	function find_chara_card_attack_text_scaling(attack_display_text) {
-		draw_set_font(CHARA_CARD_ATTACK_FONT)
-		draw_set_halign(fa_left)
-		draw_set_valign(fa_middle)
-		var attack_box_layout = flexpanel_node_layout_get_position(flexpanel_node_get_child(chara_card_flexpanels, "attack_box"), false)
-		var max_string_width = attack_box_layout.width - attack_box_layout.paddingLeft - attack_box_layout.paddingRight
-		var max_string_height = attack_box_layout.height - attack_box_layout.paddingTop - attack_box_layout.paddingBottom
+		if(is_string(attack_display_text) && string_width(attack_display_text) != 0 && string_height(attack_display_text) != 0) {
+			draw_set_font(CHARA_CARD_ATTACK_FONT)
+			draw_set_halign(fa_left)
+			draw_set_valign(fa_middle)
+			var attack_box_layout = flexpanel_node_layout_get_position(flexpanel_node_get_child(chara_card_flexpanels, "attack_box"), false)
+			var max_string_width = attack_box_layout.width - attack_box_layout.paddingLeft - attack_box_layout.paddingRight
+			var max_string_height = attack_box_layout.height - attack_box_layout.paddingTop - attack_box_layout.paddingBottom
 
-		var text_size_x_scale = max_string_width / string_width(attack_display_text)
-		var text_size_y_scale = max_string_height / string_height(attack_display_text)
-		if (text_size_x_scale > text_size_y_scale) {
-		    attack_text_scale = text_size_y_scale
-		}
-		else {
-			attack_text_scale = text_size_x_scale	
+			var text_size_x_scale = max_string_width / string_width(attack_display_text)
+			var text_size_y_scale = max_string_height / string_height(attack_display_text)
+			if (text_size_x_scale > text_size_y_scale) {
+			    attack_text_scale = text_size_y_scale
+			}
+			else {
+				attack_text_scale = text_size_x_scale	
+			}
 		}
 	}
 #endregion	
@@ -437,11 +455,13 @@ function chara_card_drawn_elements(card_xscale = 1, card_yscale = 1) constructor
 	///												character's ability description
 	/// @param {string} chara_description		The character's ability description
 	function set_chara_card_description(chara_description) {
-		description_text = chara_description
-		find_chara_card_description_text_scaling(description_text)
-		var description_box_layout = flexpanel_node_layout_get_position(flexpanel_node_get_child(chara_card_flexpanels, "description_box"), false)
-		description_x_in_card = description_box_layout.left + description_box_layout.paddingLeft
-		description_y_in_card =  description_box_layout.top + description_box_layout.paddingTop
+		if(is_string(chara_description)) {
+			description_text = chara_description
+			find_chara_card_description_text_scaling(description_text)
+			var description_box_layout = flexpanel_node_layout_get_position(flexpanel_node_get_child(chara_card_flexpanels, "description_box"), false)
+			description_x_in_card = description_box_layout.left + description_box_layout.paddingLeft
+			description_y_in_card =  description_box_layout.top + description_box_layout.paddingTop
+		}
 	}
 
 	/// @desc											Finds what the character card description should be
@@ -449,19 +469,21 @@ function chara_card_drawn_elements(card_xscale = 1, card_yscale = 1) constructor
 	///														and sets description_text_scale to this value
 	/// @param {string} description_display_text		The text being displayed in the description box
 	function find_chara_card_description_text_scaling(description_display_text) {
-		draw_set_font(CHARA_CARD_DESCRIPTION_FONT)
-		draw_set_halign(fa_left)
-		draw_set_valign(fa_top)
-		var description_box_layout = flexpanel_node_layout_get_position(flexpanel_node_get_child(chara_card_flexpanels, "description_box"), false)
-		max_description_width = description_box_layout.width - description_box_layout.paddingLeft - description_box_layout.paddingRight
-		var max_string_height = description_box_layout.height - description_box_layout.paddingTop - description_box_layout.paddingBottom
+		if(is_string(description_display_text) && string_height(description_display_text) != 0) {
+			draw_set_font(CHARA_CARD_DESCRIPTION_FONT)
+			draw_set_halign(fa_left)
+			draw_set_valign(fa_top)
+			var description_box_layout = flexpanel_node_layout_get_position(flexpanel_node_get_child(chara_card_flexpanels, "description_box"), false)
+			max_description_width = description_box_layout.width - description_box_layout.paddingLeft - description_box_layout.paddingRight
+			var max_string_height = description_box_layout.height - description_box_layout.paddingTop - description_box_layout.paddingBottom
 
-		var description_height = string_height_ext(description_display_text, string_height(description_display_text), max_description_width)
-		if(description_height > max_string_height) {
-			description_text_scale = sqrt(max_string_height / description_height)
-		}
-		else {
-			description_text_scale = 1
+			var description_height = string_height_ext(description_display_text, string_height(description_display_text), max_description_width)
+			if(description_height > max_string_height) {
+				description_text_scale = sqrt(max_string_height / description_height)
+			}
+			else {
+				description_text_scale = 1
+			}
 		}
 	}
 #endregion
