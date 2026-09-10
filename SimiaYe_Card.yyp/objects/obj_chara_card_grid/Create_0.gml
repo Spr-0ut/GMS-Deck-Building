@@ -99,7 +99,7 @@ function find_chara_cards_by_chara_id(chara_ids_to_find) {
 /// @param {Id.Instance} chara_card		The chara card to be placed in the grid
 function return_chara_card_to_grid(chara_card) {
 	if(typeof(chara_card) == "ref" && chara_card != noone && instance_exists(chara_card)) {
-		chara_card.sprite_index	= find_chara_card_sprite(chara_card.chara_card_data.class, is_expanded_grid)
+		chara_card.change_chara_card_size(is_expanded_grid)
 		var chara_card_width = (sprite_get_width(chara_card.sprite_index) + (2 * CHARA_CARD_X_PADDING)) * image_xscale
 		var chara_card_height = (sprite_get_height(chara_card.sprite_index) + (2 * CHARA_CARD_Y_PADDING)) * image_yscale
 		
@@ -191,7 +191,7 @@ function set_chara_cards_pos(shrunk_cards, grid_y_pos) {
 
 		if(chara_card_instances[card_index] != noone) {
 			var card_data = chara_card_instances[card_index].chara_card_data
-			chara_card_instances[card_index].sprite_index = find_chara_card_sprite(card_data.class, !shrunk_cards)
+			chara_card_instances[card_index].change_chara_card_size(!shrunk_cards)
 			chara_card_instances[card_index].y = card_y_pos
 		}
 	}
