@@ -2,8 +2,15 @@
 #macro CHARA_CARD_X_PADDING			6
 #macro CHARA_CARD_Y_PADDING			6
 
-chara_cards_to_display = get_unlocked_chara_cards()
 chara_card_instances = []
+damage_chara_cards = []
+mech_chara_cards = []
+potion_chara_cards = []
+science_chara_cards = []
+tank_chara_cards = []
+
+current_chara_card_filter = chara_class.all_chara
+chara_cards_to_display = get_unlocked_chara_cards()
 chara_card_grid_layer = layer_create(layer_get_depth(layer) - 1, "chara_card_grid_instance")
 is_expanded_grid = false
 grid_is_moving = false
@@ -71,8 +78,32 @@ function create_chara_card_grid_view() {
 			})
 			
 			chara_card_instances[card_index] = display_card
+			add_chara_card_to_class_array(display_card, chara_card_data.class)
 			card_x_pos += chara_card_width + (chara_card_grid_width % chara_card_width / num_columns)
 		}
+	}
+}
+
+/// @desc									Adds the given chara_card to it's appropriate class array
+/// @param {Id.Instance} chara_card			The character card being added to the class array
+/// @param {Real} chara_card_class			The character's class
+function add_chara_card_to_class_array(chara_card, chara_card_class) {
+	switch (chara_card_class) {
+		case chara_class.science:
+			array_push(science_chara_cards, chara_card)
+			break
+		case chara_class.damage:
+			array_push(damage_chara_cards, chara_card)
+			break
+		case chara_class.mech:
+			array_push(mech_chara_cards, chara_card)
+			break
+		case chara_class.potion:
+			array_push(potion_chara_cards, chara_card)
+			break
+		case chara_class.tank:
+			array_push(tank_chara_cards, chara_card)
+			break
 	}
 }
 
@@ -93,13 +124,18 @@ function find_chara_cards_by_chara_id(chara_ids_to_find) {
 	return chara_cards_found
 }
 
-/// @desc								Returns the given card back into the chara card grid display.
+/// @desc								Returns the given card back into the chara card grid display,
+///											hiding it if its class does not match the active filter.
 ///											NOTE: This assumes it existed in the grid before and is
 ///											being placed back into the grid, NOT adding a new card
 /// @param {Id.Instance} chara_card		The chara card to be placed in the grid
 function return_chara_card_to_grid(chara_card) {
 	if(typeof(chara_card) == "ref" && chara_card != noone && instance_exists(chara_card)) {
 		chara_card.change_chara_card_size(is_expanded_grid)
+		chara_card_instances[chara_card.grid_index] = chara_card
+		
+		//This assumes the cards will always be the same size. As of right now that's true and to make it
+		//	more generic would result in a potentially worse solution
 		var chara_card_width = (sprite_get_width(chara_card.sprite_index) + (2 * CHARA_CARD_X_PADDING)) * image_xscale
 		var chara_card_height = (sprite_get_height(chara_card.sprite_index) + (2 * CHARA_CARD_Y_PADDING)) * image_yscale
 		
@@ -110,17 +146,53 @@ function return_chara_card_to_grid(chara_card) {
 								CHARA_CARD_X_PADDING * chara_card.image_xscale +
 								(chara_card_grid_width % chara_card_width / (num_columns))
 		var initial_y_pos = y + (CHARA_CARD_GRID_PADDING + CHARA_CARD_Y_PADDING) * image_yscale
-		var card_column = chara_card.grid_index % num_columns
 		
-		var card_x_pos = initial_x_pos + chara_card_width * card_column +
-							(chara_card_grid_width % chara_card_width / num_columns) * card_column 
-		var card_y_pos = initial_y_pos + floor(chara_card.grid_index / num_columns) * chara_card_height
+		if(current_chara_card_filter == chara_class.all_chara) {		
+			var card_column = chara_card.grid_index % num_columns
+			var card_x_pos = initial_x_pos + chara_card_width * card_column +
+								(chara_card_grid_width % chara_card_width / num_columns) * card_column 
+			var card_y_pos = initial_y_pos + floor(chara_card.grid_index / num_columns) * chara_card_height
 			
-		chara_card_instances[chara_card.grid_index] = chara_card
-		chara_card.x = card_x_pos
-		chara_card.y = card_y_pos
-		chara_card.chara_card_start_x_position = card_x_pos
-		chara_card.chara_card_start_y_position = card_y_pos
+			chara_card.x = card_x_pos
+			chara_card.y = card_y_pos
+			chara_card.chara_card_start_x_position = card_x_pos
+			chara_card.chara_card_start_y_position = card_y_pos
+		}
+		else if(current_chara_card_filter == chara_card.chara_card_data.class) {
+			var cards_to_show = []
+			switch (current_chara_card_filter) {
+				case chara_class.science:
+					cards_to_show = science_chara_cards
+					break
+				case chara_class.damage:
+					cards_to_show = damage_chara_cards
+					break
+				case chara_class.mech:
+					cards_to_show = mech_chara_cards
+					break
+				case chara_class.potion:
+					cards_to_show = potion_chara_cards
+					break
+				case chara_class.tank:
+					cards_to_show = tank_chara_cards
+					break
+			}
+			var card_index = array_get_index(cards_to_show, chara_card)
+			if(card_index >= 0 && card_index < array_length(cards_to_show)) {
+				var card_column = card_index % num_columns
+				var card_x_pos = initial_x_pos + chara_card_width * card_column +
+									(chara_card_grid_width % chara_card_width / num_columns) * card_column 
+				var card_y_pos = initial_y_pos + floor(card_index / num_columns) * chara_card_height
+				
+				chara_card.x = card_x_pos
+				chara_card.y = card_y_pos
+				chara_card.chara_card_start_x_position = card_x_pos
+				chara_card.chara_card_start_y_position = card_y_pos
+			}
+		}
+		else {
+			chara_card.visible = false	
+		}
 	}
 }
 
@@ -139,7 +211,7 @@ function expand_chara_card_grid() {
 		if(y - target_grid_y < 1) {
 			grid_is_moving = false
 			is_expanded_grid = true
-			set_chara_cards_pos(false, y)
+			set_chara_cards_pos(false)
 			if(instance_exists(obj_party_chara_card_box)) {
 				obj_party_chara_card_box.shrink_chara_card_box()
 			}
@@ -161,7 +233,7 @@ function shrink_chara_card_grid() {
 			is_expanded_grid = false
 			grid_is_moving = false
 			sprite_index = spr_shrunk_chara_select_grid
-			set_chara_cards_pos(true, y)
+			set_chara_cards_pos(true)
 			if(instance_exists(obj_party_chara_card_box)) {
 				obj_party_chara_card_box.expand_chara_card_box()
 			}
@@ -171,9 +243,8 @@ function shrink_chara_card_grid() {
 
 /// @desc							Sets the character cards in the grid to the correct position
 ///										based on whether it is expanded or shrunk sprites
-/// @param {Bool} shrunk_cards	Flag to determine if the cards will be the shrunk version or not
-/// @param {Real} grid_y_pos		The vertical position of the character card grid
-function set_chara_cards_pos(shrunk_cards, grid_y_pos) {
+/// @param {Bool} shrunk_cards		Flag to determine if the cards will be the shrunk version or not
+function set_chara_cards_pos(shrunk_cards) {
 	var chara_card_sprite = shrunk_cards ? spr_shrunk_mech_chara_card : spr_expanded_mech_chara_card
 	
 	//This assumes the cards will always be the same size. As of right now that's true and to make it
@@ -205,4 +276,110 @@ function empty_card_slot(chara_card) {
 			chara_card.grid_index < array_length(chara_card_instances)) {
 		chara_card_instances[chara_card.grid_index] = noone
 	}
+}
+
+/// @desc								Filters the grid so only chara cards of the given class are shown
+/// @param {Real} class_to_display		The chara_class that determines which chara cards are displayed
+function filter_chara_cards(class_to_display) {
+	var cards_to_show = []
+	switch (class_to_display) {
+		case chara_class.science:
+			cards_to_show = science_chara_cards
+			break
+		case chara_class.damage:
+			cards_to_show = damage_chara_cards
+			break
+		case chara_class.mech:
+			cards_to_show = mech_chara_cards
+			break
+		case chara_class.potion:
+			cards_to_show = potion_chara_cards
+			break
+		case chara_class.tank:
+			cards_to_show = tank_chara_cards
+			break
+		default:
+			cards_to_show = chara_card_instances
+			break
+	}
+	
+	for(var chara_card_index = 0; chara_card_index < array_length(chara_card_instances); chara_card_index++) {
+		if(chara_card_instances[chara_card_index] != noone &&
+			chara_card_instances[chara_card_index].chara_card_data.class != class_to_display) {
+				chara_card_instances[chara_card_index].visible = false
+		}
+	}
+	
+	if(array_length(cards_to_show) > 0) {
+		//This assumes the cards will always be the same size. As of right now that's true and to make it
+		//	more generic would result in a potentially worse solution
+		var chara_card_width = (sprite_get_width(cards_to_show[0].sprite_index) +
+										(2 * CHARA_CARD_X_PADDING)) * image_xscale
+		var chara_card_height = (sprite_get_height(cards_to_show[0].sprite_index) +
+									(2 * CHARA_CARD_Y_PADDING)) * image_yscale
+		var chara_card_grid_width = sprite_width - (2 * CHARA_CARD_GRID_PADDING * image_xscale)
+		var num_columns = floor(chara_card_grid_width / chara_card_width)
+	
+		var initial_x_pos = x + CHARA_CARD_GRID_PADDING * image_xscale +
+								(chara_card_grid_width % chara_card_width / num_columns)
+		var initial_y_pos = y + (CHARA_CARD_GRID_PADDING + CHARA_CARD_Y_PADDING) * image_yscale
+	
+		var card_x_pos = initial_x_pos
+		var card_y_pos = initial_y_pos - chara_card_height
+		for(var chara_card_index = 0; chara_card_index < array_length(cards_to_show); chara_card_index++) {
+			var chara_card = cards_to_show[chara_card_index]
+			if(chara_card_index % num_columns == 0) {
+				card_x_pos = initial_x_pos + CHARA_CARD_X_PADDING * image_xscale
+				card_y_pos += chara_card_height
+			}
+			
+			if(!instance_exists(obj_party_chara_card_box) || 
+				obj_party_chara_card_box.check_for_chara_card_in_party(chara_card) == -1) {
+					chara_card.x = card_x_pos
+					chara_card.y = card_y_pos
+					chara_card.chara_card_start_x_position = card_x_pos
+					chara_card.chara_card_start_y_position = card_y_pos
+					chara_card.visible = true
+				}
+			card_x_pos += chara_card_width + (chara_card_grid_width % chara_card_width / num_columns)
+		}
+	}
+	current_chara_card_filter = class_to_display
+}
+
+/// @desc								Clears any active filters, and displays all chara cards
+function clear_filter() {
+	var chara_card_sprite = is_expanded_grid ? spr_expanded_mech_chara_card : spr_shrunk_mech_chara_card
+	
+	//This assumes the cards will always be the same size. As of right now that's true and to make it
+	//	more generic would result in a potentially worse solution
+	var chara_card_width = (sprite_get_width(chara_card_sprite) + (2 * CHARA_CARD_X_PADDING)) * image_xscale
+	var chara_card_height = (sprite_get_height(chara_card_sprite) + (2 * CHARA_CARD_Y_PADDING)) * image_yscale
+	var chara_card_grid_width = sprite_width - (2 * CHARA_CARD_GRID_PADDING * image_xscale)
+	var num_columns = floor(chara_card_grid_width / chara_card_width)
+	
+	var initial_x_pos = x + CHARA_CARD_GRID_PADDING * image_xscale +
+								(chara_card_grid_width % chara_card_width / num_columns)
+	var initial_y_pos = y + (CHARA_CARD_GRID_PADDING + CHARA_CARD_Y_PADDING) * image_yscale
+	
+	var card_x_pos = initial_x_pos
+	var card_y_pos = initial_y_pos - chara_card_height
+	for (var card_index = 0; card_index < array_length(chara_cards_to_display); card_index++) {
+		if(card_index % num_columns == 0) {
+			card_x_pos = initial_x_pos + CHARA_CARD_X_PADDING * image_xscale
+			card_y_pos += chara_card_height
+		}
+
+		var chara_card = chara_card_instances[card_index]
+		if(chara_card != noone) {
+			chara_card.x = card_x_pos
+			chara_card.y = card_y_pos
+			chara_card.chara_card_start_x_position = card_x_pos
+			chara_card.chara_card_start_y_position = card_y_pos
+			chara_card.visible = true
+		}
+		card_x_pos += chara_card_width + (chara_card_grid_width % chara_card_width / num_columns)
+	}
+	
+	current_chara_card_filter = chara_class.all_chara
 }
