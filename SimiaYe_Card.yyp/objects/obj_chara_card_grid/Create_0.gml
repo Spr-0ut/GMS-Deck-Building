@@ -236,12 +236,12 @@ function shrink_chara_card_grid() {
 ///										based on whether it is expanded or shrunk sprites
 /// @param {Bool} shrunk_cards		Flag to determine if the cards will be the shrunk version or not
 function set_chara_cards_size(shrunk_cards) {
-	set_chara_cards_pos(chara_card_instances, method(self, 
-		function(shrunk_cards, chara_card, chara_card_index) {
-			if(chara_card != noone) {
-				chara_card.change_chara_card_size(!shrunk_cards)
-			}
-		}), [shrunk_cards])
+	for(var chara_card_index = 0; chara_card_index < array_length(chara_card_instances); chara_card_index++) {
+		if(chara_card_instances[chara_card_index] != noone) {
+			chara_card_instances[chara_card_index].change_chara_card_size(!shrunk_cards)
+		}
+	}
+	set_chara_cards_pos(chara_card_instances)
 }
 
 /// @desc								Removes the given character card from the grid, but leaves
