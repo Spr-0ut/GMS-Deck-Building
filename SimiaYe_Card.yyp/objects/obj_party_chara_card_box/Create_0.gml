@@ -50,8 +50,8 @@ function update_follower_order() {
 		}
 		if(array_length(new_chara_order) > 0) {
 			new_chara_order[0].is_controlled_chara = true
-			obj_follower_order_manager.update_chara_order(new_chara_order)
 		}
+		obj_follower_order_manager.update_chara_order(new_chara_order)
 	}	
 }
 
