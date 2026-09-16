@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"data_test_science_chara",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"data_test_science_chara",
+  "parent":{
+    "name":"Test_Science_Chara",
+    "path":"folders/Objects/Characters/Test_Science_Chara.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -16,6 +16,7 @@ is_expanded_grid = false
 grid_is_moving = false
 target_grid_y = y
 create_chara_card_grid_view()
+remove_unused_chara_card_filters()
 
 /// @desc							Finds if there has been any data_chara created before, and if so returns
 ///										the chara's data. Otherwise returns a default set of data
@@ -27,7 +28,14 @@ function get_unlocked_chara_cards() {
 		unlocked_chara_cards = chara_data_struct.get_all_chara_data()
 	}
 	else {
-		unlocked_chara_cards = [new data_gilk(), new data_gilk(), new data_main()]
+		unlocked_chara_cards = [
+		new data_gilk(), new data_gilk(), 
+		new data_main(),
+		new data_test_potion_class(), new data_test_potion_class(), new data_test_potion_class(),
+		new data_test_science_class(), new data_test_science_class(), 
+		new data_test_tank_class(), new data_test_tank_class(), new data_test_tank_class(),
+		new data_test_tank_class(), new data_test_tank_class()
+		]
 	}
 	
 	return unlocked_chara_cards
@@ -101,6 +109,25 @@ function add_chara_card_to_class_array(chara_card, chara_card_class) {
 		case chara_class.tank:
 			array_push(tank_chara_cards, chara_card)
 			break
+	}
+}
+
+/// @desc									Destroys the class filters that have no chara cards
+function remove_unused_chara_card_filters() {
+	if(array_length(science_chara_cards) == 0 && instance_exists(obj_science_chara_cards_filter)) {
+		instance_destroy(obj_science_chara_cards_filter)
+	}
+	if(array_length(damage_chara_cards) == 0 && instance_exists(obj_damage_chara_cards_filter)) {
+		instance_destroy(obj_damage_chara_cards_filter)
+	}
+	if(array_length(mech_chara_cards) == 0 && instance_exists(obj_mech_chara_cards_filter)) {
+		instance_destroy(obj_mech_chara_cards_filter)
+	}
+	if(array_length(potion_chara_cards) == 0 && instance_exists(obj_potion_chara_cards_filter)) {
+		instance_destroy(obj_potion_chara_cards_filter)
+	}
+	if(array_length(tank_chara_cards) == 0 && instance_exists(obj_tank_chara_cards_filter)) {
+		instance_destroy(obj_tank_chara_cards_filter)
 	}
 }
 
