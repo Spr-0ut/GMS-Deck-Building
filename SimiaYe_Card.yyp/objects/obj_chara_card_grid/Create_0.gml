@@ -57,7 +57,7 @@ function create_chara_card_grid_view() {
 		set_chara_cards_pos(chara_card_instances, method(self, 
 			function(chara_card, chara_card_index) {
 				var chara_card_data = chara_cards_to_display[chara_card_index]
-				var chara_card_instance = instance_create_layer(0, 0, chara_card_grid_layer, chara_card_data.chara_card_index, {
+				var chara_card_instance = instance_create_layer(0, 0, chara_card_grid_layer, obj_chara_card, {
 					sprite_index : find_chara_card_sprite(chara_card_data.class, false),
 					image_xscale,
 					image_yscale,
