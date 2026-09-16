@@ -43,7 +43,7 @@ function activate_filter() {
 function deactivate_filter(clear_grid_filter = true) {
 	if(filter_active) {
 		x = filter_starting_x
-		if(clear_grid_filter) {
+		if(clear_grid_filter && instance_exists(obj_chara_card_grid)) {
 			obj_chara_card_grid.clear_filter()
 		}
 		filter_active = false

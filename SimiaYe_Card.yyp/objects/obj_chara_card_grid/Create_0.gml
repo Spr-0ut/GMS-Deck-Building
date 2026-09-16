@@ -45,42 +45,39 @@ function create_chara_card_grid_view() {
 			}
 		}
 		
-		//This assumes the cards will always be the same size. As of right now that's true and to make it
-		//	more generic would result in a potentially worse solution
-		var chara_card_width = (sprite_get_width(spr_shrunk_mech_chara_card) +
-									(2 * CHARA_CARD_X_PADDING)) * image_xscale
-		var chara_card_height = (sprite_get_height(spr_shrunk_mech_chara_card) +
-									(2 * CHARA_CARD_Y_PADDING)) * image_yscale
-		var chara_card_grid_width = sprite_width - (2 * CHARA_CARD_GRID_PADDING * image_xscale)
-		var num_columns = floor(chara_card_grid_width / chara_card_width)
-		
-		var initial_x_pos = x + CHARA_CARD_GRID_PADDING * image_xscale +
-								(chara_card_grid_width % chara_card_width / num_columns)
-		var initial_y_pos = y + (CHARA_CARD_GRID_PADDING + CHARA_CARD_Y_PADDING) * image_yscale
 		chara_card_instances = array_create(array_length(chara_cards_to_display))
-	
-		var card_x_pos = initial_x_pos
-		var card_y_pos = initial_y_pos - chara_card_height
-		for (var card_index = 0; card_index < array_length(chara_cards_to_display); card_index++) {
-			if(card_index % num_columns == 0) {
-				card_x_pos = initial_x_pos + CHARA_CARD_X_PADDING * chara_card_instances[card_index].image_xscale
-				card_y_pos += chara_card_height
-			}
-
-			var chara_card_data = chara_cards_to_display[card_index]
-			var display_card = instance_create_layer(card_x_pos, card_y_pos, chara_card_grid_layer, chara_card_data.chara_card_index, {
-				sprite_index : find_chara_card_sprite(chara_card_data.class, false),
-				image_xscale,
-				image_yscale,
-				grid_index : card_index,
-				chara_card_data,
-				flexpanels : new chara_card_drawn_elements(image_xscale, image_yscale)
-			})
+		set_chara_cards_pos(chara_card_instances, method(self, 
+			function(chara_card, chara_card_index) {
+				var chara_card_data = chara_cards_to_display[chara_card_index]
+				var chara_card_instance = instance_create_layer(0, 0, chara_card_grid_layer, chara_card_data.chara_card_index, {
+					sprite_index : find_chara_card_sprite(chara_card_data.class, false),
+					image_xscale,
+					image_yscale,
+					grid_index : chara_card_index,
+					chara_card_data,
+					flexpanels : new chara_card_drawn_elements(image_xscale, image_yscale)
+				})
 			
-			chara_card_instances[card_index] = display_card
-			add_chara_card_to_class_array(display_card, chara_card_data.class)
-			card_x_pos += chara_card_width + (chara_card_grid_width % chara_card_width / num_columns)
-		}
+				chara_card_instances[chara_card_index] = chara_card_instance
+			
+				switch (chara_card_data.class) {
+					case chara_class.science:
+						array_push(science_chara_cards, chara_card_instance)
+						break
+					case chara_class.damage:
+						array_push(damage_chara_cards, chara_card_instance)
+						break
+					case chara_class.mech:
+						array_push(mech_chara_cards, chara_card_instance)
+						break
+					case chara_class.potion:
+						array_push(potion_chara_cards, chara_card_instance)
+						break
+					case chara_class.tank:
+						array_push(tank_chara_cards, chara_card_instance)
+						break
+				}
+			}))
 	}
 }
 
@@ -133,30 +130,8 @@ function return_chara_card_to_grid(chara_card) {
 	if(typeof(chara_card) == "ref" && chara_card != noone && instance_exists(chara_card)) {
 		chara_card.change_chara_card_size(is_expanded_grid)
 		chara_card_instances[chara_card.grid_index] = chara_card
-		
-		//This assumes the cards will always be the same size. As of right now that's true and to make it
-		//	more generic would result in a potentially worse solution
-		var chara_card_width = (sprite_get_width(chara_card.sprite_index) + (2 * CHARA_CARD_X_PADDING)) * image_xscale
-		var chara_card_height = (sprite_get_height(chara_card.sprite_index) + (2 * CHARA_CARD_Y_PADDING)) * image_yscale
-		
-		var chara_card_grid_width = sprite_width - (2 * CHARA_CARD_GRID_PADDING * image_xscale)
-		var num_columns = floor(chara_card_grid_width / chara_card_width)
-		
-		var initial_x_pos = x + CHARA_CARD_GRID_PADDING * image_xscale +
-								CHARA_CARD_X_PADDING * chara_card.image_xscale +
-								(chara_card_grid_width % chara_card_width / (num_columns))
-		var initial_y_pos = y + (CHARA_CARD_GRID_PADDING + CHARA_CARD_Y_PADDING) * image_yscale
-		
-		if(current_chara_card_filter == chara_class.all_chara) {		
-			var card_column = chara_card.grid_index % num_columns
-			var card_x_pos = initial_x_pos + chara_card_width * card_column +
-								(chara_card_grid_width % chara_card_width / num_columns) * card_column 
-			var card_y_pos = initial_y_pos + floor(chara_card.grid_index / num_columns) * chara_card_height
-			
-			chara_card.x = card_x_pos
-			chara_card.y = card_y_pos
-			chara_card.chara_card_start_x_position = card_x_pos
-			chara_card.chara_card_start_y_position = card_y_pos
+		if(current_chara_card_filter == chara_class.all_chara) {	
+			set_chara_cards_pos(chara_card_instances)
 		}
 		else if(current_chara_card_filter == chara_card.chara_card_data.class) {
 			var cards_to_show = []
@@ -177,21 +152,10 @@ function return_chara_card_to_grid(chara_card) {
 					cards_to_show = tank_chara_cards
 					break
 			}
-			var card_index = array_get_index(cards_to_show, chara_card)
-			if(card_index >= 0 && card_index < array_length(cards_to_show)) {
-				var card_column = card_index % num_columns
-				var card_x_pos = initial_x_pos + chara_card_width * card_column +
-									(chara_card_grid_width % chara_card_width / num_columns) * card_column 
-				var card_y_pos = initial_y_pos + floor(card_index / num_columns) * chara_card_height
-				
-				chara_card.x = card_x_pos
-				chara_card.y = card_y_pos
-				chara_card.chara_card_start_x_position = card_x_pos
-				chara_card.chara_card_start_y_position = card_y_pos
-			}
+			set_chara_cards_pos(cards_to_show)
 		}
 		else {
-			chara_card.visible = false	
+			chara_card.visible = false
 		}
 	}
 }
@@ -211,7 +175,7 @@ function expand_chara_card_grid() {
 		if(y - target_grid_y < 1) {
 			grid_is_moving = false
 			is_expanded_grid = true
-			set_chara_cards_pos(false)
+			set_chara_cards_size(false)
 			if(instance_exists(obj_party_chara_card_box)) {
 				obj_party_chara_card_box.shrink_chara_card_box()
 			}
@@ -233,7 +197,7 @@ function shrink_chara_card_grid() {
 			is_expanded_grid = false
 			grid_is_moving = false
 			sprite_index = spr_shrunk_chara_select_grid
-			set_chara_cards_pos(true)
+			set_chara_cards_size(true)
 			if(instance_exists(obj_party_chara_card_box)) {
 				obj_party_chara_card_box.expand_chara_card_box()
 			}
@@ -244,28 +208,13 @@ function shrink_chara_card_grid() {
 /// @desc							Sets the character cards in the grid to the correct position
 ///										based on whether it is expanded or shrunk sprites
 /// @param {Bool} shrunk_cards		Flag to determine if the cards will be the shrunk version or not
-function set_chara_cards_pos(shrunk_cards) {
-	var chara_card_sprite = shrunk_cards ? spr_shrunk_mech_chara_card : spr_expanded_mech_chara_card
-	
-	//This assumes the cards will always be the same size. As of right now that's true and to make it
-	//	more generic would result in a potentially worse solution
-	var chara_card_width = (sprite_get_width(chara_card_sprite) + (2 * CHARA_CARD_X_PADDING)) * image_xscale
-	var chara_card_height = (sprite_get_height(chara_card_sprite) + (2 * CHARA_CARD_Y_PADDING)) * image_yscale
-	var chara_card_grid_width = sprite_width - (2 * CHARA_CARD_GRID_PADDING * image_xscale)
-	var num_columns = floor(chara_card_grid_width / chara_card_width)
-		
-	var card_y_pos = y + CHARA_CARD_GRID_PADDING * image_yscale - chara_card_height
-	for (var card_index = 0; card_index < array_length(chara_cards_to_display); card_index++) {
-		if(card_index % num_columns == 0) {
-			card_y_pos += chara_card_height
-		}
-
-		if(chara_card_instances[card_index] != noone) {
-			var card_data = chara_card_instances[card_index].chara_card_data
-			chara_card_instances[card_index].change_chara_card_size(!shrunk_cards)
-			chara_card_instances[card_index].y = card_y_pos
-		}
-	}
+function set_chara_cards_size(shrunk_cards) {
+	set_chara_cards_pos(chara_card_instances, method(self, 
+		function(shrunk_cards, chara_card, chara_card_index) {
+			if(chara_card != noone) {
+				chara_card.change_chara_card_size(!shrunk_cards)
+			}
+		}), [shrunk_cards])
 }
 
 /// @desc								Removes the given character card from the grid, but leaves
@@ -310,76 +259,98 @@ function filter_chara_cards(class_to_display) {
 		}
 	}
 	
-	if(array_length(cards_to_show) > 0) {
-		//This assumes the cards will always be the same size. As of right now that's true and to make it
-		//	more generic would result in a potentially worse solution
-		var chara_card_width = (sprite_get_width(cards_to_show[0].sprite_index) +
-										(2 * CHARA_CARD_X_PADDING)) * image_xscale
-		var chara_card_height = (sprite_get_height(cards_to_show[0].sprite_index) +
-									(2 * CHARA_CARD_Y_PADDING)) * image_yscale
-		var chara_card_grid_width = sprite_width - (2 * CHARA_CARD_GRID_PADDING * image_xscale)
-		var num_columns = floor(chara_card_grid_width / chara_card_width)
-	
-		var initial_x_pos = x + CHARA_CARD_GRID_PADDING * image_xscale +
-								(chara_card_grid_width % chara_card_width / num_columns)
-		var initial_y_pos = y + (CHARA_CARD_GRID_PADDING + CHARA_CARD_Y_PADDING) * image_yscale
-	
-		var card_x_pos = initial_x_pos
-		var card_y_pos = initial_y_pos - chara_card_height
-		for(var chara_card_index = 0; chara_card_index < array_length(cards_to_show); chara_card_index++) {
-			var chara_card = cards_to_show[chara_card_index]
-			if(chara_card_index % num_columns == 0) {
-				card_x_pos = initial_x_pos + CHARA_CARD_X_PADDING * image_xscale
-				card_y_pos += chara_card_height
-			}
-			
+	set_chara_cards_pos(cards_to_show, method(self, 
+		function(chara_card, chara_card_index) {
 			if(!instance_exists(obj_party_chara_card_box) || 
 				obj_party_chara_card_box.check_for_chara_card_in_party(chara_card) == -1) {
-					chara_card.x = card_x_pos
-					chara_card.y = card_y_pos
-					chara_card.chara_card_start_x_position = card_x_pos
-					chara_card.chara_card_start_y_position = card_y_pos
 					chara_card.visible = true
 				}
-			card_x_pos += chara_card_width + (chara_card_grid_width % chara_card_width / num_columns)
-		}
-	}
+		}), [], false)
 	current_chara_card_filter = class_to_display
 }
 
 /// @desc								Clears any active filters, and displays all chara cards
 function clear_filter() {
-	var chara_card_sprite = is_expanded_grid ? spr_expanded_mech_chara_card : spr_shrunk_mech_chara_card
+	set_chara_cards_pos(chara_card_instances, method(self, 
+		function(chara_card, chara_card_index) {
+			if(chara_card != noone) {
+				chara_card.visible = true
+			}
+		}), [], false)
+	
+	current_chara_card_filter = chara_class.all_chara
+}
+
+/// @desc											Sets the position of the given chara cards in the grid.
+///														NOTE: This assumes that the only cards in the grid
+///														are the ones given in cards_to_position
+/// @param {Array<Id.Instance>} cards_to_position	The array of cards to be positioned in order
+/// @param {Method} on_card_index					The optional call back function right before the card
+///														is moved
+/// @param {Array} on_card_index_args				The parameters for on_card_index call back function.
+///														NOTE: The chara card and its cards_to_position  
+///														index will be added to the end of this array
+/// @param {Bool} move_party_chara_cards			Optional flag to determine if the cards are allowed
+///														to move if it's in the party. Defaults to true
+function set_chara_cards_pos(cards_to_position, on_card_index = noone, on_card_index_args = [], move_party_chara_cards = true) {
+	var first_chara_card_index = array_find_index(cards_to_position,
+		function(_element, _index) {
+			return  variable_instance_exists(_element, "object_index") &&
+					(object_is_ancestor(_element.object_index, obj_chara_card) ||
+					_element.object_index == obj_chara_card)
+		})
+	
+	var card_sprite = spr_shrunk_damage_chara_card
+	var card_x_scale = 1
+	var card_y_scale = 1
+	if(first_chara_card_index >= 0) {
+		var first_chara_card = cards_to_position[first_chara_card_index]
+		card_sprite = first_chara_card.sprite_index
+		card_x_scale = first_chara_card.image_xscale
+		card_y_scale = first_chara_card.image_yscale
+	}
 	
 	//This assumes the cards will always be the same size. As of right now that's true and to make it
 	//	more generic would result in a potentially worse solution
-	var chara_card_width = (sprite_get_width(chara_card_sprite) + (2 * CHARA_CARD_X_PADDING)) * image_xscale
-	var chara_card_height = (sprite_get_height(chara_card_sprite) + (2 * CHARA_CARD_Y_PADDING)) * image_yscale
+	var chara_card_width = (sprite_get_width(card_sprite) + (2 * CHARA_CARD_X_PADDING)) * card_x_scale
+	var chara_card_height = (sprite_get_height(card_sprite) + (2 * CHARA_CARD_Y_PADDING)) * card_y_scale
 	var chara_card_grid_width = sprite_width - (2 * CHARA_CARD_GRID_PADDING * image_xscale)
 	var num_columns = floor(chara_card_grid_width / chara_card_width)
+	move_party_chara_cards = move_party_chara_cards || !instance_exists(obj_party_chara_card_box)
 	
-	var initial_x_pos = x + CHARA_CARD_GRID_PADDING * image_xscale +
-								(chara_card_grid_width % chara_card_width / num_columns)
-	var initial_y_pos = y + (CHARA_CARD_GRID_PADDING + CHARA_CARD_Y_PADDING) * image_yscale
+	var initial_x_pos = x + 2 * CHARA_CARD_GRID_PADDING * card_x_scale +
+							(chara_card_grid_width % chara_card_width / num_columns)
+	var initial_y_pos = y + (CHARA_CARD_GRID_PADDING + CHARA_CARD_Y_PADDING) * 
+							card_y_scale
 	
 	var card_x_pos = initial_x_pos
-	var card_y_pos = initial_y_pos - chara_card_height
-	for (var card_index = 0; card_index < array_length(chara_cards_to_display); card_index++) {
-		if(card_index % num_columns == 0) {
-			card_x_pos = initial_x_pos + CHARA_CARD_X_PADDING * image_xscale
+	var card_y_pos = initial_y_pos
+	for(var chara_card_index = 0; chara_card_index < array_length(cards_to_position); chara_card_index++) {
+		if(is_method(on_card_index)) {
+			var callback_args = array_create(array_length(on_card_index_args))
+			array_copy(callback_args, 0, on_card_index_args, 0, array_length(on_card_index_args))
+			array_push(callback_args, cards_to_position[chara_card_index], chara_card_index)
+			
+			method_call(on_card_index, callback_args)
+		}
+		
+		var chara_card = cards_to_position[chara_card_index]
+		if(chara_card != noone) {
+			if(move_party_chara_cards || 
+				obj_party_chara_card_box.check_for_chara_card_in_party(chara_card) == -1) {
+					chara_card.x = card_x_pos
+					chara_card.y = card_y_pos
+					chara_card.chara_card_start_x_position = card_x_pos
+					chara_card.chara_card_start_y_position = card_y_pos
+			}
+		}
+		
+		if((chara_card_index + 1) % num_columns == 0) {
+			card_x_pos = initial_x_pos
 			card_y_pos += chara_card_height
 		}
-
-		var chara_card = chara_card_instances[card_index]
-		if(chara_card != noone) {
-			chara_card.x = card_x_pos
-			chara_card.y = card_y_pos
-			chara_card.chara_card_start_x_position = card_x_pos
-			chara_card.chara_card_start_y_position = card_y_pos
-			chara_card.visible = true
+		else {
+			card_x_pos += chara_card_width + (chara_card_grid_width % chara_card_width / num_columns)	
 		}
-		card_x_pos += chara_card_width + (chara_card_grid_width % chara_card_width / num_columns)
 	}
-	
-	current_chara_card_filter = chara_class.all_chara
 }
