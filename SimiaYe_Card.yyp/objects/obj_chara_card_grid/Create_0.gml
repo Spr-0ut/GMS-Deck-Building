@@ -29,15 +29,23 @@ function get_unlocked_chara_cards() {
 	}
 	else {
 		unlocked_chara_cards = [
-		new data_gilk(), new data_gilk(), 
-		new data_main(),
-		new data_test_potion_class(), new data_test_potion_class(), new data_test_potion_class(),
-		new data_test_science_class(), new data_test_science_class(), 
+		new data_test_tank_class(), new data_test_tank_class(),
 		new data_test_tank_class(), new data_test_tank_class(), new data_test_tank_class(),
-		new data_test_tank_class(), new data_test_tank_class()
+		new data_test_science_class(), new data_test_science_class(), 
+		new data_test_potion_class(), new data_test_potion_class(), new data_test_potion_class(),
+		new data_main(),
+		new data_gilk(), new data_gilk(), 
 		]
 	}
 	
+	array_sort(unlocked_chara_cards, function(current, next) {
+		if(is_instanceof(current, data_chara) && is_instanceof(next, data_chara)) {
+			return current.chara_id - next.chara_id
+		}
+		else {
+			return is_instanceof(next, data_chara) - is_instanceof(current, data_chara)
+		}
+	})
 	return unlocked_chara_cards
 }
 
