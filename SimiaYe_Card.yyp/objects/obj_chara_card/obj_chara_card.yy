@@ -35,6 +35,7 @@
     {"$GMObjectProperty":"v2","%Name":"grid_index","filters":[],"listItems":[],"multiselect":false,"name":"grid_index","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"0","varType":0,},
     {"$GMObjectProperty":"v2","%Name":"chara_card_data","filters":[],"listItems":[],"multiselect":false,"name":"chara_card_data","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"{}","varType":4,},
     {"$GMObjectProperty":"v2","%Name":"flexpanels","filters":[],"listItems":[],"multiselect":false,"name":"flexpanels","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"","varType":4,},
+    {"$GMObjectProperty":"v2","%Name":"card_is_expanded","filters":[],"listItems":[],"multiselect":false,"name":"card_is_expanded","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"true","varType":3,},
   ],
   "resourceType":"GMObject",
   "resourceVersion":"2.0",

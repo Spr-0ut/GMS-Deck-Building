@@ -71,7 +71,8 @@ function create_chara_card_grid_view() {
 					image_yscale,
 					grid_index : chara_card_index,
 					chara_card_data,
-					flexpanels : new chara_card_drawn_elements(image_xscale, image_yscale)
+					flexpanels : new chara_card_drawn_elements(image_xscale, image_yscale),
+					card_is_expanded : false
 				})
 			
 				chara_card_instances[chara_card_index] = chara_card_instance
@@ -163,7 +164,7 @@ function find_chara_cards_by_chara_id(chara_ids_to_find) {
 /// @param {Id.Instance} chara_card		The chara card to be placed in the grid
 function return_chara_card_to_grid(chara_card) {
 	if(typeof(chara_card) == "ref" && chara_card != noone && instance_exists(chara_card)) {
-		chara_card.change_chara_card_size(is_expanded_grid)
+		chara_card.set_chara_card_size(is_expanded_grid)
 		chara_card_instances[chara_card.grid_index] = chara_card
 		if(current_chara_card_filter == chara_class.all_chara) {	
 			set_chara_cards_pos(chara_card_instances)
@@ -204,13 +205,13 @@ function expand_chara_card_grid() {
 								 image_yscale
 		target_grid_y = y - amount_grid_grows
 		grid_is_moving = true
+		set_chara_cards_size(true, target_grid_y)
 	}
 	else if(grid_is_moving) {
 		y = lerp(y, target_grid_y, 0.5)
 		if(y - target_grid_y < 1) {
 			grid_is_moving = false
 			is_expanded_grid = true
-			set_chara_cards_size(false)
 			if(instance_exists(obj_party_chara_card_box)) {
 				obj_party_chara_card_box.shrink_chara_card_box()
 			}
@@ -225,6 +226,7 @@ function shrink_chara_card_grid() {
 									image_yscale
 		target_grid_y = y + amount_grid_shrinks
 		grid_is_moving = true
+		set_chara_cards_size(false, target_grid_y)
 	}
 	else if(grid_is_moving) {
 		y = lerp(y, target_grid_y, 0.5)
@@ -232,7 +234,6 @@ function shrink_chara_card_grid() {
 			is_expanded_grid = false
 			grid_is_moving = false
 			sprite_index = spr_shrunk_chara_select_grid
-			set_chara_cards_size(true)
 			if(instance_exists(obj_party_chara_card_box)) {
 				obj_party_chara_card_box.expand_chara_card_box()
 			}
@@ -240,16 +241,57 @@ function shrink_chara_card_grid() {
 	}
 }
 
-/// @desc							Sets the character cards in the grid to the correct position
-///										based on whether it is expanded or shrunk sprites
-/// @param {Bool} shrunk_cards		Flag to determine if the cards will be the shrunk version or not
-function set_chara_cards_size(shrunk_cards) {
-	for(var chara_card_index = 0; chara_card_index < array_length(chara_card_instances); chara_card_index++) {
-		if(chara_card_instances[chara_card_index] != noone) {
-			chara_card_instances[chara_card_index].change_chara_card_size(!shrunk_cards)
+/// @desc							Alerts the character cards that they are changing size and finds
+///										their new positions
+/// @param {Bool} expand_cards		Flag to determine if the cards will be the shrunk version or not
+/// @param {Real} target_grid_y		The y position of the grid once it is done moving
+function set_chara_cards_size(expand_cards, target_grid_y) {
+	//Please note: This function was copied and modified from set_chara_cards_pos, the changes here
+	///					were too significant to work with this function, but changes to one should
+	///					be considered in the other. Otherwise changing the grid size will cause issues
+	var card_sprite = find_chara_card_sprite(chara_class.all_chara, expand_cards)
+	var cards_to_show = find_class_filtered_cards(current_chara_card_filter)
+
+	var first_chara_card_index = array_find_index(cards_to_show,
+		function(_element, _index) {
+			return  variable_instance_exists(_element, "object_index") &&
+					(object_is_ancestor(_element.object_index, obj_chara_card) ||
+					_element.object_index == obj_chara_card)
+		})
+	var card_x_scale = cards_to_show[first_chara_card_index].image_xscale
+	var card_y_scale = cards_to_show[first_chara_card_index].image_yscale
+	
+	//This assumes the cards will always be the same size. As of right now that's true and to make it
+	//	more generic would result in a potentially worse solution
+	var chara_card_width = (sprite_get_width(card_sprite) + (2 * CHARA_CARD_X_PADDING)) * card_x_scale
+	var chara_card_height = (sprite_get_height(card_sprite) + (2 * CHARA_CARD_Y_PADDING)) * card_y_scale
+	var chara_card_grid_width = sprite_width - (2 * CHARA_CARD_GRID_PADDING * image_xscale)
+	var num_columns = floor(chara_card_grid_width / chara_card_width)
+	
+	var initial_x_pos = x + 2 * CHARA_CARD_GRID_PADDING * card_x_scale +
+							(chara_card_grid_width % chara_card_width / num_columns)
+	var initial_y_pos = target_grid_y + (CHARA_CARD_GRID_PADDING + CHARA_CARD_Y_PADDING) * 
+							card_y_scale
+							
+	var party_cards = []
+	if(instance_exists(obj_party_chara_card_box)) {
+		party_cards = instance_find(obj_party_chara_card_box, 0).current_party_chara	
+	}
+	
+	var card_x_pos = initial_x_pos
+	var card_y_pos = initial_y_pos
+	for(var chara_card_index = 0; chara_card_index < array_length(cards_to_show); chara_card_index++) {
+		if(cards_to_show[chara_card_index] != noone && !array_contains(party_cards, cards_to_show[chara_card_index])) {
+			cards_to_show[chara_card_index].change_chara_card_size(expand_cards, card_x_pos, card_y_pos)
+		}
+		if((chara_card_index + 1) % num_columns == 0) {
+			card_x_pos = initial_x_pos
+			card_y_pos += chara_card_height
+		}
+		else {
+			card_x_pos += chara_card_width + (chara_card_grid_width % chara_card_width / num_columns)	
 		}
 	}
-	set_chara_cards_pos(chara_card_instances)
 }
 
 /// @desc								Removes the given character card from the grid, but leaves
@@ -265,28 +307,6 @@ function empty_card_slot(chara_card) {
 /// @desc								Filters the grid so only chara cards of the given class are shown
 /// @param {Real} class_to_display		The chara_class that determines which chara cards are displayed
 function filter_chara_cards(class_to_display) {
-	var cards_to_show = []
-	switch (class_to_display) {
-		case chara_class.science:
-			cards_to_show = science_chara_cards
-			break
-		case chara_class.damage:
-			cards_to_show = damage_chara_cards
-			break
-		case chara_class.mech:
-			cards_to_show = mech_chara_cards
-			break
-		case chara_class.potion:
-			cards_to_show = potion_chara_cards
-			break
-		case chara_class.tank:
-			cards_to_show = tank_chara_cards
-			break
-		default:
-			cards_to_show = chara_card_instances
-			break
-	}
-	
 	for(var chara_card_index = 0; chara_card_index < array_length(chara_card_instances); chara_card_index++) {
 		if(chara_card_instances[chara_card_index] != noone &&
 			chara_card_instances[chara_card_index].chara_card_data.class != class_to_display) {
@@ -294,6 +314,7 @@ function filter_chara_cards(class_to_display) {
 		}
 	}
 	
+	var cards_to_show = find_class_filtered_cards(class_to_display)
 	set_chara_cards_pos(cards_to_show, method(self, 
 		function(chara_card, chara_card_index) {
 			if(!instance_exists(obj_party_chara_card_box) || 
@@ -302,6 +323,26 @@ function filter_chara_cards(class_to_display) {
 				}
 		}), [], false)
 	current_chara_card_filter = class_to_display
+}
+
+/// @desc								Finds an array of all the chara_card_instances of the given class
+/// @param {Real} class_to_find			The chara_class to find the character cards for
+/// @returns {Array<Id.Instance>}		The array of all the character cards of the given class
+function find_class_filtered_cards(class_to_find) {
+	switch (class_to_find) {
+		case chara_class.science:
+			return science_chara_cards
+		case chara_class.damage:
+			return damage_chara_cards
+		case chara_class.mech:
+			return mech_chara_cards
+		case chara_class.potion:
+			return potion_chara_cards
+		case chara_class.tank:
+			return tank_chara_cards
+		default:
+			return chara_card_instances
+	}	
 }
 
 /// @desc								Clears any active filters, and displays all chara cards

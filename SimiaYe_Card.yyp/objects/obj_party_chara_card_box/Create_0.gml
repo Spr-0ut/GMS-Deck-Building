@@ -15,7 +15,7 @@ is_expanded_party_box = true
 /// @param {Id.Instance} chara_card_to_add	The card of the character to add to the player's party
 function add_party_memeber(chara_card_to_add, index_to_replace = -1) {
 	if(typeof(chara_card_to_add) == "ref") {
-		chara_card_to_add.change_chara_card_size(is_expanded_party_box)
+		chara_card_to_add.set_chara_card_size(is_expanded_party_box)
 		
 		if(typeof(index_to_replace) != "number" || index_to_replace < 0 || index_to_replace >= MAX_PARTY_SIZE) {
 			var chara_slot_width = sprite_width / MAX_PARTY_SIZE
@@ -158,15 +158,28 @@ function find_current_party() {
 /// @desc							Alerts the party character card box to begin expanding
 function expand_chara_card_box() {
 	target_y_scale = starting_y_scale * chara_card_sprite_scale_diff
+	
+	for(var party_index = 0; party_index < array_length(current_party_chara); party_index++) {
+		var chara_card = current_party_chara[party_index]
+		if(chara_card != noone) {
+			chara_card.change_chara_card_size(true, chara_card.x, chara_card.y)
+		}
+	}
 }
 
 /// @desc							Alerts the party character card box to begin shrinking
 function shrink_chara_card_box() {
 	target_y_scale = starting_y_scale / chara_card_sprite_scale_diff
+	
+	for(var party_index = 0; party_index < array_length(current_party_chara); party_index++) {
+		var chara_card = current_party_chara[party_index]
+		if(chara_card != noone) {
+			chara_card.change_chara_card_size(false, chara_card.x, chara_card.y)
+		}
+	}
 }
 
-/// @desc							Handles shrinking or expanding the party character cards and
-///										their box each frame
+/// @desc							Handles shrinking or expanding the party box each frame
 function change_party_box_size() {
 	var dist_from_target_scale = image_yscale - target_y_scale
 	if(dist_from_target_scale == 0) {
@@ -178,28 +191,16 @@ function change_party_box_size() {
 	}
 	else {
 		image_yscale = lerp(image_yscale, target_y_scale, PARTY_BOX_SIZE_CHANGE_SPEED)
-		for(var party_index = 0; party_index < array_length(current_party_chara); party_index++) {
-			if(current_party_chara[party_index] != noone) {
-				current_party_chara[party_index].image_yscale = image_yscale
-			}
-		}
 	}
 }
 
 /// @desc							Completes the party character card box changing size by setting
-///										the correct sprites and reseting the sprite scaling
+///										the correct sprite and reseting the sprite scaling
 function party_box_resize_completed() {
 	target_y_scale = starting_y_scale
 	image_yscale = starting_y_scale
 	sprite_index = spr_shrunk_party_select_slots
 	if(is_expanded_party_box) {
 		sprite_index = spr_expanded_party_select_slots
-	}
-		
-	for(var party_index = 0; party_index < array_length(current_party_chara); party_index++) {
-		if(current_party_chara[party_index] != noone) {
-			current_party_chara[party_index].change_chara_card_size(is_expanded_party_box)
-			current_party_chara[party_index].image_yscale = starting_y_scale
-		}
 	}
 }

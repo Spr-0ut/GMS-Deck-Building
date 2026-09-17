@@ -4,3 +4,7 @@ if(chara_card_selected) {
 }
 
 flexpanels.set_chara_card_pos(x, y)
+
+if(chara_card_is_changing_size) {
+	animate_chara_card_change_size()	
+}
