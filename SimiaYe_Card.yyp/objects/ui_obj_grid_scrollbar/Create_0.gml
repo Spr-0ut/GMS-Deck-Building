@@ -131,7 +131,7 @@ function set_objects_to_scroll_pos() {
 /// @param {Real} scroll_percent		The percentage of viewable_window_height to move the grid items
 function scroll_grid_items(scroll_percent) {
 	var num_rows_displayed = ceil(viewable_window_height / row_height)
-	var y_shift_from_scroll = scroll_percent * (scrollable_list_height - viewable_window_height)
+	var y_shift_from_scroll = find_y_shift_from_scroll(scroll_percent)
 	var first_row_of_final_screen = ceil(array_length(objects_to_move) / num_columns) - num_rows_displayed
 	var start_index = max(floor(scroll_percent * first_row_of_final_screen) * num_columns, 0)
 	var end_index = min(start_index + ((num_rows_displayed + 1) * num_columns), array_length(objects_to_move))
@@ -149,4 +149,15 @@ function scroll_grid_items(scroll_percent) {
 			}
 		}
 	}
+}
+
+/// @desc								Calculates the y distance scrolled items need to move up
+///											based on the amount scrolled
+/// @param {Real} scroll_percent		The optional percentage the scroll bar has been scrolled
+/// @returns {Real}						The amount to subtract from grid item's y positions
+function find_y_shift_from_scroll(percent_scrolled = -1) {
+	if(!is_real(percent_scrolled) || percent_scrolled < 0) {
+		percent_scrolled = abs((scroll_thumb.y - scroll_min) / (scroll_max - scroll_min))
+	}
+	return percent_scrolled * (scrollable_list_height - viewable_window_height)
 }

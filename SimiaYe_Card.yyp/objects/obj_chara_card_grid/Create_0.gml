@@ -475,6 +475,12 @@ function set_chara_cards_pos(cards_to_position, on_card_index = noone, on_card_i
 	var initial_y_pos = target_grid_y + (CHARA_CARD_GRID_PADDING + CHARA_CARD_Y_PADDING) * 
 							card_y_scale
 	
+	if(chara_card_grid_scroll_bar == noone) {
+		var grid_height = chara_card_height * ceil(array_length(chara_card_instances) / num_columns)
+		create_chara_card_scroll_bar(chara_card_height, grid_height, num_columns)
+	}
+	var y_shift_from_scroll = chara_card_grid_scroll_bar.find_y_shift_from_scroll()
+	
 	var card_x_pos = initial_x_pos
 	var card_y_pos = initial_y_pos
 	for(var chara_card_index = 0; chara_card_index < array_length(cards_to_position); chara_card_index++) {
@@ -491,9 +497,9 @@ function set_chara_cards_pos(cards_to_position, on_card_index = noone, on_card_i
 			if(move_party_chara_cards || 
 				obj_party_chara_card_box.check_for_chara_card_in_party(chara_card) == -1) {
 					chara_card.x = card_x_pos
-					chara_card.y = card_y_pos
+					chara_card.y = card_y_pos - y_shift_from_scroll
 					chara_card.chara_card_start_x_position = card_x_pos
-					chara_card.chara_card_start_y_position = card_y_pos
+					chara_card.chara_card_start_y_position = card_y_pos - y_shift_from_scroll
 					chara_card.xstart = card_x_pos
 					chara_card.ystart = card_y_pos
 					chara_card.flexpanels.set_chara_card_surface_pos(
@@ -510,6 +516,4 @@ function set_chara_cards_pos(cards_to_position, on_card_index = noone, on_card_i
 			card_x_pos += chara_card_width + (chara_card_grid_width % chara_card_width / num_columns)	
 		}
 	}
-	
-	create_chara_card_scroll_bar(chara_card_height, card_y_pos + chara_card_height - initial_y_pos, num_columns)
 }
