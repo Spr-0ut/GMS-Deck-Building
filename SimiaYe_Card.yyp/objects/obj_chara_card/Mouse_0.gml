@@ -5,4 +5,5 @@ if(!chara_card_selected && !global.object_being_clicked && visible && is_top_lay
 		chara_card_start_y_position = y
 		x = mouse_x - (sprite_width / 2)
 		y = mouse_y - (sprite_height / 2)
+		flexpanels.set_draw_to_surface(false)
 }

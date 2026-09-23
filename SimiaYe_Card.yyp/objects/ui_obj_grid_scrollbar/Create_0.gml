@@ -13,6 +13,46 @@ amount_bar_moves_on_scroll = find_scroll_wheel_scaling(thumb_scale)
 scroll_clicked = false
 amount_scrolled = scroll_min
 pos_thumb_clicked = 0
+scroll_grid_items(0)
+
+/// @desc								Handles updating the scroll bar data if the scroll bar or scrolled
+///											items need to change size
+/// @param {Real} scroll_bar_y_pos		The new y position of the scroll bar, scroll_min is also updated
+/// @param {Real} scroll_bar_y_scale	The y scale for the scroll bar, the thumb scale is also updated
+/// @param {Real} list_height			The height of the full list being scrolled
+/// @param {Real} height_of_rows		The height of each row, amount_bar_moves_on_scroll is also updated
+/// @param {Real} number_of_columns		The number of columns displayed in the grid
+/// @param {Real} view_window_height	The height of the portion of the grid that's visible also updates
+///											scroll thumb scaling
+function update_scroll_data(scroll_bar_y_pos = undefined, scroll_bar_y_scale = undefined,
+							list_height = undefined, height_of_rows = undefined,
+							number_of_columns = undefined, view_window_height = undefined) {
+	if(scroll_bar_y_pos != undefined && is_real(scroll_bar_y_pos)) {
+		y = scroll_bar_y_pos
+	}
+	if(scroll_bar_y_scale != undefined && is_real(scroll_bar_y_scale) && image_yscale > 0) {
+		image_yscale = scroll_bar_y_scale
+	}
+	if(list_height != undefined && is_real(list_height) && list_height > 0) {
+		scrollable_list_height = list_height
+	}
+	if(height_of_rows != undefined && is_real(height_of_rows) && height_of_rows > 0) {
+		row_height = height_of_rows
+	}
+	if(number_of_columns != undefined && is_real(number_of_columns) && number_of_columns > 0) {
+		num_columns = number_of_columns
+	}
+	if(view_window_height != undefined && is_real(view_window_height) && view_window_height > 0) {
+		viewable_window_height = view_window_height
+	}
+	
+	var thumb_scale = find_scroll_thumb_scale()
+	scroll_min = scroll_bar_y_pos + floor(SCROLL_BORDER_WIDTH * image_yscale)
+	scroll_thumb.image_yscale = thumb_scale
+	scroll_max = find_scroll_thumb_max_y(thumb_scale)
+	amount_bar_moves_on_scroll = find_scroll_wheel_scaling(thumb_scale)
+	reset_scroll()
+}
 
 /// @desc								Finds the amount that the scroll thumb will need to be scaled to
 ///											such that it will reflect how many screen lengths are below
@@ -73,10 +113,16 @@ function move_scroll_thumb(smooth_scroll) {
 	set_objects_to_scroll_pos()
 }
 
+/// @desc								Sets the thumb and objects_to_move to their top most position
+function reset_scroll() {
+	amount_scrolled = scroll_min
+	move_scroll_thumb(false)
+}
+
 /// @desc								Sets the position of all the objects_to_move based on the
 ///											given percent_scrolled and their ystart position
 function set_objects_to_scroll_pos() {
-	var percent_scrolled = (scroll_thumb.y - scroll_min) / (scroll_max - scroll_min)
+	var percent_scrolled = abs((scroll_thumb.y - scroll_min) / (scroll_max - scroll_min))
 	scroll_grid_items(percent_scrolled)
 }
 
@@ -87,14 +133,20 @@ function scroll_grid_items(scroll_percent) {
 	var num_rows_displayed = ceil(viewable_window_height / row_height)
 	var y_shift_from_scroll = scroll_percent * (scrollable_list_height - viewable_window_height)
 	var first_row_of_final_screen = ceil(array_length(objects_to_move) / num_columns) - num_rows_displayed
-	var start_index = floor(scroll_percent * first_row_of_final_screen) * num_columns
+	var start_index = max(floor(scroll_percent * first_row_of_final_screen) * num_columns, 0)
 	var end_index = min(start_index + ((num_rows_displayed + 1) * num_columns), array_length(objects_to_move))
 	
-	instance_deactivate_layer(objects_to_move[0].layer)
-	for (var movable_objects_index = start_index; movable_objects_index < end_index; movable_objects_index++)
+	for (var movable_objects_index = max(start_index - num_columns, 0); movable_objects_index < min(end_index + num_columns, array_length(objects_to_move)); movable_objects_index++)
 	{
-		var current_obj = objects_to_move[movable_objects_index]
-		instance_activate_object(current_obj)
-		current_obj.y = current_obj.ystart - y_shift_from_scroll
+		if(objects_to_move[movable_objects_index] != noone) {
+			if(movable_objects_index >= start_index && movable_objects_index < end_index) {
+				var current_obj = objects_to_move[movable_objects_index]
+				current_obj.visible = true
+				current_obj.y = current_obj.ystart - y_shift_from_scroll
+			}
+			else {
+				objects_to_move[movable_objects_index].visible = false
+			}
+		}
 	}
 }

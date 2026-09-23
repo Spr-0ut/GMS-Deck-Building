@@ -1,1 +1,1 @@
-flexpanels.draw_chara_card(method(self, draw_self))
+flexpanels.draw_chara_card()

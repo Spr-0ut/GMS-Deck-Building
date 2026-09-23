@@ -1,0 +1,1 @@
+instance_destroy(scroll_thumb)

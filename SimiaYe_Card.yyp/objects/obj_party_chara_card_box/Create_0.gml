@@ -16,6 +16,7 @@ is_expanded_party_box = true
 function add_party_memeber(chara_card_to_add, index_to_replace = -1) {
 	if(typeof(chara_card_to_add) == "ref") {
 		chara_card_to_add.set_chara_card_size(is_expanded_party_box)
+		chara_card_to_add.flexpanels.set_draw_to_surface(false)
 		
 		if(typeof(index_to_replace) != "number" || index_to_replace < 0 || index_to_replace >= MAX_PARTY_SIZE) {
 			var chara_slot_width = sprite_width / MAX_PARTY_SIZE

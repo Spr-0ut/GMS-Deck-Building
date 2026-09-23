@@ -1,6 +1,6 @@
 #macro CHARA_CARD_GRID_PADDING		16
 #macro CHARA_CARD_X_PADDING			6
-#macro CHARA_CARD_Y_PADDING			6
+#macro CHARA_CARD_Y_PADDING			16
 
 chara_card_instances = []
 damage_chara_cards = []
@@ -15,6 +15,9 @@ chara_card_grid_layer = layer_create(layer_get_depth(layer) - 1, "chara_card_gri
 is_expanded_grid = false
 grid_is_moving = false
 target_grid_y = y
+chara_card_grid_scroll_bar = noone
+chara_card_grid_surface = surface_create(sprite_width - (2 * CHARA_CARD_GRID_PADDING * image_xscale),
+										 sprite_height - (CHARA_CARD_GRID_PADDING * image_yscale))
 create_chara_card_grid_view()
 remove_unused_chara_card_filters()
 
@@ -71,7 +74,7 @@ function create_chara_card_grid_view() {
 					image_yscale,
 					grid_index : chara_card_index,
 					chara_card_data,
-					flexpanels : new chara_card_drawn_elements(image_xscale, image_yscale),
+					flexpanels : new chara_card_drawn_elements(image_xscale, image_yscale, chara_card_grid_surface, x + (CHARA_CARD_GRID_PADDING * image_xscale), y + (CHARA_CARD_GRID_PADDING * image_yscale)),
 					card_is_expanded : false
 				})
 			
@@ -95,6 +98,55 @@ function create_chara_card_grid_view() {
 						break
 				}
 			}))
+	}
+}
+
+/// @desc									Creates the scroll bar for the chara card grid
+/// @param {Real} chara_card_height			The height of each row of the grid scrolled
+/// @param {Real} grid_height				The total height of the grid being scrolled
+/// @param {Real} num_columns				The number of columns in the grid
+function create_chara_card_scroll_bar(chara_card_height, grid_height, num_columns) {
+	var bar_sprite_height = sprite_get_height(object_get_sprite(ui_obj_grid_scrollbar))
+	var bar_sprite_y_scale = (sprite_height - SCROLL_BAR_PADDING) / bar_sprite_height
+	var bar_x_pos = x + sprite_width + SCROLL_BAR_PADDING
+	var bar_y_pos = y + (SCROLL_BAR_PADDING * bar_sprite_y_scale)
+	if(chara_card_grid_scroll_bar != noone && instance_exists(chara_card_grid_scroll_bar)) {
+		var num_rows = ceil(array_length(chara_card_instances) / num_columns)
+		resize_chara_card_scroll_bar(y, num_rows, chara_card_height)
+	}
+	else {
+		var scroll_bar_layer_name = "chara_card_scroll_instance"
+		var scroll_bar_layer_id = layer_get_id(scroll_bar_layer_name)
+		if(scroll_bar_layer_id == -1) {
+			var scroll_bar_grid_depth = layer_get_depth(layer) - 1
+			scroll_bar_layer_id = layer_create(scroll_bar_grid_depth, scroll_bar_layer_name)
+		}
+	
+		chara_card_grid_scroll_bar = instance_create_layer(bar_x_pos, bar_y_pos, scroll_bar_layer_id, ui_obj_grid_scrollbar, {
+			image_yscale : bar_sprite_y_scale,
+			objects_to_move: chara_card_instances,
+			scrollable_list_height : grid_height,
+			row_height : chara_card_height,
+			num_columns,
+			viewable_window_height : surface_get_height(chara_card_grid_surface)
+		})
+	}
+}
+
+/// @desc									Updates the scrollbar to a new size and updates its scroll
+/// @param {Real} scroll_bar_y				New y position of the scrollbar
+/// @param {Real} num_rows					The number of rows the scroll bar moves
+/// @param {Real} row_height				The height of each row of the grid scrolled
+function resize_chara_card_scroll_bar(scroll_bar_y, num_rows, row_height) {
+	if(chara_card_grid_scroll_bar != noone && instance_exists(chara_card_grid_scroll_bar)) {
+		var bar_sprite_height = sprite_get_height(object_get_sprite(ui_obj_grid_scrollbar))
+		var bar_sprite_y_scale = (room_height - scroll_bar_y - 2 * SCROLL_BAR_PADDING) / bar_sprite_height
+		var bar_y_pos = scroll_bar_y + (SCROLL_BAR_PADDING * bar_sprite_y_scale)
+		var scroll_view_window = room_height - scroll_bar_y - (CHARA_CARD_GRID_PADDING * image_yscale)
+		
+		chara_card_grid_scroll_bar.update_scroll_data(bar_y_pos, bar_sprite_y_scale,
+														row_height * num_rows, row_height,
+														undefined, scroll_view_window)
 	}
 }
 
@@ -166,7 +218,8 @@ function return_chara_card_to_grid(chara_card) {
 	if(typeof(chara_card) == "ref" && chara_card != noone && instance_exists(chara_card)) {
 		chara_card.set_chara_card_size(is_expanded_grid)
 		chara_card_instances[chara_card.grid_index] = chara_card
-		if(current_chara_card_filter == chara_class.all_chara) {	
+		chara_card.flexpanels.set_draw_to_surface(true, chara_card_grid_surface)
+		if(current_chara_card_filter == chara_class.all_chara) {
 			set_chara_cards_pos(chara_card_instances)
 		}
 		else if(current_chara_card_filter == chara_card.chara_card_data.class) {
@@ -212,6 +265,16 @@ function expand_chara_card_grid() {
 		if(y - target_grid_y < 1) {
 			grid_is_moving = false
 			is_expanded_grid = true
+			y = target_grid_y
+			if(surface_exists(chara_card_grid_surface)) {
+				surface_resize(chara_card_grid_surface, sprite_width - (2 * CHARA_CARD_GRID_PADDING * image_xscale),
+									sprite_height - (CHARA_CARD_GRID_PADDING * image_yscale))
+			}
+			else {
+				chara_card_grid_surface = surface_create(sprite_width - (2 * CHARA_CARD_GRID_PADDING * image_xscale),
+										 sprite_height - (CHARA_CARD_GRID_PADDING * image_yscale))	
+			}
+			
 			if(instance_exists(obj_party_chara_card_box)) {
 				obj_party_chara_card_box.shrink_chara_card_box()
 			}
@@ -233,7 +296,16 @@ function shrink_chara_card_grid() {
 		if(target_grid_y - y < 1) {
 			is_expanded_grid = false
 			grid_is_moving = false
+			y = target_grid_y
 			sprite_index = spr_shrunk_chara_select_grid
+			if(surface_exists(chara_card_grid_surface)) {
+				surface_resize(chara_card_grid_surface, sprite_width - (2 * CHARA_CARD_GRID_PADDING * image_xscale),
+									sprite_height - (CHARA_CARD_GRID_PADDING * image_yscale))
+			}
+			else {
+				chara_card_grid_surface = surface_create(sprite_width - (2 * CHARA_CARD_GRID_PADDING * image_xscale),
+										 sprite_height - (CHARA_CARD_GRID_PADDING * image_yscale))	
+			}
 			if(instance_exists(obj_party_chara_card_box)) {
 				obj_party_chara_card_box.expand_chara_card_box()
 			}
@@ -268,7 +340,7 @@ function set_chara_cards_size(expand_cards, target_grid_y) {
 	var chara_card_grid_width = sprite_width - (2 * CHARA_CARD_GRID_PADDING * image_xscale)
 	var num_columns = floor(chara_card_grid_width / chara_card_width)
 	
-	var initial_x_pos = x + 2 * CHARA_CARD_GRID_PADDING * card_x_scale +
+	var initial_x_pos = x + CHARA_CARD_GRID_PADDING * card_x_scale +
 							(chara_card_grid_width % chara_card_width / num_columns)
 	var initial_y_pos = target_grid_y + (CHARA_CARD_GRID_PADDING + CHARA_CARD_Y_PADDING) * 
 							card_y_scale
@@ -283,6 +355,7 @@ function set_chara_cards_size(expand_cards, target_grid_y) {
 	for(var chara_card_index = 0; chara_card_index < array_length(cards_to_show); chara_card_index++) {
 		if(cards_to_show[chara_card_index] != noone && !array_contains(party_cards, cards_to_show[chara_card_index])) {
 			cards_to_show[chara_card_index].change_chara_card_size(expand_cards, card_x_pos, card_y_pos)
+			cards_to_show[chara_card_index].flexpanels.set_chara_card_surface_pos(x + (CHARA_CARD_GRID_PADDING * image_xscale), target_grid_y + (CHARA_CARD_GRID_PADDING * image_yscale))
 		}
 		if((chara_card_index + 1) % num_columns == 0) {
 			card_x_pos = initial_x_pos
@@ -292,6 +365,9 @@ function set_chara_cards_size(expand_cards, target_grid_y) {
 			card_x_pos += chara_card_width + (chara_card_grid_width % chara_card_width / num_columns)	
 		}
 	}
+	
+	var num_rows = ceil(array_length(cards_to_show) / num_columns)
+	resize_chara_card_scroll_bar(target_grid_y, num_rows, chara_card_height)
 }
 
 /// @desc								Removes the given character card from the grid, but leaves
@@ -394,9 +470,9 @@ function set_chara_cards_pos(cards_to_position, on_card_index = noone, on_card_i
 	var num_columns = floor(chara_card_grid_width / chara_card_width)
 	move_party_chara_cards = move_party_chara_cards || !instance_exists(obj_party_chara_card_box)
 	
-	var initial_x_pos = x + 2 * CHARA_CARD_GRID_PADDING * card_x_scale +
+	var initial_x_pos = x + CHARA_CARD_GRID_PADDING * card_x_scale +
 							(chara_card_grid_width % chara_card_width / num_columns)
-	var initial_y_pos = y + (CHARA_CARD_GRID_PADDING + CHARA_CARD_Y_PADDING) * 
+	var initial_y_pos = target_grid_y + (CHARA_CARD_GRID_PADDING + CHARA_CARD_Y_PADDING) * 
 							card_y_scale
 	
 	var card_x_pos = initial_x_pos
@@ -418,6 +494,11 @@ function set_chara_cards_pos(cards_to_position, on_card_index = noone, on_card_i
 					chara_card.y = card_y_pos
 					chara_card.chara_card_start_x_position = card_x_pos
 					chara_card.chara_card_start_y_position = card_y_pos
+					chara_card.xstart = card_x_pos
+					chara_card.ystart = card_y_pos
+					chara_card.flexpanels.set_chara_card_surface_pos(
+										x + (CHARA_CARD_GRID_PADDING * image_xscale),
+										target_grid_y + (CHARA_CARD_GRID_PADDING * image_yscale))
 			}
 		}
 		
@@ -429,4 +510,6 @@ function set_chara_cards_pos(cards_to_position, on_card_index = noone, on_card_i
 			card_x_pos += chara_card_width + (chara_card_grid_width % chara_card_width / num_columns)	
 		}
 	}
+	
+	create_chara_card_scroll_bar(chara_card_height, card_y_pos + chara_card_height - initial_y_pos, num_columns)
 }

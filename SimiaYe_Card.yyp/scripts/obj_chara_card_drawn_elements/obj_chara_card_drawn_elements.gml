@@ -8,13 +8,21 @@
 /// @desc							The struct to be used to draw the character cards
 /// @param {Real} card_xscale		The horizontal scaling of the character card being drawn
 /// @param {Real} card_yscale		The vertical scaling of the character card being drawn
-function chara_card_drawn_elements(card_xscale = 1, card_yscale = 1) constructor {
+function chara_card_drawn_elements(card_xscale = 1, card_yscale = 1, card_grid_surface = application_surface, surface_x = 0, surface_y = 0) constructor {
 	expanded_chara_card_flexpanels = create_expanded_chara_card_flexpanels(card_xscale, card_yscale)
 	shrunk_chara_card_flexpanels = create_shrunk_chara_card_flexpanels(card_xscale, card_yscale)
 	chara_card_flexpanels = shrunk_chara_card_flexpanels
 	is_expanded_chara_card = false
+	drawn_surface = card_grid_surface
+	surface_x_pos = surface_x
+	surface_y_pos = surface_y
+	draw_to_surface = true
 	x_pos = 0
 	y_pos = 0
+	
+	chara_card_sprite = spr_shrunk_damage_chara_card
+	chara_card_xscale = card_xscale
+	chara_card_yscale = card_yscale
 	
 	potion_slots_sprite = spr_one_potion_slot_highlight
 	num_potion_slots = 1
@@ -339,14 +347,16 @@ function chara_card_drawn_elements(card_xscale = 1, card_yscale = 1) constructor
 #endregion
 
 	/// @desc									Sets up all of the data needed to draw card elements
+	/// @param {Asset.GMSprite} card_sprite		The sprite used to draw the character card
 	/// @param {Real} num_potion_slots			The number of potions this character can hold
 	/// @param {Asset.GMSprite} portrait		The portrait sprite to show on the character card
 	/// @param {Real} chara_current_health		The amount of health the character currently has
 	/// @param {Real} chara_max_health			The max amount of health the character can have
 	/// @param {Real} chara_attack				The character's current attack
 	/// @param {Real} chara_description			The character's ability description
-	function setup_chara_card_drawn_data(num_potion_slots, portrait, chara_current_health,
+	function setup_chara_card_drawn_data(card_sprite, num_potion_slots, portrait, chara_current_health,
 										chara_max_health, chara_attack, chara_description) {
+		set_chara_card_sprite(card_sprite)
 		set_chara_card_potion_slots(num_potion_slots)
 		set_chara_card_portrait(portrait)
 		set_chara_card_health(chara_current_health, chara_max_health)
@@ -355,17 +365,42 @@ function chara_card_drawn_elements(card_xscale = 1, card_yscale = 1) constructor
 	}
 	
 	/// @desc									Handles drawing the character card and it's elements
-	/// @param {Method} draw_self_method		The draw_self() method for this character card.
-	///												NOTE: There is no validation done for this call
-	///												to maximize fps, and as such may crash the game
-	///												if the wrong data is sent
-	function draw_chara_card(draw_self_method){
+	function draw_chara_card(){
+		if(draw_to_surface && surface_exists(drawn_surface)) {
+			surface_set_target(drawn_surface)
+			if(is_real(surface_x_pos) && is_real(surface_y_pos)) {
+				x_pos -= surface_x_pos
+				y_pos -= surface_y_pos
+			}
+		}
 		draw_chara_card_portrait()
-		method_call(draw_self_method)
+		draw_chara_card_sprite()
 		draw_chara_card_potion_slots()
 		draw_chara_card_health()
 		draw_chara_card_attack()
 		draw_chara_card_description()
+		
+		if(surface_get_target() == drawn_surface && drawn_surface != application_surface) {
+			surface_reset_target()
+			if(is_real(surface_x_pos) && is_real(surface_y_pos)) {
+				x_pos += surface_x_pos
+				y_pos += surface_y_pos
+			}
+		}
+	}
+	
+	/// @desc									Enables or disables drawing the card to the given surface
+	/// @param {Bool} draw_card_on_surface		Flag to determine if the card is drawn on the surface
+	/// @param {Id.Surface} surface_to_draw_to	The optinal surface the card will draw to. NOTE: The
+	///												card position is modified by surface_pos to translate
+	///												the coords, be sure to use set_chara_card_surface_pos
+	function set_draw_to_surface(draw_card_on_surface, surface_to_draw_to = noone) {
+		if(is_bool(draw_card_on_surface)) {
+			draw_to_surface = draw_card_on_surface
+		}
+		if(surface_to_draw_to != noone && surface_exists(surface_to_draw_to)) {
+			drawn_surface = surface_to_draw_to
+		}
 	}
 	
 	/// @desc									Sets the cooridinates that will be used to draw the card
@@ -376,6 +411,15 @@ function chara_card_drawn_elements(card_xscale = 1, card_yscale = 1) constructor
 	function set_chara_card_pos(card_x_pos, card_y_pos) {
 		x_pos = card_x_pos
 		y_pos = card_y_pos
+	}
+	
+	/// @desc									Sets the surface coordinates that are used to translate
+	///												the card's draw position
+	/// @param {Real} surf_x_pos				The x position of the surface
+	/// @param {Real} surf_y_pos				The y position of the surface
+	function set_chara_card_surface_pos(surf_x_pos, surf_y_pos) {
+		surface_x_pos = surf_x_pos
+		surface_y_pos = surf_y_pos
 	}
 	
 	/// @desc									Updates the chara card's flex panel position data
@@ -395,6 +439,32 @@ function chara_card_drawn_elements(card_xscale = 1, card_yscale = 1) constructor
 		update_chara_card_attack_pos()
 		update_chara_card_description_pos()
 	}
+	
+#region Chara Card
+	/// @desc									Draws the chara_card_sprite at x_pos and y_pos
+	/// @param {Real} subimage					The optional subimage of chara_card_sprite, defaults to 0
+	function draw_chara_card_sprite(subimage = 0) {
+		draw_sprite_ext(chara_card_sprite, subimage,  x_pos, y_pos, chara_card_xscale, chara_card_yscale, 0, c_white, 1)
+	}
+
+	/// @desc									Sets the sprite of the chara card being drawn
+	/// @param {Asset.GMSprite} card_sprite		The card sprite that will be drawn
+	function set_chara_card_sprite(card_sprite) {
+		if(typeof(card_sprite) == "ref" && sprite_exists(card_sprite)) {
+			chara_card_sprite = card_sprite
+		}
+	}
+	
+	/// @desc									Sets the scaling used to draw this chara card
+	/// @param {Real} card_xscale				The horizontal scaling of the character card
+	/// @param {Real} card_yscale				The vertical scaling of the character card
+	function set_chara_card_scale(card_xscale = chara_card_xscale, card_yscale = chara_card_yscale) {
+		if(is_real(chara_card_xscale) && is_real(chara_card_yscale)) {
+			chara_card_xscale = card_xscale
+			chara_card_yscale = card_yscale
+		}
+	}
+#endregion
 	
 #region Portrait
 	/// @desc									Draws the given portrait in the flexpanel's image_box
