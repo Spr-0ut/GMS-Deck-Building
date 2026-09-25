@@ -1,4 +1,6 @@
-if(!chara_card_selected && !global.object_being_clicked && visible && is_top_layer(layer, mouse_x, mouse_y)) {
+if(!chara_card_selected && !global.object_being_clicked && visible &&
+	(!flexpanels.draw_to_surface || flexpanels.surface_y_pos < mouse_y) && 
+	is_top_layer(layer, mouse_x, mouse_y)) {
 		global.object_being_clicked	= true
 		chara_card_selected = true
 		chara_card_start_x_position = x

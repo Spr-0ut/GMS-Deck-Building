@@ -132,21 +132,28 @@ function set_objects_to_scroll_pos() {
 function scroll_grid_items(scroll_percent) {
 	var num_rows_displayed = ceil(viewable_window_height / row_height)
 	var y_shift_from_scroll = find_y_shift_from_scroll(scroll_percent)
-	var first_row_of_final_screen = ceil(array_length(objects_to_move) / num_columns) - num_rows_displayed
-	var start_index = max(floor(scroll_percent * first_row_of_final_screen) * num_columns, 0)
+	var max_rows_scrolled = (scrollable_list_height - viewable_window_height) / row_height
+	var start_index = max(floor(scroll_percent * max_rows_scrolled) * num_columns, 0)
 	var end_index = min(start_index + ((num_rows_displayed + 1) * num_columns), array_length(objects_to_move))
 	
-	for (var movable_objects_index = max(start_index - num_columns, 0); movable_objects_index < min(end_index + num_columns, array_length(objects_to_move)); movable_objects_index++)
+	for (var movable_objects_index = 0; movable_objects_index < start_index; movable_objects_index++)
 	{
 		if(objects_to_move[movable_objects_index] != noone) {
-			if(movable_objects_index >= start_index && movable_objects_index < end_index) {
-				var current_obj = objects_to_move[movable_objects_index]
-				current_obj.visible = true
-				current_obj.y = current_obj.ystart - y_shift_from_scroll
-			}
-			else {
-				objects_to_move[movable_objects_index].visible = false
-			}
+			objects_to_move[movable_objects_index].visible = false
+		}
+	}
+	for (var movable_objects_index = start_index; movable_objects_index < end_index; movable_objects_index++)
+	{
+		if(objects_to_move[movable_objects_index] != noone) {
+			var current_obj = objects_to_move[movable_objects_index]
+			current_obj.visible = true
+			current_obj.y = current_obj.ystart - y_shift_from_scroll
+		}
+	}
+	for (var movable_objects_index = end_index; movable_objects_index < array_length(objects_to_move); movable_objects_index++)
+	{
+		if(objects_to_move[movable_objects_index] != noone) {
+			objects_to_move[movable_objects_index].visible = false
 		}
 	}
 }
