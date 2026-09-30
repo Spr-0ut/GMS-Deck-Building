@@ -29,6 +29,7 @@ function update_scroll_data(scroll_bar_y_pos = undefined, scroll_bar_y_scale = u
 							number_of_columns = undefined, view_window_height = undefined) {
 	if(scroll_bar_y_pos != undefined && is_real(scroll_bar_y_pos)) {
 		y = scroll_bar_y_pos
+		scroll_min = scroll_bar_y_pos + floor(SCROLL_BORDER_WIDTH * image_yscale)
 	}
 	if(scroll_bar_y_scale != undefined && is_real(scroll_bar_y_scale) && image_yscale > 0) {
 		image_yscale = scroll_bar_y_scale
@@ -47,7 +48,6 @@ function update_scroll_data(scroll_bar_y_pos = undefined, scroll_bar_y_scale = u
 	}
 	
 	var thumb_scale = find_scroll_thumb_scale()
-	scroll_min = scroll_bar_y_pos + floor(SCROLL_BORDER_WIDTH * image_yscale)
 	scroll_thumb.image_yscale = thumb_scale
 	scroll_max = find_scroll_thumb_max_y(thumb_scale)
 	amount_bar_moves_on_scroll = find_scroll_wheel_scaling(thumb_scale)
@@ -133,8 +133,8 @@ function scroll_grid_items(scroll_percent) {
 	var num_rows_displayed = ceil(viewable_window_height / row_height)
 	var y_shift_from_scroll = find_y_shift_from_scroll(scroll_percent)
 	var max_rows_scrolled = (scrollable_list_height - viewable_window_height) / row_height
-	var start_index = max(floor(scroll_percent * max_rows_scrolled) * num_columns, 0)
-	var end_index = min(start_index + ((num_rows_displayed + 1) * num_columns), array_length(objects_to_move))
+	var start_index = clamp(floor(scroll_percent * max_rows_scrolled) * num_columns, 0, array_length(objects_to_move))
+	var end_index = clamp(start_index + ((num_rows_displayed + 1) * num_columns), 0, array_length(objects_to_move))
 	
 	for (var movable_objects_index = 0; movable_objects_index < start_index; movable_objects_index++)
 	{

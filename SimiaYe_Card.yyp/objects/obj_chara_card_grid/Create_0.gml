@@ -105,13 +105,14 @@ function create_chara_card_grid_view() {
 /// @param {Real} chara_card_height			The height of each row of the grid scrolled
 /// @param {Real} grid_height				The total height of the grid being scrolled
 /// @param {Real} num_columns				The number of columns in the grid
-function create_chara_card_scroll_bar(chara_card_height, grid_height, num_columns) {
+function create_chara_card_scroll_bar(chara_card_height, grid_height, num_columns, scrollable_objects = chara_card_instances) {
 	var bar_sprite_height = sprite_get_height(object_get_sprite(ui_obj_grid_scrollbar))
 	var bar_sprite_y_scale = (sprite_height - SCROLL_BAR_PADDING) / bar_sprite_height
 	var bar_x_pos = x + sprite_width + SCROLL_BAR_PADDING
 	var bar_y_pos = y + (SCROLL_BAR_PADDING * bar_sprite_y_scale)
 	if(chara_card_grid_scroll_bar != noone && instance_exists(chara_card_grid_scroll_bar)) {
-		var num_rows = ceil(array_length(chara_card_instances) / num_columns)
+		chara_card_grid_scroll_bar.objects_to_move = scrollable_objects
+		var num_rows = ceil(array_length(scrollable_objects) / num_columns)
 		resize_chara_card_scroll_bar(y, num_rows, chara_card_height)
 	}
 	else {
@@ -124,7 +125,7 @@ function create_chara_card_scroll_bar(chara_card_height, grid_height, num_column
 	
 		chara_card_grid_scroll_bar = instance_create_layer(bar_x_pos, bar_y_pos, scroll_bar_layer_id, ui_obj_grid_scrollbar, {
 			image_yscale : bar_sprite_y_scale,
-			objects_to_move: chara_card_instances,
+			objects_to_move: scrollable_objects,
 			scrollable_list_height : grid_height,
 			row_height : chara_card_height,
 			num_columns,
@@ -220,7 +221,7 @@ function return_chara_card_to_grid(chara_card) {
 		chara_card_instances[chara_card.grid_index] = chara_card
 		chara_card.flexpanels.set_draw_to_surface(true, chara_card_grid_surface)
 		if(current_chara_card_filter == chara_class.all_chara) {
-			set_chara_cards_pos(chara_card_instances)
+			set_chara_card_grid_pos(chara_card, chara_card.grid_index)
 		}
 		else if(current_chara_card_filter == chara_card.chara_card_data.class) {
 			var cards_to_show = []
@@ -241,12 +242,39 @@ function return_chara_card_to_grid(chara_card) {
 					cards_to_show = tank_chara_cards
 					break
 			}
-			set_chara_cards_pos(cards_to_show)
+			var card_index = array_get_index(cards_to_show, chara_card)
+			set_chara_card_grid_pos(chara_card, card_index)
 		}
 		else {
 			chara_card.visible = false
 		}
 	}
+}
+
+/// @desc								Sets the chara_card's position based on it's chara_card_index
+/// @param {Id.Instance} chara_card		The character card to positon
+/// @param {Real} chara_card_index		The index in the grid to position the chara_card at
+function set_chara_card_grid_pos(chara_card, chara_card_index) {
+	var chara_card_pos_data = find_chara_card_pos_data()
+	var y_shift_from_scroll = 0
+	if(chara_card_grid_scroll_bar != noone && instance_exists(chara_card_grid_scroll_bar)) {
+		y_shift_from_scroll = chara_card_grid_scroll_bar.find_y_shift_from_scroll()
+	}
+	
+	var column_index = chara_card_index % chara_card_pos_data.num_columns
+	var row_index = floor((chara_card_index) / chara_card_pos_data.num_columns)
+	var card_x_pos = chara_card_pos_data.initial_x_pos + column_index * chara_card_pos_data.x_shift_per_card
+	var card_y_pos = chara_card_pos_data.initial_y_pos + row_index * chara_card_pos_data.y_shift_per_card
+								
+	chara_card.x = card_x_pos
+	chara_card.y = card_y_pos - y_shift_from_scroll
+	chara_card.chara_card_start_x_position = card_x_pos
+	chara_card.chara_card_start_y_position = card_y_pos - y_shift_from_scroll
+	chara_card.xstart = card_x_pos
+	chara_card.ystart = card_y_pos
+	chara_card.flexpanels.set_chara_card_surface_pos(
+						x + (CHARA_CARD_GRID_PADDING * image_xscale),
+						target_grid_y + (CHARA_CARD_GRID_PADDING * image_yscale))
 }
 
 /// @desc							Handles expanding the character card grid each frame
@@ -350,13 +378,27 @@ function set_chara_cards_size(expand_cards, target_grid_y) {
 		party_cards = instance_find(obj_party_chara_card_box, 0).current_party_chara	
 	}
 	
+	for(var chara_card_index = 0; chara_card_index < array_length(chara_card_instances); chara_card_index++) {
+		var cur_chara_card = chara_card_instances[chara_card_index]
+		
+		if(cur_chara_card != noone && !array_contains(cards_to_show, cur_chara_card)) {
+			cur_chara_card.change_chara_card_size(expand_cards, 0, 0)
+			cur_chara_card.flexpanels.set_chara_card_surface_pos(x + (CHARA_CARD_GRID_PADDING * image_xscale), target_grid_y + (CHARA_CARD_GRID_PADDING * image_yscale))
+		}
+	}
+	
 	var card_x_pos = initial_x_pos
 	var card_y_pos = initial_y_pos
 	for(var chara_card_index = 0; chara_card_index < array_length(cards_to_show); chara_card_index++) {
-		if(cards_to_show[chara_card_index] != noone && !array_contains(party_cards, cards_to_show[chara_card_index])) {
-			cards_to_show[chara_card_index].change_chara_card_size(expand_cards, card_x_pos, card_y_pos)
-			cards_to_show[chara_card_index].flexpanels.set_chara_card_surface_pos(x + (CHARA_CARD_GRID_PADDING * image_xscale), target_grid_y + (CHARA_CARD_GRID_PADDING * image_yscale))
+		var chara_card = cards_to_show[chara_card_index]
+		if(chara_card != noone && !array_contains(party_cards, chara_card)) {
+			chara_card.change_chara_card_size(expand_cards, card_x_pos, card_y_pos)
+			if(typeof(chara_card.flexpanels) == "struct") {
+				chara_card.flexpanels.set_chara_card_surface_pos(x + (CHARA_CARD_GRID_PADDING * image_xscale),
+													target_grid_y + (CHARA_CARD_GRID_PADDING * image_yscale))
+			}
 		}
+		
 		if((chara_card_index + 1) % num_columns == 0) {
 			card_x_pos = initial_x_pos
 			card_y_pos += chara_card_height
@@ -429,11 +471,11 @@ function clear_filter() {
 				chara_card.visible = true
 			}
 		}), [], false)
-	
 	current_chara_card_filter = chara_class.all_chara
 }
 
-/// @desc											Sets the position of the given chara cards in the grid.
+/// @desc											Sets the position of the given chara cards in the grid
+///														and resets the scroll with the updated card grid.
 ///														NOTE: This assumes that the only cards in the grid
 ///														are the ones given in cards_to_position
 /// @param {Array<Id.Instance>} cards_to_position	The array of cards to be positioned in order
@@ -445,44 +487,11 @@ function clear_filter() {
 /// @param {Bool} move_party_chara_cards			Optional flag to determine if the cards are allowed
 ///														to move if it's in the party. Defaults to true
 function set_chara_cards_pos(cards_to_position, on_card_index = noone, on_card_index_args = [], move_party_chara_cards = true) {
-	var first_chara_card_index = array_find_index(cards_to_position,
-		function(_element, _index) {
-			return  variable_instance_exists(_element, "object_index") &&
-					(object_is_ancestor(_element.object_index, obj_chara_card) ||
-					_element.object_index == obj_chara_card)
-		})
-	
-	var card_sprite = spr_shrunk_damage_chara_card
-	var card_x_scale = 1
-	var card_y_scale = 1
-	if(first_chara_card_index >= 0) {
-		var first_chara_card = cards_to_position[first_chara_card_index]
-		card_sprite = first_chara_card.sprite_index
-		card_x_scale = first_chara_card.image_xscale
-		card_y_scale = first_chara_card.image_yscale
-	}
-	
-	//This assumes the cards will always be the same size. As of right now that's true and to make it
-	//	more generic would result in a potentially worse solution
-	var chara_card_width = (sprite_get_width(card_sprite) + (2 * CHARA_CARD_X_PADDING)) * card_x_scale
-	var chara_card_height = (sprite_get_height(card_sprite) + (2 * CHARA_CARD_Y_PADDING)) * card_y_scale
-	var chara_card_grid_width = sprite_width - (2 * CHARA_CARD_GRID_PADDING * image_xscale)
-	var num_columns = floor(chara_card_grid_width / chara_card_width)
+	var card_pos_data = find_chara_card_pos_data()
 	move_party_chara_cards = move_party_chara_cards || !instance_exists(obj_party_chara_card_box)
 	
-	var initial_x_pos = x + CHARA_CARD_GRID_PADDING * card_x_scale +
-							(chara_card_grid_width % chara_card_width / num_columns)
-	var initial_y_pos = target_grid_y + (CHARA_CARD_GRID_PADDING + CHARA_CARD_Y_PADDING) * 
-							card_y_scale
-	
-	if(chara_card_grid_scroll_bar == noone) {
-		var grid_height = chara_card_height * ceil(array_length(chara_card_instances) / num_columns)
-		create_chara_card_scroll_bar(chara_card_height, grid_height, num_columns)
-	}
-	var y_shift_from_scroll = chara_card_grid_scroll_bar.find_y_shift_from_scroll()
-	
-	var card_x_pos = initial_x_pos
-	var card_y_pos = initial_y_pos
+	var card_x_pos = card_pos_data.initial_x_pos
+	var card_y_pos = card_pos_data.initial_y_pos
 	for(var chara_card_index = 0; chara_card_index < array_length(cards_to_position); chara_card_index++) {
 		if(is_method(on_card_index)) {
 			var callback_args = array_create(array_length(on_card_index_args))
@@ -494,26 +503,76 @@ function set_chara_cards_pos(cards_to_position, on_card_index = noone, on_card_i
 		
 		var chara_card = cards_to_position[chara_card_index]
 		if(chara_card != noone) {
-			if(move_party_chara_cards || 
-				obj_party_chara_card_box.check_for_chara_card_in_party(chara_card) == -1) {
-					chara_card.x = card_x_pos
-					chara_card.y = card_y_pos - y_shift_from_scroll
-					chara_card.chara_card_start_x_position = card_x_pos
-					chara_card.chara_card_start_y_position = card_y_pos - y_shift_from_scroll
-					chara_card.xstart = card_x_pos
-					chara_card.ystart = card_y_pos
-					chara_card.flexpanels.set_chara_card_surface_pos(
-										x + (CHARA_CARD_GRID_PADDING * image_xscale),
-										target_grid_y + (CHARA_CARD_GRID_PADDING * image_yscale))
+			if(!move_party_chara_cards && obj_party_chara_card_box.check_for_chara_card_in_party(chara_card) != -1) {
+				cards_to_position[chara_card_index] = noone
+			}
+			else {
+				chara_card.x = card_x_pos
+				chara_card.y = card_y_pos
+				chara_card.chara_card_start_x_position = card_x_pos
+				chara_card.chara_card_start_y_position = card_y_pos
+				chara_card.xstart = card_x_pos
+				chara_card.ystart = card_y_pos
+				chara_card.flexpanels.set_chara_card_surface_pos(
+									x + (CHARA_CARD_GRID_PADDING * image_xscale),
+									target_grid_y + (CHARA_CARD_GRID_PADDING * image_yscale))
 			}
 		}
 		
-		if((chara_card_index + 1) % num_columns == 0) {
-			card_x_pos = initial_x_pos
-			card_y_pos += chara_card_height
+		if((chara_card_index + 1) % card_pos_data.num_columns == 0) {
+			card_x_pos = card_pos_data.initial_x_pos
+			card_y_pos += card_pos_data.y_shift_per_card
 		}
 		else {
-			card_x_pos += chara_card_width + (chara_card_grid_width % chara_card_width / num_columns)	
+			card_x_pos += card_pos_data.x_shift_per_card
 		}
 	}
+	
+	var grid_height = card_y_pos + card_pos_data.y_shift_per_card - card_pos_data.initial_y_pos
+	if(grid_height > surface_get_height(chara_card_grid_surface)) {
+		create_chara_card_scroll_bar(card_pos_data.y_shift_per_card, grid_height, card_pos_data.num_columns, cards_to_position)
+	}
+	else if(chara_card_grid_scroll_bar != noone && instance_exists(chara_card_grid_scroll_bar)) {
+		instance_destroy(chara_card_grid_scroll_bar)
+		chara_card_grid_scroll_bar = noone
+	}
+}
+
+/// @desc								Finds or calculates the required data to position character
+///											cards on the grid
+/// @returns {Struct}					The struct containing the initial_x_pos, initial_y_pos,
+///											x_shift_per_card, y_shift_per_card, and num_columns
+function find_chara_card_pos_data() {
+	var first_chara_card_index = array_find_index(chara_card_instances,
+		function(_element, _index) {
+			return  variable_instance_exists(_element, "object_index") &&
+					(object_is_ancestor(_element.object_index, obj_chara_card) ||
+					_element.object_index == obj_chara_card)
+		})
+	
+	var card_sprite = spr_shrunk_damage_chara_card
+	var card_x_scale = 1
+	var card_y_scale = 1
+	if(first_chara_card_index >= 0) {
+		var first_chara_card = chara_card_instances[first_chara_card_index]
+		card_sprite = first_chara_card.sprite_index
+		card_x_scale = first_chara_card.image_xscale
+		card_y_scale = first_chara_card.image_yscale
+	}
+	
+	//This assumes the cards will always be the same size. As of right now that's true and to make it
+	//	more generic would result in a potentially worse solution
+	var chara_card_width = (sprite_get_width(card_sprite) + (2 * CHARA_CARD_X_PADDING)) * card_x_scale
+	var chara_card_height = (sprite_get_height(card_sprite) + (2 * CHARA_CARD_Y_PADDING)) * card_y_scale
+	var chara_card_grid_width = sprite_width - (2 * CHARA_CARD_GRID_PADDING * image_xscale)
+	var num_columns = floor(chara_card_grid_width / chara_card_width)
+	
+	var initial_x_pos = x + CHARA_CARD_GRID_PADDING * card_x_scale +
+							(chara_card_grid_width % chara_card_width / num_columns)
+	var initial_y_pos = target_grid_y + (CHARA_CARD_GRID_PADDING + CHARA_CARD_Y_PADDING) * 
+							card_y_scale
+	var x_shift_per_card = chara_card_width + (chara_card_grid_width % chara_card_width / num_columns)
+	var y_shift_per_card = chara_card_height
+							
+	return {initial_x_pos, initial_y_pos, x_shift_per_card, y_shift_per_card, num_columns}
 }
