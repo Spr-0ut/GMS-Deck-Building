@@ -64,7 +64,14 @@ function get_instance_ids(layer_id) {
 	var element_ids_in_layer = layer_get_all_elements(layer_id)
 	var instance_ids = array_create(array_length(element_ids_in_layer))
 	for(var element_id = 0; element_id < array_length(element_ids_in_layer); element_id++) {
-		instance_ids[element_id] = layer_instance_get_instance(element_ids_in_layer[element_id]);
+		var element_instance = layer_instance_get_instance(element_ids_in_layer[element_id])
+		if(element_instance != -1 && element_instance.visible) {
+			instance_ids[element_id] = element_instance;
+		}
+		else {
+			array_delete(element_ids_in_layer, element_id, 1)
+			element_id--
+		}
 	}
 	return instance_ids
 }
