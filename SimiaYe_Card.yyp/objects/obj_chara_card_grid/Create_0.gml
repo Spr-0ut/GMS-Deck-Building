@@ -357,30 +357,8 @@ function set_chara_cards_size(expand_cards, target_grid_y) {
 	//Please note: This function was copied and modified from set_chara_cards_pos, the changes here
 	///					were too significant to work with this function, but changes to one should
 	///					be considered in the other. Otherwise changing the grid size will cause issues
-	var card_sprite = find_chara_card_sprite(chara_class.all_chara, expand_cards)
 	var cards_to_show = find_class_filtered_cards(current_chara_card_filter)
-
-	var first_chara_card_index = array_find_index(cards_to_show,
-		function(_element, _index) {
-			return  variable_instance_exists(_element, "object_index") &&
-					(object_is_ancestor(_element.object_index, obj_chara_card) ||
-					_element.object_index == obj_chara_card)
-		})
-	var card_x_scale = cards_to_show[first_chara_card_index].image_xscale
-	var card_y_scale = cards_to_show[first_chara_card_index].image_yscale
-	
-	//This assumes the cards will always be the same size. As of right now that's true and to make it
-	//	more generic would result in a potentially worse solution
-	var chara_card_width = (sprite_get_width(card_sprite) + (2 * CHARA_CARD_X_PADDING)) * card_x_scale
-	var chara_card_height = (sprite_get_height(card_sprite) + (2 * CHARA_CARD_Y_PADDING)) * card_y_scale
-	var chara_card_grid_width = sprite_width - (2 * CHARA_CARD_GRID_PADDING * image_xscale)
-	var num_columns = floor(chara_card_grid_width / chara_card_width)
-	
-	var initial_x_pos = x + CHARA_CARD_GRID_PADDING * card_x_scale +
-							(chara_card_grid_width % chara_card_width / num_columns)
-	var initial_y_pos = target_grid_y + (CHARA_CARD_GRID_PADDING + CHARA_CARD_Y_PADDING) * 
-							card_y_scale
-							
+	var chara_card_pos_data = find_chara_card_pos_data(expand_cards, cards_to_show)
 	var party_cards = []
 	if(instance_exists(obj_party_chara_card_box)) {
 		party_cards = instance_find(obj_party_chara_card_box, 0).current_party_chara	
@@ -395,8 +373,8 @@ function set_chara_cards_size(expand_cards, target_grid_y) {
 		}
 	}
 	
-	var card_x_pos = initial_x_pos
-	var card_y_pos = initial_y_pos
+	var card_x_pos = chara_card_pos_data.initial_x_pos
+	var card_y_pos = chara_card_pos_data.initial_y_pos
 	for(var chara_card_index = 0; chara_card_index < array_length(cards_to_show); chara_card_index++) {
 		var chara_card = cards_to_show[chara_card_index]
 		if(chara_card != noone && !array_contains(party_cards, chara_card)) {
@@ -407,17 +385,17 @@ function set_chara_cards_size(expand_cards, target_grid_y) {
 			}
 		}
 		
-		if((chara_card_index + 1) % num_columns == 0) {
-			card_x_pos = initial_x_pos
-			card_y_pos += chara_card_height
+		if((chara_card_index + 1) % chara_card_pos_data.num_columns == 0) {
+			card_x_pos = chara_card_pos_data.initial_x_pos
+			card_y_pos += chara_card_pos_data.y_shift_per_card
 		}
 		else {
-			card_x_pos += chara_card_width + (chara_card_grid_width % chara_card_width / num_columns)	
+			card_x_pos += chara_card_pos_data.x_shift_per_card
 		}
 	}
 	
-	var num_rows = ceil(array_length(cards_to_show) / num_columns)
-	resize_chara_card_scroll_bar(target_grid_y, num_rows, chara_card_height)
+	var num_rows = ceil(array_length(cards_to_show) / chara_card_pos_data.num_columns)
+	resize_chara_card_scroll_bar(target_grid_y, num_rows, chara_card_pos_data.y_shift_per_card)
 }
 
 /// @desc								Removes the given character card from the grid, but leaves
@@ -552,38 +530,42 @@ function set_chara_cards_pos(cards_to_position, on_card_index = noone, on_card_i
 
 /// @desc								Finds or calculates the required data to position character
 ///											cards on the grid
+/// @param {bool} expanded_grid			Optional flag determining if the character cards are using
+///											their expanded sprite. Defaults to is_expanded_grid
+/// @param {Array} cards_to_position	Optional array of character cards, used to find the cards
+///											scaling. Defaults to chara_card_instances
 /// @returns {Struct}					The struct containing the initial_x_pos, initial_y_pos,
 ///											x_shift_per_card, y_shift_per_card, and num_columns
-function find_chara_card_pos_data() {
-	var first_chara_card_index = array_find_index(chara_card_instances,
+function find_chara_card_pos_data(expanded_cards = is_expanded_grid, cards_to_position = chara_card_instances) {
+	var first_chara_card_index = array_find_index(cards_to_position,
 		function(_element, _index) {
 			return  variable_instance_exists(_element, "object_index") &&
 					(object_is_ancestor(_element.object_index, obj_chara_card) ||
 					_element.object_index == obj_chara_card)
 		})
 	
-	var card_sprite = spr_shrunk_damage_chara_card
 	var card_x_scale = 1
 	var card_y_scale = 1
 	if(first_chara_card_index >= 0) {
-		var first_chara_card = chara_card_instances[first_chara_card_index]
-		card_sprite = first_chara_card.sprite_index
+		var first_chara_card = cards_to_position[first_chara_card_index]
 		card_x_scale = first_chara_card.image_xscale
 		card_y_scale = first_chara_card.image_yscale
 	}
 	
+	var card_sprite = find_chara_card_sprite(chara_class.all_chara, expanded_cards)
 	//This assumes the cards will always be the same size. As of right now that's true and to make it
 	//	more generic would result in a potentially worse solution
 	var chara_card_width = (sprite_get_width(card_sprite) + (2 * CHARA_CARD_X_PADDING)) * card_x_scale
 	var chara_card_height = (sprite_get_height(card_sprite) + (2 * CHARA_CARD_Y_PADDING)) * card_y_scale
 	var chara_card_grid_width = sprite_width - (2 * CHARA_CARD_GRID_PADDING * image_xscale)
 	var num_columns = floor(chara_card_grid_width / chara_card_width)
+	var centering_x_shift = chara_card_grid_width % chara_card_width / (num_columns + 1)
 	
-	var initial_x_pos = x + CHARA_CARD_GRID_PADDING * card_x_scale +
-							(chara_card_grid_width % chara_card_width / num_columns)
-	var initial_y_pos = target_grid_y + (CHARA_CARD_GRID_PADDING + CHARA_CARD_Y_PADDING) * 
-							card_y_scale
-	var x_shift_per_card = chara_card_width + (chara_card_grid_width % chara_card_width / num_columns)
+	var initial_x_pos = x + CHARA_CARD_X_PADDING * card_x_scale + CHARA_CARD_GRID_PADDING * image_xscale + 
+							centering_x_shift + (chara_card_grid_width % chara_card_width / num_columns)
+	var initial_y_pos = target_grid_y + CHARA_CARD_GRID_PADDING * image_yscale +
+							CHARA_CARD_Y_PADDING * card_y_scale
+	var x_shift_per_card = chara_card_width + centering_x_shift
 	var y_shift_per_card = chara_card_height
 							
 	return {initial_x_pos, initial_y_pos, x_shift_per_card, y_shift_per_card, num_columns}
