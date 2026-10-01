@@ -7,14 +7,14 @@ if(scroll_clicked) {
 	amount_scrolled = clamp(temp_amount_scrolled, scroll_min, scroll_max)
 	move_scroll_thumb(false)
 }
-else if(mouse_wheel_up()) {
+else if(!global.object_being_clicked && !scroll_locked && mouse_wheel_up()) {
 	if(is_top_layer(layer)) {
 		var temp_amount_scrolled = amount_scrolled - amount_bar_moves_on_scroll
 		amount_scrolled = clamp(temp_amount_scrolled, scroll_min, scroll_max)
 		move_scroll_thumb(true)
 	}
 }
-else if(mouse_wheel_down()) {
+else if(!global.object_being_clicked && !scroll_locked && mouse_wheel_down()) {
 	if(is_top_layer(layer)) {
 		var temp_amount_scrolled = amount_scrolled + amount_bar_moves_on_scroll
 		amount_scrolled = clamp(temp_amount_scrolled, scroll_min, scroll_max)

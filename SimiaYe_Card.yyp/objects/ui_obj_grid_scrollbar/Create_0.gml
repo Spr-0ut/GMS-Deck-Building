@@ -10,6 +10,7 @@ scroll_min = y + floor(SCROLL_BORDER_WIDTH * image_yscale)
 scroll_max = find_scroll_thumb_max_y(thumb_scale)
 scroll_thumb = create_scroll_thumb(scroll_min, thumb_scale)
 amount_bar_moves_on_scroll = find_scroll_wheel_scaling(thumb_scale)
+scroll_locked = false
 scroll_clicked = false
 amount_scrolled = scroll_min
 pos_thumb_clicked = 0
