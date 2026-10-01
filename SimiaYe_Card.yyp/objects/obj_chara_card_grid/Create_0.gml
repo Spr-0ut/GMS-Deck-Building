@@ -110,6 +110,11 @@ function create_chara_card_scroll_bar(chara_card_height, grid_height, num_column
 	var bar_sprite_y_scale = (sprite_height - SCROLL_BAR_PADDING) / bar_sprite_height
 	var bar_x_pos = x + sprite_width + SCROLL_BAR_PADDING
 	var bar_y_pos = y + (SCROLL_BAR_PADDING * bar_sprite_y_scale)
+	
+	var scrollable_objects_copy = array_create(array_length(scrollable_objects))
+	array_copy(scrollable_objects_copy, 0, scrollable_objects, 0, array_length(scrollable_objects))
+	scrollable_objects = scrollable_objects_copy
+	
 	if(chara_card_grid_scroll_bar != noone && instance_exists(chara_card_grid_scroll_bar)) {
 		chara_card_grid_scroll_bar.objects_to_move = scrollable_objects
 		var num_rows = ceil(array_length(scrollable_objects) / num_columns)
@@ -255,26 +260,29 @@ function return_chara_card_to_grid(chara_card) {
 /// @param {Id.Instance} chara_card		The character card to positon
 /// @param {Real} chara_card_index		The index in the grid to position the chara_card at
 function set_chara_card_grid_pos(chara_card, chara_card_index) {
-	var chara_card_pos_data = find_chara_card_pos_data()
-	var y_shift_from_scroll = 0
-	if(chara_card_grid_scroll_bar != noone && instance_exists(chara_card_grid_scroll_bar)) {
-		y_shift_from_scroll = chara_card_grid_scroll_bar.find_y_shift_from_scroll()
-	}
+	if(typeof(chara_card) == "ref" && typeof(chara_card_index) == "number" && chara_card_index >= 0) {
+		var chara_card_pos_data = find_chara_card_pos_data()
+		var y_shift_from_scroll = 0
+		if(chara_card_grid_scroll_bar != noone && instance_exists(chara_card_grid_scroll_bar)) {
+			y_shift_from_scroll = chara_card_grid_scroll_bar.find_y_shift_from_scroll()
+			chara_card_grid_scroll_bar.objects_to_move[chara_card_index] = chara_card
+		}
 	
-	var column_index = chara_card_index % chara_card_pos_data.num_columns
-	var row_index = floor((chara_card_index) / chara_card_pos_data.num_columns)
-	var card_x_pos = chara_card_pos_data.initial_x_pos + column_index * chara_card_pos_data.x_shift_per_card
-	var card_y_pos = chara_card_pos_data.initial_y_pos + row_index * chara_card_pos_data.y_shift_per_card
+		var column_index = chara_card_index % chara_card_pos_data.num_columns
+		var row_index = floor((chara_card_index) / chara_card_pos_data.num_columns)
+		var card_x_pos = chara_card_pos_data.initial_x_pos + column_index * chara_card_pos_data.x_shift_per_card
+		var card_y_pos = chara_card_pos_data.initial_y_pos + row_index * chara_card_pos_data.y_shift_per_card
 								
-	chara_card.x = card_x_pos
-	chara_card.y = card_y_pos - y_shift_from_scroll
-	chara_card.chara_card_start_x_position = card_x_pos
-	chara_card.chara_card_start_y_position = card_y_pos - y_shift_from_scroll
-	chara_card.xstart = card_x_pos
-	chara_card.ystart = card_y_pos
-	chara_card.flexpanels.set_chara_card_surface_pos(
-						x + (CHARA_CARD_GRID_PADDING * image_xscale),
-						target_grid_y + (CHARA_CARD_GRID_PADDING * image_yscale))
+		chara_card.x = card_x_pos
+		chara_card.y = card_y_pos - y_shift_from_scroll
+		chara_card.chara_card_start_x_position = card_x_pos
+		chara_card.chara_card_start_y_position = card_y_pos - y_shift_from_scroll
+		chara_card.xstart = card_x_pos
+		chara_card.ystart = card_y_pos
+		chara_card.flexpanels.set_chara_card_surface_pos(
+							x + (CHARA_CARD_GRID_PADDING * image_xscale),
+							target_grid_y + (CHARA_CARD_GRID_PADDING * image_yscale))
+	}
 }
 
 /// @desc							Handles expanding the character card grid each frame
@@ -419,6 +427,10 @@ function empty_card_slot(chara_card) {
 	if(chara_card != noone && chara_card.grid_index >= 0 && 
 			chara_card.grid_index < array_length(chara_card_instances)) {
 		chara_card_instances[chara_card.grid_index] = noone
+		if(chara_card_grid_scroll_bar != noone && instance_exists(chara_card_grid_scroll_bar)) {
+			var chara_card_scroll_index = array_get_index(chara_card_grid_scroll_bar.objects_to_move, chara_card)
+			chara_card_grid_scroll_bar.objects_to_move[chara_card_scroll_index] = noone
+		}
 	}
 }
 
