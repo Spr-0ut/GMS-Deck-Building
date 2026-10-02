@@ -1,6 +1,9 @@
 #macro CHARA_CARD_GRID_PADDING		16
 #macro CHARA_CARD_X_PADDING			6
 #macro CHARA_CARD_Y_PADDING			16
+#macro CHARA_CARD_SCROLLBAR_HEIGHT	7 * room_height / 8
+#macro CHARA_CARD_SCROLLBAR_PADDING	16
+#macro CHARA_CARD_SCROLLBAR_X_SCALE	5
 
 chara_card_instances = []
 damage_chara_cards = []
@@ -106,10 +109,11 @@ function create_chara_card_grid_view() {
 /// @param {Real} grid_height				The total height of the grid being scrolled
 /// @param {Real} num_columns				The number of columns in the grid
 function create_chara_card_scroll_bar(chara_card_height, grid_height, num_columns, scrollable_objects = chara_card_instances) {
-	var bar_sprite_height = sprite_get_height(object_get_sprite(ui_obj_grid_scrollbar))
-	var bar_sprite_y_scale = (sprite_height - SCROLL_BAR_PADDING) / bar_sprite_height
-	var bar_x_pos = x + sprite_width + SCROLL_BAR_PADDING
-	var bar_y_pos = y + (SCROLL_BAR_PADDING * bar_sprite_y_scale)
+	var bar_sprite_height = sprite_get_height(object_get_sprite(ui_chara_card_grid_scrollbar))
+	var bar_sprite_y_scale = CHARA_CARD_SCROLLBAR_HEIGHT / bar_sprite_height
+	var grid_right_edge = x + sprite_width
+	var bar_x_pos = grid_right_edge + CHARA_CARD_SCROLLBAR_PADDING + (room_width - grid_right_edge) / 3
+	var bar_y_pos = room_height - CHARA_CARD_SCROLLBAR_HEIGHT - CHARA_CARD_SCROLLBAR_PADDING
 	
 	var scrollable_objects_copy = array_create(array_length(scrollable_objects))
 	array_copy(scrollable_objects_copy, 0, scrollable_objects, 0, array_length(scrollable_objects))
@@ -128,7 +132,8 @@ function create_chara_card_scroll_bar(chara_card_height, grid_height, num_column
 			scroll_bar_layer_id = layer_create(scroll_bar_grid_depth, scroll_bar_layer_name)
 		}
 	
-		chara_card_grid_scroll_bar = instance_create_layer(bar_x_pos, bar_y_pos, scroll_bar_layer_id, ui_obj_grid_scrollbar, {
+		chara_card_grid_scroll_bar = instance_create_layer(bar_x_pos, bar_y_pos, scroll_bar_layer_id, ui_chara_card_grid_scrollbar, {
+			image_xscale : CHARA_CARD_SCROLLBAR_X_SCALE,
 			image_yscale : bar_sprite_y_scale,
 			objects_to_move: scrollable_objects,
 			scrollable_list_height : grid_height,
@@ -145,9 +150,9 @@ function create_chara_card_scroll_bar(chara_card_height, grid_height, num_column
 /// @param {Real} row_height				The height of each row of the grid scrolled
 function resize_chara_card_scroll_bar(scroll_bar_y, num_rows, row_height) {
 	if(chara_card_grid_scroll_bar != noone && instance_exists(chara_card_grid_scroll_bar)) {
-		var bar_sprite_height = sprite_get_height(object_get_sprite(ui_obj_grid_scrollbar))
-		var bar_sprite_y_scale = (room_height - scroll_bar_y - 2 * SCROLL_BAR_PADDING) / bar_sprite_height
-		var bar_y_pos = scroll_bar_y + (SCROLL_BAR_PADDING * bar_sprite_y_scale)
+		var bar_sprite_height = sprite_get_height(object_get_sprite(ui_chara_card_grid_scrollbar))
+		var bar_sprite_y_scale = CHARA_CARD_SCROLLBAR_HEIGHT / bar_sprite_height
+		var bar_y_pos = room_height - CHARA_CARD_SCROLLBAR_HEIGHT - CHARA_CARD_SCROLLBAR_PADDING
 		var scroll_view_window = room_height - scroll_bar_y - (CHARA_CARD_GRID_PADDING * image_yscale)
 		
 		chara_card_grid_scroll_bar.update_scroll_data(bar_y_pos, bar_sprite_y_scale,

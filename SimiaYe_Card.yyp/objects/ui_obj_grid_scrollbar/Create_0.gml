@@ -5,11 +5,12 @@ viewable_window_height = clamp(viewable_window_height, 0, display_get_gui_height
 row_height = max(row_height, 0)
 scrollable_list_height = max(scrollable_list_height, 0)
 
-var thumb_scale = find_scroll_thumb_scale()
+var thumb_scale = self.find_scroll_thumb_scale()
 scroll_min = y + floor(SCROLL_BORDER_WIDTH * image_yscale)
 scroll_max = find_scroll_thumb_max_y(thumb_scale)
-scroll_thumb = create_scroll_thumb(scroll_min, thumb_scale)
+scroll_thumb = self.create_scroll_thumb(scroll_min, thumb_scale)
 amount_bar_moves_on_scroll = find_scroll_wheel_scaling(thumb_scale)
+
 scroll_locked = false
 scroll_clicked = false
 amount_scrolled = scroll_min
@@ -48,7 +49,7 @@ function update_scroll_data(scroll_bar_y_pos = undefined, scroll_bar_y_scale = u
 		viewable_window_height = view_window_height
 	}
 	
-	var thumb_scale = find_scroll_thumb_scale()
+	var thumb_scale = self.find_scroll_thumb_scale()
 	scroll_thumb.image_yscale = thumb_scale
 	scroll_max = find_scroll_thumb_max_y(thumb_scale)
 	amount_bar_moves_on_scroll = find_scroll_wheel_scaling(thumb_scale)
@@ -62,7 +63,7 @@ function update_scroll_data(scroll_bar_y_pos = undefined, scroll_bar_y_scale = u
 ///											portion of the bar)
 function find_scroll_thumb_scale() {
 	var max_scroll_thumb_scale = (sprite_height - (2 * SCROLL_BORDER_WIDTH * image_yscale))
-									/ sprite_get_height(object_get_sprite(ui_obj_grid_scroll_thumb))
+									/ sprite_get_height(object_get_sprite(scrollbar_thumb_object))
 	var num_screen_lengths = viewable_window_height / scrollable_list_height
 	return clamp(max_scroll_thumb_scale * num_screen_lengths, 1, max_scroll_thumb_scale)
 }
@@ -72,7 +73,7 @@ function find_scroll_thumb_scale() {
 /// @param {Real} thumb_scale			The amount the scroll thumb sprite is scaled (default 1)
 /// @returns							The maximum y value of the thumb such that it stays in its bar
 function find_scroll_thumb_max_y(thumb_scale = 1) {
-	var thumb_sprite_height = sprite_get_height(object_get_sprite(ui_obj_grid_scroll_thumb)) * thumb_scale
+	var thumb_sprite_height = sprite_get_height(object_get_sprite(scrollbar_thumb_object)) * thumb_scale
 	return y + sprite_height - floor(SCROLL_BORDER_WIDTH * image_yscale) - thumb_sprite_height
 }
 
@@ -84,7 +85,8 @@ function find_scroll_thumb_max_y(thumb_scale = 1) {
 function create_scroll_thumb(scroll_min, thumb_scale) {
 	var thumb_layer_depth = layer_get_depth(layer) - 1
 	var scroll_thumb_instance_id = layer_create(thumb_layer_depth, "scroll_thumb_instance")
-	return instance_create_layer(x + SCROLL_BORDER_WIDTH, scroll_min, scroll_thumb_instance_id, ui_obj_grid_scroll_thumb, {
+	return instance_create_layer(x + SCROLL_BORDER_WIDTH, scroll_min, scroll_thumb_instance_id, scrollbar_thumb_object, {
+		image_xscale,
 		image_yscale : thumb_scale
 	})
 }
