@@ -408,12 +408,15 @@ function set_chara_cards_size(expand_cards, target_grid_y) {
 /// @param {Id.Instance} chara_card		The character card to be removed from the grid
 function empty_card_slot(chara_card) {
 	if(chara_card != noone && chara_card.grid_index >= 0 && 
-			chara_card.grid_index < array_length(chara_card_instances)) {
-		chara_card_instances[chara_card.grid_index] = noone
-		if(chara_card_grid_scroll_bar != noone && instance_exists(chara_card_grid_scroll_bar)) {
-			var chara_card_scroll_index = array_get_index(chara_card_grid_scroll_bar.objects_to_move, chara_card)
-			chara_card_grid_scroll_bar.objects_to_move[chara_card_scroll_index] = noone
-		}
+		chara_card.grid_index < array_length(chara_card_instances)) {
+			chara_card_instances[chara_card.grid_index] = noone
+			if(chara_card_grid_scroll_bar != noone && instance_exists(chara_card_grid_scroll_bar)) {
+				var chara_card_scroll_index = array_get_index(chara_card_grid_scroll_bar.objects_to_move, chara_card)
+				if(chara_card_scroll_index < array_length(chara_card_grid_scroll_bar.objects_to_move) &&
+					chara_card_scroll_index >= 0) {
+						chara_card_grid_scroll_bar.objects_to_move[chara_card_scroll_index] = noone
+				}
+			}
 	}
 }
 
