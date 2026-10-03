@@ -15,16 +15,20 @@ is_expanded_party_box = true
 /// @param {Id.Instance} chara_card_to_add	The card of the character to add to the player's party
 function add_party_memeber(chara_card_to_add, index_to_replace = -1) {
 	if(typeof(chara_card_to_add) == "ref") {
-		chara_card_to_add.set_chara_card_size(is_expanded_party_box)
-		chara_card_to_add.flexpanels.set_draw_to_surface(false)
-		chara_card_to_add.visible = true
-		
 		if(typeof(index_to_replace) != "number" || index_to_replace < 0 || index_to_replace >= MAX_PARTY_SIZE) {
 			var chara_slot_width = sprite_width / MAX_PARTY_SIZE
-			index_to_replace = clamp(floor((chara_card_to_add.x - x) / chara_slot_width), 0, MAX_PARTY_SIZE)
+			index_to_replace = floor((chara_card_to_add.x - x + (chara_card_to_add.sprite_width / 2)) / 
+										chara_slot_width)
 		}
 		
-		if(current_party_chara[index_to_replace] != chara_card_to_add) {
+		if(index_to_replace < 0 || index_to_replace >= MAX_PARTY_SIZE) {
+			remove_from_party(chara_card_to_add)
+		}
+		else if(current_party_chara[index_to_replace] != chara_card_to_add) {
+			chara_card_to_add.set_chara_card_size(is_expanded_party_box)
+			chara_card_to_add.flexpanels.set_draw_to_surface(false)
+			chara_card_to_add.visible = true
+			
 			shift_party_chara_cards(chara_card_to_add, index_to_replace)
 			current_party_chara[index_to_replace] = chara_card_to_add
 			set_party_chara_card_pos(chara_card_to_add, index_to_replace)
