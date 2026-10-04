@@ -91,7 +91,6 @@ function set_cards_initial_pos(display_cards) {
 	
 	if(scroll_bar != noone) {
 		scroll_bar.objects_to_move = display_cards
-		scroll_bar.set_objects_to_scroll_pos()
 	}
 }
 

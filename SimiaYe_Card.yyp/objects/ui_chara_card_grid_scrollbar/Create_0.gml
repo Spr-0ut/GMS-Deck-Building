@@ -1,5 +1,8 @@
 #macro CHARA_CARD_GRID_SCROLL_THUMB_OVERHANG	2
 
+// Inherit the parent event
+event_inherited();
+
 /// @desc								Finds the amount that the scroll thumb will need to be scaled to
 ///											such that it will reflect how many screen lengths are below
 ///											what is shown. (1 screen length hidden = 1/2 the scroll bar)
@@ -32,7 +35,3 @@ function create_scroll_thumb(scroll_min, thumb_scale) {
 		image_yscale : thumb_scale
 	})
 }
-
-// Inherit the parent event
-// NOTE: This must be at the end of the create event due to overriding functions called during the create event
-event_inherited();

@@ -5,11 +5,14 @@ viewable_window_height = clamp(viewable_window_height, 0, display_get_gui_height
 row_height = max(row_height, 0)
 scrollable_list_height = max(scrollable_list_height, 0)
 
-var thumb_scale = self.find_scroll_thumb_scale()
 scroll_min = y + floor(SCROLL_BORDER_WIDTH * image_yscale)
-scroll_max = find_scroll_thumb_max_y(thumb_scale)
-scroll_thumb = self.create_scroll_thumb(scroll_min, thumb_scale)
-amount_bar_moves_on_scroll = find_scroll_wheel_scaling(thumb_scale)
+scroll_max = 1
+scroll_thumb = noone
+amount_bar_moves_on_scroll = 0
+// NOTE: This is a work around due to gamemaker's inheritence. Otherwise the changed functions would
+//			not be updated and it would use the functions in this create event. Instead this runs the
+//			correct functions 1 time in the begin step event
+alarm[0] = 1
 
 scroll_locked = false
 scroll_clicked = false
@@ -50,7 +53,12 @@ function update_scroll_data(scroll_bar_y_pos = undefined, scroll_bar_y_scale = u
 	}
 	
 	var thumb_scale = self.find_scroll_thumb_scale()
-	scroll_thumb.image_yscale = thumb_scale
+	if(scroll_thumb != noone && instance_exists(scroll_thumb)) {
+		scroll_thumb.image_yscale = thumb_scale
+	}
+	else {
+		self.create_scroll_thumb(scroll_min, thumb_scale)
+	}
 	scroll_max = find_scroll_thumb_max_y(thumb_scale)
 	amount_bar_moves_on_scroll = find_scroll_wheel_scaling(thumb_scale)
 	reset_scroll()
@@ -167,7 +175,12 @@ function scroll_grid_items(scroll_percent) {
 /// @returns {Real}						The amount to subtract from grid item's y positions
 function find_y_shift_from_scroll(percent_scrolled = -1) {
 	if(!is_real(percent_scrolled) || percent_scrolled < 0) {
-		percent_scrolled = abs((scroll_thumb.y - scroll_min) / (scroll_max - scroll_min))
+		if(scroll_thumb != noone && instance_exists(scroll_thumb)) {
+			percent_scrolled = abs((scroll_thumb.y - scroll_min) / (scroll_max - scroll_min))
+		}
+		else {
+			return -1	
+		}
 	}
 	return percent_scrolled * (scrollable_list_height - viewable_window_height)
 }
