@@ -26,7 +26,7 @@
   "origin":3,
   "parent":{
     "name":"Dropdown",
-    "path":"folders/Sprites/Dropdown.yy",
+    "path":"folders/Sprites/UI_Elements/Dropdown.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

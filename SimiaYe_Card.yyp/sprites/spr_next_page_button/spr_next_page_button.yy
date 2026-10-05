@@ -26,7 +26,7 @@
   "origin":4,
   "parent":{
     "name":"Book_Menu",
-    "path":"folders/Sprites/Book_Menu.yy",
+    "path":"folders/Sprites/UI_Elements/Book_Menu.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",
