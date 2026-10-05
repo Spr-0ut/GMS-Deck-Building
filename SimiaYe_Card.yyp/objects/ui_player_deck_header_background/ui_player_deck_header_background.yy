@@ -10,8 +10,8 @@
   "name":"ui_player_deck_header_background",
   "overriddenProperties":[],
   "parent":{
-    "name":"UI",
-    "path":"folders/Objects/UI.yy",
+    "name":"Player_Cards",
+    "path":"folders/Objects/UI/Player_Cards.yy",
   },
   "parentObjectId":null,
   "persistent":false,

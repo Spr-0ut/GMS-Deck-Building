@@ -17,3 +17,12 @@ if(display_next_damage_text) {
 		display_next_damage_text = false
 	}
 }
+
+if(!global.object_being_clicked && is_top_layer(layer, mouse_x, mouse_y)) {
+	if(mouse_x > bbox_left && mouse_x < bbox_right && 
+			mouse_y > bbox_top && mouse_y < bbox_bottom &&
+			attack_options[next_attack_index].targeting_type != enemy_attack_target.no_target &&
+			instance_exists(obj_enemy_attack_manager)) {
+		obj_enemy_attack_manager.highlight_attack(id)
+	}
+}

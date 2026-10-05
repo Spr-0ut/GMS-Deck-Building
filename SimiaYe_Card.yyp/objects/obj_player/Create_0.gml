@@ -45,6 +45,7 @@ chara_leaving_room = undefined
 
 class = chara_class.damage
 active_buffs = {}
+active_debuffs = {}
 display_next_effect_text = true
 effect_to_display = []
 chara_shield = 0
@@ -149,11 +150,30 @@ function animate_player_leaving_room() {
 	}	
 }
 
-/// @desc								Removes health from the player equal to damage_taken and
-///											check if player is still alive
-/// @param {Real} damage_taken			The amount of damage the player is taking
-function hit_by_enemy(damage_taken) {
-	damage_taken = clamp(damage_taken - chara_shield, 0, damage_taken)
+/// @desc										Handles the character being hit by removing health equal
+///													to enemy_attack's damage and adding debuffs. Then
+///													checks if the player is still alive
+/// @param {attack_data_struct} enemy_attack	The struct containing the attack data of the enemy
+function hit_by_enemy(enemy_attack) {
+	if(struct_exists(enemy_attack, "damage")) {
+		var damage_taken = clamp(enemy_attack.damage - chara_shield, 0, enemy_attack.damage)
+		array_push(effect_to_display, [damage_taken, c_white])
+		take_damage(damage_taken)
+	}
+	
+	if(struct_exists(enemy_attack, "debuffs")) {
+		for(var attack_debuff_index = 0; attack_debuff_index < array_length(enemy_attack.debuffs); attack_debuff_index++) {
+			var debuff_type = enemy_attack.debuffs[attack_debuff_index][0]
+			var debuff_amount = enemy_attack.debuffs[attack_debuff_index][1]
+			apply_debuff_to_player(debuff_type, debuff_amount)
+		}
+	}
+}
+
+/// @desc								Removes the given damage from the player's health and
+///											checks if it was enough damage to kill them
+/// @param {Real} damage_taken			The amount of health to remove from this character
+function take_damage(damage_taken) {
 	player_current_health = clamp(player_current_health - damage_taken, 0, player_max_health)
 	if(instance_number(ui_health_bar) > 0) {
 		for(var health_bar_index = 0; health_bar_index < instance_number(ui_health_bar); health_bar_index++) {
@@ -163,7 +183,7 @@ function hit_by_enemy(damage_taken) {
 			}
 		}
 	}
-
+		
 	show_debug_message(player_current_health)
 	if(player_current_health <= 0)
 		show_debug_message("Player is dead")
@@ -231,10 +251,8 @@ function get_attack(damage_multiplier) {
 	if(active_buffs[$ card_buff_effects.Strength] != undefined)
 		strength = active_buffs[$ card_buff_effects.Strength]
 		
-	var hitstrct = {
-	damage : (10 + strength) * damage_multiplier,
-	debuffs : [[card_debuff_effects.Poison, 3 * damage_multiplier]]
-	}
+	var hitstrct = new attack_data_struct ((10 + strength) * damage_multiplier, 
+											[[card_debuff_effects.Poison, 3 * damage_multiplier]])
 	return hitstrct
 }
 
@@ -253,24 +271,31 @@ function heal_chara(health_to_add) {
 		player_current_health = clamp(player_current_health + health_to_add, 0, player_max_health)
 }
 
-/// @desc										Applies a buff to this chara and adds them to the 
-///													effect_to_display queue
-/// @param {card_buff_effects} buff_type		The buff being applied
-/// @param {Real} buff_amount					The amount of the buff being added
-function apply_buff(buff_type, buff_amount) {
-	if(active_buffs[$ buff_type] == undefined)
-			active_buffs[$ buff_type] = buff_amount
-	else
-		active_buffs[$ buff_type] += buff_amount
-			
-	switch (buff_type) {
-		case card_buff_effects.Strength:
-			array_push(effect_to_display, [active_buffs[$ buff_type], c_maroon])
-			break;
-		case card_buff_effects.Gain_Strength_On_Any_Attack:
-			array_push(effect_to_display, [active_buffs[$ buff_type], c_fuchsia])
-			turns_since_gain_strength_on_attack = 1
-			break;
+/// @desc											Adds the given buff data to the effect_to_display
+///														queue to be shown to the player
+/// @param {Array<Real, Constant.Color>} buff_data	The amount and color of the buff being displayed
+function display_buff(buff_data) {
+	if(array_length(buff_data) != 2 || 
+		typeof(buff_data[0]) != "number" || 
+		buff_data[0] < 0 || buff_data[0] == NaN || buff_data[0] == infinity ||
+		typeof(buff_data[1]) != "number" ||
+		buff_data[1] == NaN || buff_data[1] == infinity ) {
+			return
+	}
+	
+	var buff_amount = buff_data[0]
+	var buff_color = buff_data[1]
+	array_push(effect_to_display, [buff_amount, buff_color])
+}
+
+/// @desc										Debuffs this character through the debuff_handler and
+///													adds it to the damage_to_display
+/// @param {card_debuff_effects} debuff_type	The debuff being applied to this character
+/// @param {Real} debuff_amount					The amount of the debuff being added
+function apply_debuff_to_player(debuff_type, debuff_amount) {
+	var debuff_damage = apply_debuff(active_debuffs, debuff_type, debuff_amount)
+	if(array_length(debuff_damage) == 2) {
+		array_push(effect_to_display, debuff_damage)
 	}
 }
 
@@ -298,12 +323,24 @@ function multiply_buff(buff_type, amount_multiplied) {
 ///													what should happen with it at the end of the
 ///													player's turn
 function trigger_end_of_turn_buffs() {
-	struct_foreach(active_buffs, function (debuff_name, debuff_amount) {
-		switch (debuff_name) {
+	struct_foreach(active_buffs, function (buff_name, buff_amount) {
+		switch (buff_name) {
 			case card_buff_effects.Gain_Strength_On_Any_Attack:
-				struct_remove(active_buffs, debuff_name)
+				struct_remove(active_buffs, buff_name)
 				turns_since_gain_strength_on_attack = 1
 				break
+		}
+	})
+}
+
+/// @desc							Loops through the debuffs currently active on this player and
+///										applys the damage
+function trigger_end_of_turn_debuffs() {
+	struct_foreach(active_debuffs, function (debuff_name, debuff_amount) {
+		var debuff_data = get_debuff_damage(active_debuffs, debuff_name)
+		if(array_length(debuff_data) == 2) {
+			array_push(effect_to_display, debuff_data)
+			take_damage(debuff_data[0])
 		}
 	})
 }

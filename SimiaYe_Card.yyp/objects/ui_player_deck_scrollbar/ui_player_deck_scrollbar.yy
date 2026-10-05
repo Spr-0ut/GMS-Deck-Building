@@ -13,8 +13,8 @@
   "name":"ui_player_deck_scrollbar",
   "overriddenProperties":[],
   "parent":{
-    "name":"UI",
-    "path":"folders/Objects/UI.yy",
+    "name":"Scroll_Bar",
+    "path":"folders/Objects/UI/Scroll_Bar.yy",
   },
   "parentObjectId":null,
   "persistent":false,

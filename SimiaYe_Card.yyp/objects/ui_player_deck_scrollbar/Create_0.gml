@@ -9,7 +9,7 @@ var thumb_scale = find_scroll_thumb_scale()
 amount_bar_moves = find_scroll_wheel_scaling()
 scroll_min = y + floor(SCROLL_BORDER_WIDTH * image_yscale)
 scroll_max = find_scroll_thumb_max(thumb_scale)
-scroll_thumb = create_scroll_thumb(scroll_min, scroll_max, thumb_scale)
+scroll_thumb = create_scroll_thumb(scroll_min, thumb_scale)
 pos_thumb_clicked = 0
 
 /// @desc								Finds the scroll scaling needed to move 1 row
@@ -29,10 +29,9 @@ function find_scroll_wheel_scaling() {
 /// @desc								Creates the scroll bar thumb that shows the user where on the screen
 ///											they are scrolled to
 /// @param {Real} scroll_min			The highest position on screen the scroll thumb can go to
-/// @param {Real} scroll_max			The lowest position on screen the scroll thumb can go to
 /// @param {Real} thumb_scale			The amount the scroll thumb sprite is scaled
 /// @returns							The new scroll thumb instance
-function create_scroll_thumb(scroll_min, scroll_max, thumb_scale) {
+function create_scroll_thumb(scroll_min, thumb_scale) {
 	var thumb_layer_depth = layer_get_depth(layer) - 1
 	var player_deck_scroll_thumb_instance_id = layer_create(thumb_layer_depth, "player_deck_scroll_thumb_instance")
 	return instance_create_layer(x + SCROLL_BORDER_WIDTH, scroll_min, player_deck_scroll_thumb_instance_id, ui_player_deck_scroll_thumb, {

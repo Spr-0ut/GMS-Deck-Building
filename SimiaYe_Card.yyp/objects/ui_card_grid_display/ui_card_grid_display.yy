@@ -10,8 +10,8 @@
   "name":"ui_card_grid_display",
   "overriddenProperties":[],
   "parent":{
-    "name":"UI",
-    "path":"folders/Objects/UI.yy",
+    "name":"Player_Cards",
+    "path":"folders/Objects/UI/Player_Cards.yy",
   },
   "parentObjectId":null,
   "persistent":false,

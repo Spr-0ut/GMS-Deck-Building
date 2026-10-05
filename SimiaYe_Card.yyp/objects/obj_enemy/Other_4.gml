@@ -1,0 +1,1 @@
+select_next_attack()
