@@ -490,6 +490,7 @@ function set_chara_cards_pos(cards_to_position, on_card_index = noone, on_card_i
 	
 	var card_x_pos = card_pos_data.initial_x_pos
 	var card_y_pos = card_pos_data.initial_y_pos
+	var scrollbar_array = array_create(array_length(cards_to_position))
 	for(var chara_card_index = 0; chara_card_index < array_length(cards_to_position); chara_card_index++) {
 		if(is_method(on_card_index)) {
 			var callback_args = array_create(array_length(on_card_index_args))
@@ -501,10 +502,8 @@ function set_chara_cards_pos(cards_to_position, on_card_index = noone, on_card_i
 		
 		var chara_card = cards_to_position[chara_card_index]
 		if(chara_card != noone) {
-			if(!move_party_chara_cards && obj_party_chara_card_box.check_for_chara_card_in_party(chara_card) != -1) {
-				cards_to_position[chara_card_index] = noone
-			}
-			else {
+			if(move_party_chara_cards || obj_party_chara_card_box.check_for_chara_card_in_party(chara_card) == -1) {
+				scrollbar_array[chara_card_index] = chara_card
 				chara_card.x = card_x_pos
 				chara_card.y = card_y_pos
 				chara_card.chara_card_start_x_position = card_x_pos
@@ -528,7 +527,7 @@ function set_chara_cards_pos(cards_to_position, on_card_index = noone, on_card_i
 	
 	var grid_height = card_y_pos + card_pos_data.y_shift_per_card - card_pos_data.initial_y_pos
 	if(grid_height > surface_get_height(chara_card_grid_surface)) {
-		create_chara_card_scroll_bar(card_pos_data.y_shift_per_card, grid_height, card_pos_data.num_columns, cards_to_position)
+		create_chara_card_scroll_bar(card_pos_data.y_shift_per_card, grid_height, card_pos_data.num_columns, scrollbar_array)
 	}
 	else if(chara_card_grid_scroll_bar != noone && instance_exists(chara_card_grid_scroll_bar)) {
 		instance_destroy(chara_card_grid_scroll_bar)
