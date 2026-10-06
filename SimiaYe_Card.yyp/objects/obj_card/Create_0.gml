@@ -5,12 +5,15 @@
 #macro NOT_ENOUGH_CARDS_IN_DECK_TO_PLAY			"Not enough cards in your deck to play this card"
 #macro PADDING_BETWEEN_CARD_DESCRIPTION_LINES	2
 #macro CARD_SELECTION_CONFIRMATION_MOVEMENT		30
+#macro CARD_Y_POS_WHILE_HOVERING_OVER			display_get_gui_height() - sprite_height - 40
+#macro CARD_ANGLE_WHILE_HOVERING_OVER			0
+#macro CARD_POSITION_ADJUSTMENT_SPEED			0.2
+#macro CARD_ANGLE_ADJUSTMENT_SPEED				0.2
 
-flexpanels = create_card_flexpanels(sprite_width, sprite_height)
+flexpanels = create_card_flexpanels(sprite_width, sprite_height, image_xscale, image_yscale)
+card_elements_data = new card_element_position(flexpanels, sprite_xoffset, sprite_yoffset)
 
 card_selected = false
-card_start_x_position = x
-card_start_y_position = y
 error_text = ""
 is_selected = false
 card_played = false
@@ -20,6 +23,41 @@ card_can_be_moved = array_all(interaction_type,
 							return _val != card_interaction_type.display_card &&
 									_val != card_interaction_type.selectable_card 
 						})
+
+card_can_auto_adjust = true
+hovering_over_card = false
+
+if(!variable_global_exists("card_surf")) {
+	global.card_surf = surface_create(display_get_gui_width(), display_get_gui_height())
+}
+
+if(!variable_global_exists("card_surf_drawn")) {
+	global.card_surf_drawn = false
+}
+
+if(!variable_global_exists("object_being_clicked")) {
+	global.object_being_clicked = false
+}
+
+if(!variable_global_exists("card_being_hovered")) {
+	global.card_being_hovered = noone
+}
+
+if(!variable_global_exists("card_min_y")) {
+	global.card_min_y = infinity
+}
+
+if(!variable_global_exists("cards_in_hand_x_pos")) {
+	global.cards_in_hand_x_pos = array_create(MAX_PLAYER_HAND_SIZE, -1)
+}
+
+if(!variable_global_exists("cards_in_hand_y_pos")) {
+	global.cards_in_hand_y_pos = array_create(MAX_PLAYER_HAND_SIZE, -1)
+}
+
+if(!variable_global_exists("cards_in_hand_angle")) {
+	global.cards_in_hand_angle = array_create(MAX_PLAYER_HAND_SIZE, -1)
+}
 
 #region THIS NEED TO BE LOOKED AT FOR EACH CARD
 
@@ -93,24 +131,28 @@ player_turn_end_action = function (on_end_turn_action, on_end_turn_action_args) 
 /// @description							Checks to see if no other cards are selected then allows this
 ///												card to be selected
 function select_card() {
-	if(!card_selected && !global.object_being_clicked && visible && is_top_layer(layer, mouse_x, mouse_y)) {
+	if(!card_selected && !global.object_being_clicked && visible 
+			&& is_top_layer(layer, mouse_x, mouse_y)) {
 		global.object_being_clicked	= true
 		card_selected = true
-		if(card_can_be_moved) {
-			card_start_x_position = x
-			card_start_y_position = y
-			x = mouse_x - (sprite_width / 2)
+		if(card_can_be_moved && global.card_being_hovered == id) {
+			image_angle = 0
+			x = mouse_x
 			y = mouse_y - (sprite_height / 2)
+			mask_index = sprite_index
 		}
 	}
 }
 
+/// @description							Handles the card being released, either playing the card
+///												or reseting it to the bottom of the screen
 function card_released() {
 	global.object_being_clicked	= false
+	global.card_being_hovered = noone
 	card_selected = false
 	if(array_contains(interaction_type, card_interaction_type.default_card)) {
 		ui_player_hand.card_can_be_selected = true
-		if(y < card_start_y_position - (sprite_height * 0.5)) {
+		if(y < global.cards_in_hand_y_pos[card_index_in_hand] - (sprite_height * 0.5)) {
 			if(energy_cost < 0) {
 				queue_error_message(THIS_CARD_CAN_NOT_BE_PLAYED)
 			}
@@ -151,8 +193,19 @@ function queue_error_message(error_message) {
 /// @description							The callback function for obj_target_selection_handler,
 ///												reseting the card position if playing it was canceled
 function reset_card() {
-	x = card_start_x_position
-	y = card_start_y_position
+	with(obj_card) {
+		card_can_auto_adjust = true
+	}
+	image_angle = global.cards_in_hand_angle[card_index_in_hand]
+	x = global.cards_in_hand_x_pos[card_index_in_hand]
+	y = global.cards_in_hand_y_pos[card_index_in_hand]
+	
+	if(collision_point(mouse_x, mouse_y, id, true, false) == noone) {
+		hovering_over_card = false
+	}
+	else {
+		hovering_over_card = true	
+	}
 }
 
 /// @description							Creates the target selection handler on a new layer above
@@ -160,6 +213,9 @@ function reset_card() {
 function create_target_selection_handler(remove_card_energy) {
 	var top_layer_depth = layer_get_depth(find_top_layer())
 	var target_selection_layer = layer_create(top_layer_depth - 100)
+	with(obj_card) {
+		card_can_auto_adjust = false
+	}
 	instance_create_layer(x, y, target_selection_layer, obj_target_selection_handler, 
 	{
 		num_chara_to_select,
@@ -184,6 +240,10 @@ function create_target_selection_handler(remove_card_energy) {
 function card_has_been_played(selected_chara, selected_cards, enemy_instance, remove_card_energy = true) {
 	if(remove_card_energy) {
 		ui_player_energy.remove_from_player_current_energy(energy_cost)
+	}
+	
+	with(obj_card) {
+		card_can_auto_adjust = true
 	}
 	
 	var on_card_action_complete = undefined
@@ -223,11 +283,13 @@ function exhaust_card(on_card_exhaust = undefined, on_card_exhaust_args = []) {
 function create_expanded_card() {
 	var screen_height = display_get_gui_height()
 	var screen_width = display_get_gui_width()
-	var sprite_size_scale = (screen_height - EXPANDED_CARD_PADDING) / sprite_height
+	var base_sprite_height = sprite_get_height(sprite_index)
+	var base_sprite_width = sprite_get_width(sprite_index)
+	var sprite_size_scale = (screen_height - EXPANDED_CARD_PADDING) / base_sprite_height
 	
-	var card_x_pos = (screen_width - (sprite_width * sprite_size_scale)) / 2
-	var card_y_pos = (screen_height - (sprite_height * sprite_size_scale)) / 2
-	var new_flexpanels = create_card_flexpanels(sprite_width * sprite_size_scale, sprite_height * sprite_size_scale, sprite_size_scale, sprite_size_scale)
+	var card_x_pos = (screen_width - (base_sprite_width * sprite_size_scale)) / 2 + (sprite_get_xoffset(sprite_index) * sprite_size_scale)
+	var card_y_pos = (screen_height - (base_sprite_height * sprite_size_scale)) / 2 + (sprite_get_yoffset(sprite_index) * sprite_size_scale)
+	var new_flexpanels = create_card_flexpanels(base_sprite_width * sprite_size_scale, base_sprite_height * sprite_size_scale, sprite_size_scale, sprite_size_scale)
 	
 	var expanded_card_instance_id = layer_create(-200, "expanded_card_instance")
 	instance_create_layer(card_x_pos, card_y_pos, expanded_card_instance_id, obj_display_card, {

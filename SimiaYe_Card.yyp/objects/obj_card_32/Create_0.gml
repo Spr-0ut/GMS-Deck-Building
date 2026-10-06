@@ -1,7 +1,7 @@
 // Inherit the parent event
 event_inherited();
 
-card_description = "If selected chara has shield half it and deal 1.25 dmg. Otherwise gain 2 shield"
+card_description = "If selected chara has shield half it and deal 1.25 dmg. Otherwise gain 5 shield"
 /// @desc											If a target is selected attack them for 1.25
 /// @param {struct_card_action} card_action_struct	The struct that contains all card actions
 card_action = function (card_action_struct) {
@@ -19,7 +19,7 @@ chara_selected_action = function (selected_chara) {
 		defender_selection_type = card_attack_target.single_enemy
 	}
 	else {
-		selected_chara.add_shield(2)
+		selected_chara.add_shield(5)
 		defender_selection_type = card_attack_target.no_enemies
 	}
 }

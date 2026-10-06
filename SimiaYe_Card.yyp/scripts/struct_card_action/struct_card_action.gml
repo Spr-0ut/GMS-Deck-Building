@@ -41,11 +41,13 @@ function struct_card_action(_selected_chara, _selected_cards, _selected_enemies,
 	/// @description								Loops through each selected character and hit each
 	///													selected enemy with their attack multiplied by
 	///													the amount of shield that character has
-	static deal_dmg_to_enemies_equal_to_shield = function() {
+	/// @param {Real} attack_multiplier				How much each character's shield is muliplied by
+	///													to calculate the card's damage
+	static deal_dmg_to_enemies_equal_to_shield = function(attack_multiplier = 1) {
 		for (var chara_index = 0; chara_index < array_length(selected_chara); chara_index++) {
 			activate_on_attack_buffs()
 			for (var enemy_index = 0; enemy_index < array_length(selected_enemies); enemy_index++) {
-				var attack_data = selected_chara[chara_index].get_attack(selected_chara[chara_index].chara_shield)
+				var attack_data = selected_chara[chara_index].get_attack(selected_chara[chara_index].chara_shield * attack_multiplier)
 				selected_enemies[enemy_index].hit_by_player(selected_chara[chara_index], attack_data)
 			}
 		}

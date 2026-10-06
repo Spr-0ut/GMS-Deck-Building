@@ -41,8 +41,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"spr_card",
-    "path":"sprites/spr_card/spr_card.yy",
+    "name":"spr_science_card",
+    "path":"sprites/spr_science_card/spr_science_card.yy",
   },
   "spriteMaskId":null,
   "visible":true,

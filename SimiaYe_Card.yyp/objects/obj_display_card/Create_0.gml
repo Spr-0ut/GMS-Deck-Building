@@ -1,6 +1,7 @@
 #macro EXPANDED_CARD_PADDING 100
 
 remove_expanded_card = false
+card_elements_data = new card_element_position(flexpanels, sprite_xoffset, sprite_yoffset)
 
 /// @desc								Draws a rectangle over the whole camera to dim the game
 ///											NOTE: this must be called in the Draw event or it won't

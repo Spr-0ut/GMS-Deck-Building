@@ -41,8 +41,10 @@ function create_card_grid_view() {
 		}
 		//This assumes the cards will always be the same size. As of right now that's true and to make it
 		//	more generic would result in a potentially worse solution
-		var card_width = sprite_get_width(object_get_sprite(cards_to_display[0]))
-		var card_height = sprite_get_height(object_get_sprite(cards_to_display[0]))
+		var card_width = sprite_get_width(object_get_sprite(cards_to_display[0])) * CARD_DEFAULT_SCALE
+		var card_height = sprite_get_height(object_get_sprite(cards_to_display[0])) * CARD_DEFAULT_SCALE
+		var card_x_offset = sprite_get_xoffset(object_get_sprite(cards_to_display[0])) * CARD_DEFAULT_SCALE
+		var card_y_offset = sprite_get_yoffset(object_get_sprite(cards_to_display[0])) * CARD_DEFAULT_SCALE
 		var screen_width = display_get_gui_width()
 		var num_columns = floor(screen_width / (card_width + CARD_PADDING))
 		var num_rows = ceil(array_length(cards_to_display) / num_columns)
@@ -51,11 +53,13 @@ function create_card_grid_view() {
 		display_cards = array_create(array_length(cards_to_display))
 	
 		for (var card_index = 0; card_index < array_length(cards_to_display); card_index++) {
-			var card_x_pos = card_index % num_columns * (card_width + CARD_PADDING) + CARD_PADDING
+			var card_x_pos = card_index % num_columns * (card_width + CARD_PADDING) + CARD_PADDING + card_x_offset
 			var card_y_pos = bottom_of_header + (floor(card_index / num_columns) * 
-								(card_height + CARD_PADDING)) + CARD_PADDING
+								(card_height + CARD_PADDING)) + CARD_PADDING + card_y_offset
 
 			var display_card = instance_create_layer(card_x_pos, card_y_pos, card_display_instance_id, cards_to_display[card_index], {
+				image_xscale : CARD_DEFAULT_SCALE,
+				image_yscale : CARD_DEFAULT_SCALE,
 				flexpanels,
 				interaction_type : [card_interaction_type.display_card,
 									cards_are_selectable ? card_interaction_type.selectable_card :
@@ -78,15 +82,17 @@ function set_cards_initial_pos(display_cards) {
 	//	more generic would result in a potentially worse solution
 	var card_width = display_cards[0].sprite_width
 	var card_height = display_cards[0].sprite_height
+	var card_x_offset = display_cards[0].sprite_xoffset
+	var card_y_offset = display_cards[0].sprite_yoffset
 	var screen_width = display_get_gui_width()
 	var num_columns = floor(screen_width / (card_width + CARD_PADDING))
 	var num_rows = ceil(array_length(display_cards) / num_columns)
 	height_of_card_list = ((card_height + CARD_PADDING) * num_rows) + CARD_PADDING
 	
 	for (var card_index = 0; card_index < array_length(display_cards); card_index++) {
-		display_cards[card_index].x = card_index % num_columns * (card_width + CARD_PADDING) + CARD_PADDING
+		display_cards[card_index].x = card_index % num_columns * (card_width + CARD_PADDING) + CARD_PADDING + card_x_offset
 		display_cards[card_index].y = bottom_of_header + (floor(card_index / num_columns) * 
-							(card_height + CARD_PADDING)) + CARD_PADDING
+										(card_height + CARD_PADDING)) + CARD_PADDING + card_y_offset
 		display_cards[card_index].ystart = display_cards[card_index].y
 		display_cards[card_index].xstart = display_cards[card_index].x
 	}
