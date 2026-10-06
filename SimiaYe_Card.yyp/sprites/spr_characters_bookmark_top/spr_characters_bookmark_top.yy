@@ -26,7 +26,7 @@
   "origin":0,
   "parent":{
     "name":"Bookmarks",
-    "path":"folders/Sprites/Book_Menu/Bookmarks.yy",
+    "path":"folders/Sprites/UI_Elements/Book_Menu/Bookmarks.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

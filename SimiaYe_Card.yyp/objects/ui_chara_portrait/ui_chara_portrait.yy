@@ -10,8 +10,8 @@
   "name":"ui_chara_portrait",
   "overriddenProperties":[],
   "parent":{
-    "name":"UI",
-    "path":"folders/Objects/UI.yy",
+    "name":"Character_Info",
+    "path":"folders/Objects/UI/Character_Info.yy",
   },
   "parentObjectId":null,
   "persistent":false,

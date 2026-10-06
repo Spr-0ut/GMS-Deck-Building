@@ -7,16 +7,16 @@
   "managed":true,
   "name":"obj_card_36",
   "overriddenProperties":[
-    {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"obj_card","path":"objects/obj_card/obj_card.yy",},"propertyId":{"name":"energy_cost","path":"objects/obj_card/obj_card.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"5",},
+    {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"obj_card","path":"objects/obj_card/obj_card.yy",},"propertyId":{"name":"energy_cost","path":"objects/obj_card/obj_card.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"2",},
     {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"obj_card","path":"objects/obj_card/obj_card.yy",},"propertyId":{"name":"attacker_selection_type","path":"objects/obj_card/obj_card.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"card_selection_target.selected_class",},
     {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"obj_card","path":"objects/obj_card/obj_card.yy",},"propertyId":{"name":"defender_selection_type","path":"objects/obj_card/obj_card.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"card_attack_target.no_enemies",},
-    {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"obj_card","path":"objects/obj_card/obj_card.yy",},"propertyId":{"name":"allowed_classes","path":"objects/obj_card/obj_card.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"chara_class.damage",},
+    {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"obj_card","path":"objects/obj_card/obj_card.yy",},"propertyId":{"name":"allowed_classes","path":"objects/obj_card/obj_card.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"chara_class.tank",},
     {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"obj_card","path":"objects/obj_card/obj_card.yy",},"propertyId":{"name":"num_chara_to_select","path":"objects/obj_card/obj_card.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"1",},
     {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"obj_card","path":"objects/obj_card/obj_card.yy",},"propertyId":{"name":"card_type","path":"objects/obj_card/obj_card.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"card_type.ability",},
   ],
   "parent":{
-    "name":"Damage Cards",
-    "path":"folders/Objects/Card/Damage Cards.yy",
+    "name":"Tank Cards",
+    "path":"folders/Objects/Card/Tank Cards.yy",
   },
   "parentObjectId":{
     "name":"obj_card",
@@ -40,8 +40,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"spr_card",
-    "path":"sprites/spr_card/spr_card.yy",
+    "name":"spr_tank_card",
+    "path":"sprites/spr_tank_card/spr_tank_card.yy",
   },
   "spriteMaskId":null,
   "visible":true,

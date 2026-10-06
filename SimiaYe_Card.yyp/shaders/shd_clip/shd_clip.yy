@@ -3,8 +3,8 @@
   "%Name":"shd_clip",
   "name":"shd_clip",
   "parent":{
-    "name":"UI",
-    "path":"folders/Objects/UI.yy",
+    "name":"Character_Info",
+    "path":"folders/Objects/UI/Character_Info.yy",
   },
   "resourceType":"GMShader",
   "resourceVersion":"2.0",

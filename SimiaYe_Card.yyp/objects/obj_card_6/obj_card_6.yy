@@ -40,8 +40,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"spr_card",
-    "path":"sprites/spr_card/spr_card.yy",
+    "name":"spr_basic_card",
+    "path":"sprites/spr_basic_card/spr_basic_card.yy",
   },
   "spriteMaskId":null,
   "visible":true,

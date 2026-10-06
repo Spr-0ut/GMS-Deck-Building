@@ -1,7 +1,7 @@
 // Inherit the parent event
 event_inherited();
 
-card_description = "Choose 3 cards in your discard pile to Exhaust. Deal damage equal to their cost"
+card_description = "Choose 3 cards in your discard pile to Exhaust. Deal damage equal to their combined cost"
 target_selection_order = [selection_target.card, selection_target.character, selection_target.enemy]
 
 /// @desc											Finds the energy cost of the selected cards before

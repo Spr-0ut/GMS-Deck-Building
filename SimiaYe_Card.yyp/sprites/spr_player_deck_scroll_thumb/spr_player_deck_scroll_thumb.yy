@@ -26,7 +26,7 @@
   "origin":0,
   "parent":{
     "name":"Scroll_Bar",
-    "path":"folders/Sprites/Scroll_Bar.yy",
+    "path":"folders/Sprites/UI_Elements/Scroll_Bar.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

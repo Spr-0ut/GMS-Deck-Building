@@ -2,9 +2,9 @@
   "$GMSprite":"v2",
   "%Name":"spr_attack_symbol",
   "bboxMode":0,
-  "bbox_bottom":17,
+  "bbox_bottom":14,
   "bbox_left":0,
-  "bbox_right":17,
+  "bbox_right":14,
   "bbox_top":0,
   "collisionKind":1,
   "collisionTolerance":0,
@@ -12,14 +12,14 @@
   "edgeFiltering":false,
   "For3D":false,
   "frames":[
-    {"$GMSpriteFrame":"v1","%Name":"a53604d9-99c1-4550-b6b7-b688c3083c4f","name":"a53604d9-99c1-4550-b6b7-b688c3083c4f","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"9ccf539b-b0e8-4f56-bce1-5adf1ac4cf04","name":"9ccf539b-b0e8-4f56-bce1-5adf1ac4cf04","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
   ],
   "gridX":0,
   "gridY":0,
-  "height":18,
+  "height":15,
   "HTile":false,
   "layers":[
-    {"$GMImageLayer":"","%Name":"4cf09cfe-fdb4-43ee-aadd-944dc54fc8c1","blendMode":0,"displayName":"default","isLocked":false,"name":"4cf09cfe-fdb4-43ee-aadd-944dc54fc8c1","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
+    {"$GMImageLayer":"","%Name":"1dedcffe-5543-4b2a-b806-52c6f2dc5613","blendMode":0,"displayName":"default","isLocked":false,"name":"1dedcffe-5543-4b2a-b806-52c6f2dc5613","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
   ],
   "name":"spr_attack_symbol",
   "nineSlice":null,
@@ -69,8 +69,8 @@
     "tracks":[
       {"$GMSpriteFramesTrack":"","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"$KeyframeStore<SpriteFrameKeyframe>":"","Keyframes":[
             {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
-                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"a53604d9-99c1-4550-b6b7-b688c3083c4f","path":"sprites/spr_attack_symbol/spr_attack_symbol.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
-              },"Disabled":false,"id":"5d421981-8a3e-4637-813f-6f4834a6863a","IsCreationKey":false,"Key":0.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"9ccf539b-b0e8-4f56-bce1-5adf1ac4cf04","path":"sprites/spr_attack_symbol/spr_attack_symbol.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+              },"Disabled":false,"id":"849aca5a-ef0b-4292-8804-61a52099f7ab","IsCreationKey":false,"Key":0.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
           ],"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"2.0",},"modifiers":[],"name":"frames","resourceType":"GMSpriteFramesTrack","resourceVersion":"2.0","spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange":null,
@@ -86,5 +86,5 @@
   },
   "type":0,
   "VTile":false,
-  "width":18,
+  "width":15,
 }

@@ -9,8 +9,8 @@
   "name":"ui_window_settings_updater",
   "overriddenProperties":[],
   "parent":{
-    "name":"UI",
-    "path":"folders/Objects/UI.yy",
+    "name":"Resolution_Updater",
+    "path":"folders/Objects/UI/Resolution_Updater.yy",
   },
   "parentObjectId":null,
   "persistent":false,
