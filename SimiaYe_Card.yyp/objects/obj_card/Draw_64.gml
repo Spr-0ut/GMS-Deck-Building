@@ -1,5 +1,9 @@
 if(card_can_be_moved) {
-	surface_set_target(application_surface)
+	if (!surface_exists(global.card_surf))
+	{
+	    global.card_surf = surface_create(display_get_gui_width(), display_get_gui_height())
+	}
+	surface_set_target(global.card_surf)
 
 	var _zwrite = gpu_get_zwriteenable()
 	var _ztest = gpu_get_ztestenable()
@@ -32,8 +36,6 @@ if(card_can_be_moved) {
 	}
 
 	surface_reset_target()
-	draw_surface(application_surface, 0, 0);
-
 }
 else {
 	draw_self()

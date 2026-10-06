@@ -27,6 +27,14 @@ card_can_be_moved = array_all(interaction_type,
 card_can_auto_adjust = true
 hovering_over_card = false
 
+if(!variable_global_exists("card_surf")) {
+	global.card_surf = surface_create(display_get_gui_width(), display_get_gui_height())
+}
+
+if(!variable_global_exists("card_surf_drawn")) {
+	global.card_surf_drawn = false
+}
+
 if(!variable_global_exists("object_being_clicked")) {
 	global.object_being_clicked = false
 }
