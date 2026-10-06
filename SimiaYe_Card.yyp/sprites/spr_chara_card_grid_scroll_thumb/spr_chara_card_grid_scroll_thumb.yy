@@ -45,7 +45,7 @@
   "origin":0,
   "parent":{
     "name":"Chara_Card_Grid_Scrollbar",
-    "path":"folders/Sprites/Scroll_Bar/Chara_Card_Grid_Scrollbar.yy",
+    "path":"folders/Sprites/UI_Elements/Scroll_Bar/Chara_Card_Grid_Scrollbar.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",
