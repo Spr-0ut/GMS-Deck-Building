@@ -1,0 +1,1 @@
+flexpanels.draw_chara_card()

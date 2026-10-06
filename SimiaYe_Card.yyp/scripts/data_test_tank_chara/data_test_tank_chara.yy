@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"data_test_tank_chara",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"data_test_tank_chara",
+  "parent":{
+    "name":"Test_Tank_Chara",
+    "path":"folders/Objects/Characters/Test_Tank_Chara.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

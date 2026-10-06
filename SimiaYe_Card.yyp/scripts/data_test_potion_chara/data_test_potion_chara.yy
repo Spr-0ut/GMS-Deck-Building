@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"data_test_potion_chara",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"data_test_potion_chara",
+  "parent":{
+    "name":"Test_Potion_Chara",
+    "path":"folders/Objects/Characters/Test_Potion_Chara.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
