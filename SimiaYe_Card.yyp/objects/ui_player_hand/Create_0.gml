@@ -4,6 +4,11 @@
 #macro CARD_DEFAULT_SCALE 3
 #macro DEGREES_PER_CARD_IN_ARC 17
 
+if(!variable_global_exists("card_surf")) {
+	global.card_surf = surface_create(display_get_gui_width(), display_get_gui_height())
+}
+
+player_cards_layer = layer_create(depth + 1, "player_cards_layer")
 player_hand_size = DEFAULT_PLAYER_HAND_SIZE
 cards_in_hand = array_create(0)
 is_hand_visible = true
@@ -88,7 +93,7 @@ function get_player_current_hand() {
 /// @returns {bool}					True if the card was added to the player's hand or false and it was
 ///										returned to the top of the player's deck
 function add_card(card) {
-	var card_instance = instance_create_layer(x, y, "Instances", card, {
+	var card_instance = instance_create_layer(x, y, player_cards_layer, card, {
 		image_xscale : CARD_DEFAULT_SCALE,
 		image_yscale : CARD_DEFAULT_SCALE
 	})
@@ -113,7 +118,7 @@ function add_multiple_cards(cards) {
 	var new_array_length = current_num_cards_in_hand + array_length(cards)
 	array_resize(cards_in_hand, new_array_length)
 	for(var card_index = 0; card_index < array_length(cards); card_index++) {
-		var card_instance = instance_create_layer(x, y, "Instances", cards[card_index], {
+		var card_instance = instance_create_layer(x, y, player_cards_layer, cards[card_index], {
 		image_xscale : CARD_DEFAULT_SCALE,
 		image_yscale : CARD_DEFAULT_SCALE
 		})
@@ -126,7 +131,7 @@ function add_multiple_cards(cards) {
 /// @desc							Creates a copy of the given card in the player's hand
 /// @param {Id.Instance} card		The card that is being copied
 function add_copy_of_card_to_hand(card) {
-	var card_instance = instance_create_layer(x, y, "Instances", card.object_index, {
+	var card_instance = instance_create_layer(x, y, player_cards_layer, card.object_index, {
 		image_xscale : CARD_DEFAULT_SCALE,
 		image_yscale : CARD_DEFAULT_SCALE
 	})
