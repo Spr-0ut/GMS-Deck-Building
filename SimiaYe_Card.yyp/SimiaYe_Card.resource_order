@@ -21,12 +21,12 @@
     {"name":"Chara_Cards_Shrunk","order":4,"path":"folders/Sprites/Chara/Chara_Cards_Shrunk.yy",},
     {"name":"Potion_Slots","order":9,"path":"folders/Sprites/Chara/Potion_Slots.yy",},
     {"name":"Enemy","order":1,"path":"folders/Sprites/Enemy.yy",},
-    {"name":"Chara_Card_Grid_Scrollbar","order":2,"path":"folders/Sprites/UI_Elements/Scroll_Bar/Chara_Card_Grid_Scrollbar.yy",},
     {"name":"Book_Menu","order":7,"path":"folders/Sprites/UI_Elements/Book_Menu.yy",},
     {"name":"Button","order":5,"path":"folders/Sprites/UI_Elements/Button.yy",},
     {"name":"Dropdown","order":4,"path":"folders/Sprites/UI_Elements/Dropdown.yy",},
     {"name":"Energy","order":6,"path":"folders/Sprites/UI_Elements/Energy.yy",},
     {"name":"Health_Bar","order":1,"path":"folders/Sprites/UI_Elements/Health_Bar.yy",},
+    {"name":"Chara_Card_Grid_Scrollbar","order":2,"path":"folders/Sprites/UI_Elements/Scroll_Bar/Chara_Card_Grid_Scrollbar.yy",},
     {"name":"Slider","order":2,"path":"folders/Sprites/UI_Elements/Slider.yy",},
   ],
   "ResourceOrderSettings":[
