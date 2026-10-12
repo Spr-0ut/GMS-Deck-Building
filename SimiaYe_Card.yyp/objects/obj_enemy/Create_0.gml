@@ -1,8 +1,12 @@
+#macro ENEMY_CHASE_SPEED	WALK_SPEED * 1.5
+
 active_debuffs = {}
 active_buffs = {}
 display_next_damage_text = true
 damage_to_display = []
 next_attack_index = 0
+check_for_dist_to_player = false
+enemy_path = path_add()
 
 #region Implement in each enemy type
 
@@ -23,6 +27,10 @@ function basic_attack() {
 
 #endregion
 
+/// @desc							Alerts this enemy to begin tracking the player position to attack them
+function activate_player_tracking() {
+	check_for_dist_to_player = true
+}
 
 /// @desc							Checks if this enemy has summon sickness from just being summoned
 ///										and adds a temporary attack that clears the summon sickness
@@ -195,5 +203,33 @@ function take_damage(health_damage) {
 		if(instance_exists(obj_enemy_attack_manager)) {
 			obj_enemy_attack_manager.remove_enemy_intent(id)
 		}
+	}
+}
+
+/// @desc									Finds a path for this enemy to move towards the given instance
+///												if it's within dist_to_chase_chara from this enemy
+/// @param {Id.Instance} target_to_chase	The target object this enemy will try and path towards
+function path_to_instance(target_to_chase) {
+	var center_of_enemy_x = x - sprite_xoffset + (sprite_width / 2)
+	var center_of_enemy_y = y - sprite_yoffset + (sprite_height / 2)
+	var center_of_player_x = target_to_chase.x - target_to_chase.sprite_xoffset + (target_to_chase.sprite_width / 2)
+	var center_of_player_y = target_to_chase.y - target_to_chase.sprite_yoffset + (target_to_chase.sprite_height / 2)
+	var dist_to_player_sqr = sqr(center_of_player_x - center_of_enemy_x) + sqr(center_of_player_y - center_of_enemy_y)
+		
+	if(dist_to_player_sqr < sqr(dist_to_chase_chara)) {
+		if(dist_to_player_sqr < sqr((sprite_width + target_to_chase.sprite_width) / 2) ||
+			dist_to_player_sqr < sqr((sprite_height + target_to_chase.sprite_height) / 2)) {
+				global.room_is_arena = true
+				room_goto(Arena)
+		}
+		else {
+			if(mp_grid_path(global.pathing_grid, enemy_path, center_of_enemy_x, center_of_enemy_y, center_of_player_x, center_of_player_y, true)) {
+				path_start(enemy_path, ENEMY_CHASE_SPEED, path_action_stop, false)
+			}
+		}
+	}
+	else {
+		check_for_dist_to_player = false
+		path_end()
 	}
 }

@@ -20,6 +20,7 @@ else {
 			}
 			
 			check_for_building_entrance()
+			check_for_near_enemy()
 		}
 	}
 	else if (!character_teleporting) {

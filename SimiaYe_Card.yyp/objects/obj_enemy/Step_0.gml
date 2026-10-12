@@ -3,26 +3,33 @@
 /// @param {Real} TIME_BETWEEN_ATTACKS	A constant that determines how many frames between each text pop up
 var TIME_BETWEEN_ATTACKS = 12
 
-if(display_next_damage_text) {
-	if(array_length(damage_to_display) > 0) {
-		var damage_data = array_shift(damage_to_display)
-		var amount_of_damage = format_display_number(damage_data[0])
-		var damage_text_color = damage_data[1]
-		instance_create_layer(x, y, "Instances", obj_damageText,
-		{
-			damage_taken : amount_of_damage,
-			text_color : damage_text_color
-		})
-		alarm[0] = TIME_BETWEEN_ATTACKS
-		display_next_damage_text = false
+if (variable_global_exists("room_is_arena") && global.room_is_arena) {
+	if(display_next_damage_text) {
+		if(array_length(damage_to_display) > 0) {
+			var damage_data = array_shift(damage_to_display)
+			var amount_of_damage = format_display_number(damage_data[0])
+			var damage_text_color = damage_data[1]
+			instance_create_layer(x, y, "Instances", obj_damageText,
+			{
+				damage_taken : amount_of_damage,
+				text_color : damage_text_color
+			})
+			alarm[0] = TIME_BETWEEN_ATTACKS
+			display_next_damage_text = false
+		}
+	}
+
+	if(!global.object_being_clicked && is_top_layer(layer, mouse_x, mouse_y)) {
+		if(mouse_x > bbox_left && mouse_x < bbox_right && 
+				mouse_y > bbox_top && mouse_y < bbox_bottom &&
+				attack_options[next_attack_index].targeting_type != enemy_attack_target.no_target &&
+				instance_exists(obj_enemy_attack_manager)) {
+			obj_enemy_attack_manager.highlight_attack(id)
+		}
 	}
 }
-
-if(!global.object_being_clicked && is_top_layer(layer, mouse_x, mouse_y)) {
-	if(mouse_x > bbox_left && mouse_x < bbox_right && 
-			mouse_y > bbox_top && mouse_y < bbox_bottom &&
-			attack_options[next_attack_index].targeting_type != enemy_attack_target.no_target &&
-			instance_exists(obj_enemy_attack_manager)) {
-		obj_enemy_attack_manager.highlight_attack(id)
+else {
+	if(check_for_dist_to_player && variable_global_exists("player_chara") && global.player_chara != noone) {
+		path_to_instance(global.player_chara)
 	}
 }

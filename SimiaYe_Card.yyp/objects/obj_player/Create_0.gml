@@ -732,3 +732,17 @@ function check_for_building_entrance() {
 		closest_trigger.wake_up()	
 	}
 }
+
+/// @desc							Activates any enemies on screen, allowing them to attack the player
+function check_for_near_enemy() {
+	var dist_to_wake_enemies_x = camera_get_view_width(view_camera[0])
+	var dist_to_wake_enemies_y = camera_get_view_height(view_camera[0])
+	
+	var enemies_to_wake = ds_list_create()
+	var num_enemies_to_wake = collision_rectangle_list(x - dist_to_wake_enemies_x, y - dist_to_wake_enemies_y,
+														x + dist_to_wake_enemies_x, y + dist_to_wake_enemies_y,
+														obj_enemy, false, true, enemies_to_wake, false)
+	for(var enemy_index = 0; enemy_index < num_enemies_to_wake; enemy_index++) {
+		enemies_to_wake[| enemy_index].activate_player_tracking()
+	}
+}
