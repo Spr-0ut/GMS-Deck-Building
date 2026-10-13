@@ -6,6 +6,9 @@ display_next_damage_text = true
 damage_to_display = []
 next_attack_index = 0
 check_for_dist_to_target = false
+enemy_start_x = x
+enemy_start_y = y
+enemy_returning_to_start = true
 collidable_items = find_room_collision_items(room)
 enemy_path = path_add()
 
@@ -207,40 +210,82 @@ function take_damage(health_damage) {
 	}
 }
 
-/// @desc									Finds a path for this enemy to move towards the given instance
-///												if it's within dist_to_chase_chara from this enemy and there
-///												are no collidable_items blocking line of sight
-/// @param {Id.Instance} target_to_chase	The target object this enemy will try and path towards
-function path_to_instance(target_to_chase) {
+/// @desc									Finds how far this enemy is away from the target_to_chase
+///												and determines its next action based on that distance
+/// @param {Id.Instance} target_to_chase	The target instance to determine the distance from
+function determine_enemy_chase_action(target_to_chase) {
 	var center_of_enemy_x = bbox_left + (bbox_right - bbox_left) / 2
 	var center_of_enemy_y = bbox_top + (bbox_bottom - bbox_top) / 2
 	var center_of_target_x = target_to_chase.bbox_left + (target_to_chase.bbox_right - target_to_chase.bbox_left) / 2
 	var center_of_target_y = target_to_chase.bbox_top + (target_to_chase.bbox_bottom -  target_to_chase.bbox_top) / 2
-	
 	var dist_to_target_sqr = sqr(center_of_target_x - center_of_enemy_x) + sqr(center_of_target_y - center_of_enemy_y)
-	if(dist_to_target_sqr < sqr(dist_to_chase_target)) {
-		if(dist_to_target_sqr < sqr((sprite_width + target_to_chase.sprite_width) / 2) ||
-			dist_to_target_sqr < sqr((sprite_height + target_to_chase.sprite_height) / 2)) {
-				global.room_is_arena = true
-				room_goto(Arena)
-		}
-		else {
-			var top_left_visible = collision_line(bbox_left, bbox_top, target_to_chase.bbox_left,  target_to_chase.bbox_top, collidable_items, false, true) == noone
-			var top_right_visible = collision_line(bbox_right, bbox_top, target_to_chase.bbox_right,  target_to_chase.bbox_top, collidable_items, false, true) == noone
-			var bottom_left_visible = collision_line(bbox_left, bbox_bottom, target_to_chase.bbox_left, target_to_chase.bbox_bottom, collidable_items, false, true) == noone
-			var bottom_right_visible = collision_line(bbox_right, bbox_bottom, target_to_chase.bbox_right, target_to_chase.bbox_bottom, collidable_items, false, true) == noone
-
-			if((top_left_visible || top_right_visible || bottom_left_visible || bottom_right_visible) && 
-				mp_grid_path(global.pathing_grid, enemy_path, center_of_enemy_x, center_of_enemy_y, center_of_target_x, center_of_target_y, true)) {
-					path_start(enemy_path, ENEMY_CHASE_SPEED, path_action_stop, false)
-			}
-			else if(path_position >= 1) {
-				show_debug_message("player not found, will return to start later")
-			}
-		}
+	
+	if(place_meeting(x, y, target_to_chase)) {
+		swap_to_arena()
+	}
+	else if(dist_to_target_sqr < sqr(dist_to_chase_target)) {
+		find_enemy_path(target_to_chase, center_of_enemy_x, center_of_enemy_y, center_of_target_x, center_of_target_y)
 	}
 	else {
 		check_for_dist_to_target = false
-		show_debug_message("player not found, will return to start later")
+		path_enemy_to_start()
+	}
+}
+
+/// @desc									Swaps the player into the Arena room to begin a fight
+function swap_to_arena() {
+	global.room_is_arena = true
+	room_goto(Arena)
+}
+
+/// @desc									Finds whether this enemy will chase the given target or return
+///												to it's original position
+/// @param {Id.Instance} target_to_chase	The target this enemy will path towards
+/// @param {Real} center_of_enemy_x			The x position of the center of this enemy's bounding box
+/// @param {Real} center_of_enemy_y			The y position of the center of this enemy's bounding box
+/// @param {Real} center_of_target_x		The x position of the center of the target's bounding box
+/// @param {Real} center_of_target_y		The y position of the center of the target's bounding box
+function find_enemy_path(target_to_chase, center_of_enemy_x, center_of_enemy_y, center_of_target_x, center_of_target_y) {
+	if(check_target_can_be_seen(target_to_chase)) {
+		path_enemy_to_target(center_of_enemy_x, center_of_enemy_y, center_of_target_x, center_of_target_y)
+	}
+	else if(path_position >= 1) {
+		path_enemy_to_start()
+	}
+}
+
+/// @desc									Determines if the top or bottom of this enemy is able to see
+///												the top or the bottom of the given target's bounding box
+/// @param {Id.Instance} target_to_chase	The instance this enemy is attempting to see
+/// @returns {Bool}							A flag for if the enemy can see the given character
+function check_target_can_be_seen(target_to_chase) {
+	var top_left_visible = collision_line(bbox_left, bbox_top, target_to_chase.bbox_left,  target_to_chase.bbox_top, collidable_items, false, true) == noone
+	var top_right_visible = collision_line(bbox_right, bbox_top, target_to_chase.bbox_right,  target_to_chase.bbox_top, collidable_items, false, true) == noone
+	var bottom_left_visible = collision_line(bbox_left, bbox_bottom, target_to_chase.bbox_left, target_to_chase.bbox_bottom, collidable_items, false, true) == noone
+	var bottom_right_visible = collision_line(bbox_right, bbox_bottom, target_to_chase.bbox_right, target_to_chase.bbox_bottom, collidable_items, false, true) == noone
+
+	return top_left_visible || top_right_visible || bottom_left_visible || bottom_right_visible
+}
+
+/// @desc									Attempts to find an enemy_path from the center of the enemy
+///												the the center of the target on global.pathing_grid
+/// @param {Real} center_of_enemy_x			The x position of the center of this enemy's bounding box
+/// @param {Real} center_of_enemy_y			The y position of the center of this enemy's bounding box
+/// @param {Real} center_of_target_x		The x position of the center of the target's bounding box
+/// @param {Real} center_of_target_y		The y position of the center of the target's bounding box
+function path_enemy_to_target(center_of_enemy_x, center_of_enemy_y, center_of_target_x, center_of_target_y) {
+	if(mp_grid_path(global.pathing_grid, enemy_path, center_of_enemy_x, center_of_enemy_y, center_of_target_x, center_of_target_y, true)) {
+		enemy_returning_to_start = false
+		path_start(enemy_path, ENEMY_CHASE_SPEED, path_action_stop, false)
+	}	
+}
+
+/// @desc									Attempts to find an enemy_path from the enemy's current
+///												position to the enemy_start_ position
+function path_enemy_to_start() {
+	if(!enemy_returning_to_start &&
+		mp_grid_path(global.pathing_grid, enemy_path, x, y, enemy_start_x, enemy_start_y, true)) {
+			enemy_returning_to_start = true
+			path_start(enemy_path, ENEMY_CHASE_SPEED, path_action_stop, false)
 	}
 }
