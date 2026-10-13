@@ -29,7 +29,7 @@ if (variable_global_exists("room_is_arena") && global.room_is_arena) {
 	}
 }
 else {
-	if(check_for_dist_to_player && variable_global_exists("player_chara") && global.player_chara != noone) {
+	if(check_for_dist_to_target && variable_global_exists("player_chara") && global.player_chara != noone) {
 		path_to_instance(global.player_chara)
 	}
 }

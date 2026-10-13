@@ -5,7 +5,8 @@ active_buffs = {}
 display_next_damage_text = true
 damage_to_display = []
 next_attack_index = 0
-check_for_dist_to_player = false
+check_for_dist_to_target = false
+collidable_items = find_room_collision_items(room)
 enemy_path = path_add()
 
 #region Implement in each enemy type
@@ -29,7 +30,7 @@ function basic_attack() {
 
 /// @desc							Alerts this enemy to begin tracking the player position to attack them
 function activate_player_tracking() {
-	check_for_dist_to_player = true
+	check_for_dist_to_target = true
 }
 
 /// @desc							Checks if this enemy has summon sickness from just being summoned
@@ -207,29 +208,39 @@ function take_damage(health_damage) {
 }
 
 /// @desc									Finds a path for this enemy to move towards the given instance
-///												if it's within dist_to_chase_chara from this enemy
+///												if it's within dist_to_chase_chara from this enemy and there
+///												are no collidable_items blocking line of sight
 /// @param {Id.Instance} target_to_chase	The target object this enemy will try and path towards
 function path_to_instance(target_to_chase) {
-	var center_of_enemy_x = x - sprite_xoffset + (sprite_width / 2)
-	var center_of_enemy_y = y - sprite_yoffset + (sprite_height / 2)
-	var center_of_player_x = target_to_chase.x - target_to_chase.sprite_xoffset + (target_to_chase.sprite_width / 2)
-	var center_of_player_y = target_to_chase.y - target_to_chase.sprite_yoffset + (target_to_chase.sprite_height / 2)
-	var dist_to_player_sqr = sqr(center_of_player_x - center_of_enemy_x) + sqr(center_of_player_y - center_of_enemy_y)
-		
-	if(dist_to_player_sqr < sqr(dist_to_chase_chara)) {
-		if(dist_to_player_sqr < sqr((sprite_width + target_to_chase.sprite_width) / 2) ||
-			dist_to_player_sqr < sqr((sprite_height + target_to_chase.sprite_height) / 2)) {
+	var center_of_enemy_x = bbox_left + (bbox_right - bbox_left) / 2
+	var center_of_enemy_y = bbox_top + (bbox_bottom - bbox_top) / 2
+	var center_of_target_x = target_to_chase.bbox_left + (target_to_chase.bbox_right - target_to_chase.bbox_left) / 2
+	var center_of_target_y = target_to_chase.bbox_top + (target_to_chase.bbox_bottom -  target_to_chase.bbox_top) / 2
+	
+	var dist_to_target_sqr = sqr(center_of_target_x - center_of_enemy_x) + sqr(center_of_target_y - center_of_enemy_y)
+	if(dist_to_target_sqr < sqr(dist_to_chase_target)) {
+		if(dist_to_target_sqr < sqr((sprite_width + target_to_chase.sprite_width) / 2) ||
+			dist_to_target_sqr < sqr((sprite_height + target_to_chase.sprite_height) / 2)) {
 				global.room_is_arena = true
 				room_goto(Arena)
 		}
 		else {
-			if(mp_grid_path(global.pathing_grid, enemy_path, center_of_enemy_x, center_of_enemy_y, center_of_player_x, center_of_player_y, true)) {
-				path_start(enemy_path, ENEMY_CHASE_SPEED, path_action_stop, false)
+			var top_left_visible = collision_line(bbox_left, bbox_top, target_to_chase.bbox_left,  target_to_chase.bbox_top, collidable_items, false, true) == noone
+			var top_right_visible = collision_line(bbox_right, bbox_top, target_to_chase.bbox_right,  target_to_chase.bbox_top, collidable_items, false, true) == noone
+			var bottom_left_visible = collision_line(bbox_left, bbox_bottom, target_to_chase.bbox_left, target_to_chase.bbox_bottom, collidable_items, false, true) == noone
+			var bottom_right_visible = collision_line(bbox_right, bbox_bottom, target_to_chase.bbox_right, target_to_chase.bbox_bottom, collidable_items, false, true) == noone
+
+			if((top_left_visible || top_right_visible || bottom_left_visible || bottom_right_visible) && 
+				mp_grid_path(global.pathing_grid, enemy_path, center_of_enemy_x, center_of_enemy_y, center_of_target_x, center_of_target_y, true)) {
+					path_start(enemy_path, ENEMY_CHASE_SPEED, path_action_stop, false)
+			}
+			else if(path_position >= 1) {
+				show_debug_message("player not found, will return to start later")
 			}
 		}
 	}
 	else {
-		check_for_dist_to_player = false
-		path_end()
+		check_for_dist_to_target = false
+		show_debug_message("player not found, will return to start later")
 	}
 }

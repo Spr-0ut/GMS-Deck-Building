@@ -34,7 +34,7 @@
     {"$GMObjectProperty":"v2","%Name":"Is_alive","filters":[],"listItems":[],"multiselect":false,"name":"Is_alive","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"true","varType":3,},
     {"$GMObjectProperty":"v2","%Name":"Attack_damage","filters":[],"listItems":[],"multiselect":false,"name":"Attack_damage","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"5","varType":1,},
     {"$GMObjectProperty":"v2","%Name":"has_summon_sickness","filters":[],"listItems":[],"multiselect":false,"name":"has_summon_sickness","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"False","varType":3,},
-    {"$GMObjectProperty":"v2","%Name":"dist_to_chase_chara","filters":[],"listItems":[],"multiselect":false,"name":"dist_to_chase_chara","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"300","varDescription":"max distance this enemy is willing to travel to reach their target","varType":0,},
+    {"$GMObjectProperty":"v2","%Name":"dist_to_chase_target","filters":[],"listItems":[],"multiselect":false,"name":"dist_to_chase_target","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"300","varDescription":"max distance this enemy is willing to travel to reach their target","varType":0,},
   ],
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
