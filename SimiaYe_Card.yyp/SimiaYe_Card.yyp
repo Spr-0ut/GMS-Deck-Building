@@ -670,6 +670,7 @@
     {"id":{"name":"spr_dropdown_option","path":"sprites/spr_dropdown_option/spr_dropdown_option.yy",},},
     {"id":{"name":"spr_dropdown","path":"sprites/spr_dropdown/spr_dropdown.yy",},},
     {"id":{"name":"spr_end_turn_button","path":"sprites/spr_end_turn_button/spr_end_turn_button.yy",},},
+    {"id":{"name":"spr_enemy_loses_player_symbol","path":"sprites/spr_enemy_loses_player_symbol/spr_enemy_loses_player_symbol.yy",},},
     {"id":{"name":"spr_enter_building","path":"sprites/spr_enter_building/spr_enter_building.yy",},},
     {"id":{"name":"spr_expanded_chara_select_grid","path":"sprites/spr_expanded_chara_select_grid/spr_expanded_chara_select_grid.yy",},},
     {"id":{"name":"spr_expanded_damage_chara_card","path":"sprites/spr_expanded_damage_chara_card/spr_expanded_damage_chara_card.yy",},},

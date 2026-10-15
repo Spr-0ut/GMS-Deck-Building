@@ -1,4 +1,7 @@
 #macro ENEMY_CHASE_SPEED	WALK_SPEED * 1.5
+#macro SECONDS_ENEMY_SEARCHS_FOR_PLAYER		2
+#macro ENEMY_LOSES_PLAYER_SPRITE			spr_enemy_loses_player_symbol
+#macro ENEMY_LOSES_PLAYER_SYMBOL_PADDING	5
 
 active_debuffs = {}
 active_buffs = {}
@@ -9,6 +12,7 @@ check_for_dist_to_target = false
 enemy_start_x = x
 enemy_start_y = y
 enemy_returning_to_start = true
+display_enemy_loses_player_symbol = false
 collidable_items = find_room_collision_items(room)
 enemy_path = path_add()
 
@@ -221,14 +225,15 @@ function determine_enemy_chase_action(target_to_chase) {
 	var dist_to_target_sqr = sqr(center_of_target_x - center_of_enemy_x) + sqr(center_of_target_y - center_of_enemy_y)
 	
 	if(place_meeting(x, y, target_to_chase)) {
+		display_enemy_loses_player_symbol = false
 		swap_to_arena()
 	}
 	else if(dist_to_target_sqr < sqr(dist_to_chase_target)) {
+		display_enemy_loses_player_symbol = false
 		find_enemy_path(target_to_chase, center_of_enemy_x, center_of_enemy_y, center_of_target_x, center_of_target_y)
 	}
 	else {
 		check_for_dist_to_target = false
-		path_enemy_to_start()
 	}
 }
 
@@ -248,9 +253,6 @@ function swap_to_arena() {
 function find_enemy_path(target_to_chase, center_of_enemy_x, center_of_enemy_y, center_of_target_x, center_of_target_y) {
 	if(check_target_can_be_seen(target_to_chase)) {
 		path_enemy_to_target(center_of_enemy_x, center_of_enemy_y, center_of_target_x, center_of_target_y)
-	}
-	else if(path_position >= 1) {
-		path_enemy_to_start()
 	}
 }
 

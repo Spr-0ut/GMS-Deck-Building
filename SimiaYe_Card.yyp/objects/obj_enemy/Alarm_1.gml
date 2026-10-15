@@ -1,0 +1,2 @@
+display_enemy_loses_player_symbol = false
+path_enemy_to_start()
