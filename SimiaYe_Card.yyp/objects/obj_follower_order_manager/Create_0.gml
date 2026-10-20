@@ -178,6 +178,9 @@ function find_charas_ordered(next_chara = noone, chara_list = []) {
 		obj_follower_order_manager.find_player_chara()
 	}
 	if(typeof(next_chara) != "ref" || next_chara == noone) {
+		if(!instance_exists(global.player_chara)) {
+			return []	
+		}
 		next_chara = global.player_chara
 	}
 	

@@ -169,6 +169,9 @@ function add_enemy_intent(enemy_instance_id, enemy_attack, attack_targeting_type
 function get_players_targeted(targeting_type, attacker_instance_id) {
 	if(array_length(ordered_player_charas) < 1) {
 		ordered_player_charas = obj_follower_order_manager.find_charas_ordered()
+		if(array_length(ordered_player_charas) == 0) {
+			return []	
+		}
 	}
 	
 	switch(targeting_type) {
