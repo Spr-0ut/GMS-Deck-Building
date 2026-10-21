@@ -204,9 +204,9 @@ function trigger_end_of_turn_debuffs() {
 /// @desc							Removes health from this enemy and checks if they die
 /// @param {Real} health_damage		The amount of health to remove from this enemy
 function take_damage(health_damage) {
-	Health -= health_damage
-	if(Health <= 0 && Is_alive) {
-		Is_alive = false
+	enemy_data.current_health -= health_damage
+	if(enemy_data.current_health <= 0 && enemy_data.is_alive) {
+		enemy_data.is_alive = false
 		show_debug_message("This enemy is dead")
 		if(instance_exists(obj_enemy_attack_manager)) {
 			obj_enemy_attack_manager.remove_enemy_intent(id)
@@ -240,6 +240,10 @@ function determine_enemy_chase_action(target_to_chase) {
 /// @desc									Swaps the player into the Arena room to begin a fight
 function swap_to_arena() {
 	global.room_is_arena = true
+	if(instance_exists(obj_enemy_manager)) {
+		obj_enemy_manager.save_encounter_data([enemy_data])
+	}
+	
 	room_goto(Arena)
 }
 

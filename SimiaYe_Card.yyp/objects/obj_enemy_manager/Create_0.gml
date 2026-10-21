@@ -2,8 +2,72 @@ if(instance_number(obj_enemy_manager) > 1) {
 	instance_destroy()
 }
 
-enemy_instance_layer = layer_create(depth, "enemy_instance_layer")
 ordered_enemies = []
+room_enemy_data = {}
+encounter_data = []
+
+/// @desc										Clears the room of enemies and creates the given enemy
+///													instances then adds them to ordered_enemies
+/// @param {Array<Struct>} enemies_to_create	An array of data_enemy structs used to create the enemies
+function create_enemies(enemies_to_create) {
+	instance_destroy(obj_enemy)
+	
+	ordered_enemies = create_enemy_instances(enemies_to_create)
+	array_sort(ordered_enemies, function (current, next) {
+		return 	current.x - next.x
+	})
+		
+	if(instance_exists(obj_enemy_attack_manager)) {
+		obj_enemy_attack_manager.create_indicators()
+	}
+}
+
+/// @desc										Creates instances of each of the given enemies
+/// @param {Array<Struct>} enemies_to_create	An array of data_enemy structs used to create the enemies
+/// @returns {Array<Id.Instance>}				An array of the newly created enemy instances
+function create_enemy_instances(enemies_to_create) {
+	var enemy_instances_created = []
+	var enemy_instance_layer = get_enemy_instance_layer()
+	
+	if(typeof(enemies_to_create) = "array") {
+		for(var enemy_index = 0; enemy_index < array_length(enemies_to_create); enemy_index++) {
+			var cur_enemy = enemies_to_create[enemy_index]
+			if(typeof(cur_enemy) = "struct" && is_instanceof(cur_enemy, data_enemy)) {
+				var x_pos = cur_enemy.initial_x_pos + sprite_get_xoffset(object_get_sprite(cur_enemy.object))
+				var y_pos = cur_enemy.initial_y_pos + sprite_get_yoffset(object_get_sprite(cur_enemy.object))
+				
+				var enemy_instance = instance_create_layer(x_pos, y_pos, enemy_instance_layer, cur_enemy.object, { 
+					enemy_data : cur_enemy
+				})
+				array_push(enemy_instances_created, enemy_instance)
+			}
+		}
+	}
+	return enemy_instances_created
+}
+
+/// @desc										Saves the data_enemy that will be used for the next
+///													Arena encounter
+/// @param {Array<Struct>} enemies_in_fight		The data_enemy used to create the enemies in the Arena
+function save_encounter_data(enemies_in_fight) {
+	encounter_data = enemies_in_fight
+}
+
+/// @desc										Attempts to find the layer to create enemy instances on
+///													or creates a new one if no layer could be found
+/// @returns {Id.Layer}							The layer to create enemy instances on
+function get_enemy_instance_layer() {
+	var enemy_instance_layer = layer_get_id("enemy_instance_layer")
+	if(enemy_instance_layer != -1) {
+		return enemy_instance_layer
+	}
+	else if(instance_exists(obj_enemy)) {
+		var enemy_instance = instance_find(obj_enemy, 0)
+		return enemy_instance.layer
+	}
+	
+	return layer_create(0, "enemy_instance_layer")
+}
 
 /// @desc								The function to be used to access ordered_enemies
 /// @returns {Array<Id.Instance>}		All of the enemies ordered based on their x position
@@ -16,6 +80,9 @@ function get_ordered_enemies_array() {
 
 /// @desc								Finds all of the instances obj_enemy and its children
 ///											and orders them in a list based on their x position
+/// @returns {Array<Id.Instance>}		The instances of enemies in the current room, sorted by their
+///											x position. NOTE: This list is also the placed in
+///											ordered_enemies, so it does not need to be added again
 function find_enemies_ordered() {
 	ordered_enemies = array_create(instance_number(obj_enemy))
 	for(var enemy_index = 0; enemy_index < instance_number(obj_enemy); enemy_index++) {
@@ -25,6 +92,8 @@ function find_enemies_ordered() {
 	array_sort(ordered_enemies, function (current, next) {
 		return 	current.x - next.x
 	})
+	
+	return ordered_enemies
 }
 
 /// @desc								Adds the given enemy to the ordered_enemies array
@@ -43,11 +112,12 @@ function add_existing_enemy(enemy) {
 /// @param {Asset.GMObject} enemy		The enemy to create an instance for
 /// @returns {Id.Instance}				The instance id of the enemy created, or noone if it couldnt
 ///											be created
-function create_new_enemy(enemy) {
+function summon_new_enemy(enemy) {
 	if(typeof(enemy) == "ref" && object_is_ancestor(enemy, obj_enemy)) {
 		if(instance_exists(obj_enemy_attack_manager)) {
 			var enemy_indicator = obj_enemy_attack_manager.find_open_enemy_indicator()
 			if(enemy_indicator != noone) {
+				var enemy_instance_layer = get_enemy_instance_layer()
 				var x_pos = enemy_indicator.x + sprite_get_xoffset(object_get_sprite(enemy))
 				var y_pos = enemy_indicator.y + sprite_get_yoffset(object_get_sprite(enemy)) + ATTACK_INDICATOR_Y_PADDING
 				
@@ -74,7 +144,7 @@ function create_new_enemy(enemy) {
 ///											selecting the next attack
 function end_enemies_turn() {
 	if(array_length(ordered_enemies) < 1) {
-		ordered_enemies = find_enemies_ordered()
+		find_enemies_ordered()
 	}
 	
 	if(object_exists(obj_enemy_attack_manager)) {

@@ -45,20 +45,16 @@ function find_enemy_attack(enemy_id) {
 function attack_target_character() {
 	if(target != noone  && display_attack_intentions) {
 		for(var attack_index = 0; attack_index < array_length(attacks_to_display); attack_index++) {
-			if(!attacks_to_display[attack_index].attack.has_summon_sickness) {
-				if(object_is_ancestor(target.object_index, obj_player)) {
-					if(target.player_current_health > 0 &&
-							attacks_to_display[attack_index].enemy_id.Is_alive) {
-						target.hit_by_enemy(attacks_to_display[attack_index].attack)
-					}
+			var enemy_is_alive = attacks_to_display[attack_index].enemy_id.enemy_data.is_alive
+			if(!attacks_to_display[attack_index].attack.has_summon_sickness && enemy_is_alive) {
+				if(object_is_ancestor(target.object_index, obj_player) && target.player_current_health > 0) {
+					target.hit_by_enemy(attacks_to_display[attack_index].attack)
 				}
 				else if(object_is_ancestor(target.object_index, obj_enemy)) {
-					if(attacks_to_display[attack_index].enemy_id.Is_alive) {
-						if(array_length(attacks_to_display[attack_index].attack.enemies_to_spawn) > 0) {
-							summon_enemies(attacks_to_display[attack_index].attack.enemies_to_spawn)
-						}
-						target.hit_by_player(attacks_to_display[attack_index].enemy_id, attacks_to_display[attack_index].attack)
+					if(array_length(attacks_to_display[attack_index].attack.enemies_to_spawn) > 0) {
+						summon_enemies(attacks_to_display[attack_index].attack.enemies_to_spawn)
 					}
+					target.hit_by_player(attacks_to_display[attack_index].enemy_id, attacks_to_display[attack_index].attack)
 				}
 			}
 		}	
@@ -72,7 +68,7 @@ function attack_target_character() {
 function summon_enemies(enemies_to_spawn) {
 	if(instance_exists(obj_enemy_manager)) {
 		for(var enemy_index = 0; enemy_index < array_length(enemies_to_spawn); enemy_index++) {
-			var enemy_instance = obj_enemy_manager.create_new_enemy(enemies_to_spawn[enemy_index])
+			var enemy_instance = obj_enemy_manager.summon_new_enemy(enemies_to_spawn[enemy_index])
 			if(enemy_instance == noone) {
 				break	
 			}

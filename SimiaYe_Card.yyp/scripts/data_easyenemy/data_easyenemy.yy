@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"data_easyenemy",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"data_easyenemy",
+  "parent":{
+    "name":"Easyenemy",
+    "path":"folders/Objects/Enemy/Easyenemy.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
