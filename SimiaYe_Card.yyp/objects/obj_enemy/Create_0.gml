@@ -241,7 +241,7 @@ function determine_enemy_chase_action(target_to_chase) {
 function swap_to_arena() {
 	global.room_is_arena = true
 	if(instance_exists(obj_enemy_manager)) {
-		obj_enemy_manager.save_encounter_data([enemy_data])
+		obj_enemy_manager.save_encounter_data(enemy_data.encounter_data)
 	}
 	
 	room_goto(Arena)

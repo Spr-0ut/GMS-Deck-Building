@@ -10,4 +10,5 @@ function data_enemy(initial_x, initial_y) constructor{
 	is_alive = true
 	initial_x_pos = initial_x
 	initial_y_pos = initial_y
+	encounter_data = [self]
 }
