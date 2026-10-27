@@ -24,8 +24,8 @@ if(!variable_global_exists("room_switching"))
 
 arena = false
 collidable_items = find_room_collision_items(room)
-if(player_current_health == -1)
-	player_current_health = player_max_health
+if(chara_data.player_current_health == -1)
+	chara_data.player_current_health = chara_data.player_max_health
 
 var bbox_edge_to_origin_dist = { left :	bbox_left - x,
 									top :	bbox_top - y,
@@ -43,18 +43,12 @@ dist_to_move_chara = 0
 on_walk_animation_end = undefined
 chara_leaving_room = undefined
 
-class = chara_class.damage
 active_buffs = {}
 active_debuffs = {}
 display_next_effect_text = true
 effect_to_display = []
 chara_shield = 0
-player_current_health = player_max_health
 turns_since_gain_strength_on_attack = 1
-
-if(!is_real(chara_id) || chara_id < 0) {
-	chara_id = create_chara_id()	
-}
 
 /// @desc								Sets the controlled character's initial position so they are
 ///											next to the obj_room_change_trigger with pos_num equal to
@@ -178,7 +172,7 @@ function hit_by_enemy(enemy_attack) {
 ///											checks if it was enough damage to kill them
 /// @param {Real} damage_taken			The amount of health to remove from this character
 function take_damage(damage_taken) {
-	player_current_health = clamp(player_current_health - damage_taken, 0, player_max_health)
+	chara_data.player_current_health = clamp(chara_data.player_current_health - damage_taken, 0, chara_data.player_max_health)
 	if(instance_number(ui_health_bar) > 0) {
 		for(var health_bar_index = 0; health_bar_index < instance_number(ui_health_bar); health_bar_index++) {
 			var health_bar_instance = instance_find(ui_health_bar, health_bar_index)
@@ -188,8 +182,8 @@ function take_damage(damage_taken) {
 		}
 	}
 		
-	show_debug_message(player_current_health)
-	if(player_current_health <= 0)
+	show_debug_message(chara_data.player_current_health)
+	if(chara_data.player_current_health <= 0)
 		show_debug_message("Player is dead")
 }
 
@@ -272,7 +266,7 @@ function add_shield(shield_amount) {
 /// @param {Real} health_to_add			The maximum health to be healed
 function heal_chara(health_to_add) {
 	if(health_to_add > 0)
-		player_current_health = clamp(player_current_health + health_to_add, 0, player_max_health)
+		chara_data.player_current_health = clamp(chara_data.player_current_health + health_to_add, 0, chara_data.player_max_health)
 }
 
 /// @desc											Adds the given buff data to the effect_to_display

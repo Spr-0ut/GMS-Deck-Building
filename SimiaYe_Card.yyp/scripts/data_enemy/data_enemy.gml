@@ -8,6 +8,7 @@ function data_enemy(initial_x, initial_y) constructor{
 	max_health = 0
 	current_health = 0
 	is_alive = true
+	encounter_just_defeated = false
 	initial_x_pos = initial_x
 	initial_y_pos = initial_y
 	encounter_data = [self]

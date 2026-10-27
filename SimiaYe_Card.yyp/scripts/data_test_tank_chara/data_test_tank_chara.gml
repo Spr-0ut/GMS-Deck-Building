@@ -3,6 +3,7 @@ function data_test_tank_class(_chara_id = create_chara_id()) : data_chara(_chara
 	object_index = obj_test_tank_chara
 	class = chara_class.tank
 	player_max_health = 500
+	player_current_health = player_max_health
 	chara_portrait = spr_test_tank_chara
 	chara_attack = 1
 	chara_description = "This is a temp character for the tank class"

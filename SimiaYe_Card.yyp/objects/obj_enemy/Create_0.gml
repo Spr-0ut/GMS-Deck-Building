@@ -211,6 +211,9 @@ function take_damage(health_damage) {
 		if(instance_exists(obj_enemy_attack_manager)) {
 			obj_enemy_attack_manager.remove_enemy_intent(id)
 		}
+		if(instance_exists(obj_enemy_manager)) {
+			obj_enemy_manager.enemy_dies(id)
+		}
 	}
 }
 
@@ -237,11 +240,16 @@ function determine_enemy_chase_action(target_to_chase) {
 	}
 }
 
-/// @desc									Swaps the player into the Arena room to begin a fight
+/// @desc									Saves data about the current room and swaps the player
+//												into the Arena room to begin a fight
 function swap_to_arena() {
 	global.room_is_arena = true
+	global.return_room = room
 	if(instance_exists(obj_enemy_manager)) {
 		obj_enemy_manager.save_encounter_data(enemy_data.encounter_data)
+	}
+	if(instance_exists(obj_player_chara_manager)) {
+		obj_player_chara_manager.save_chara_encounter_data()
 	}
 	
 	room_goto(Arena)
@@ -293,5 +301,17 @@ function path_enemy_to_start() {
 		mp_grid_path(global.pathing_grid, enemy_path, x, y, enemy_start_x, enemy_start_y, true)) {
 			enemy_returning_to_start = true
 			path_start(enemy_path, ENEMY_CHASE_SPEED, path_action_stop, false)
+	}
+}
+
+/// @desc									Temporary way to show the player killed the enemy when
+///												returning to the overworld. This should be replaced
+///												with a proper animation later
+function animate_enemy_dying() {
+	image_angle += 5
+	if(image_angle >= 360) {
+		enemy_data.is_alive = false
+		enemy_data.encounter_just_defeated = false
+		instance_destroy()
 	}
 }

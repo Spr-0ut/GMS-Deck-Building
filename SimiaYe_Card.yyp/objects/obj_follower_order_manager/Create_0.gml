@@ -21,34 +21,6 @@ function show_chara_select_button() {
 	}
 }
 
-/// @desc												Creates an instance of each of the characters given
-/// @param {Array<data_chara>} sorted_chara_to_create	The array of data_chara to create instances of
-function create_chara_instances(sorted_chara_to_create) {
-	var chara_layer = layer_get_id("Instances")
-	if(chara_layer == noone) {
-		chara_layer = layer_create(0, "Instances")	
-	}
-	var x_pos = 192
-	var y_pos = 576
-	
-	var previous_chara = noone
-	for(var chara_index = 0; chara_index < array_length(sorted_chara_to_create); chara_index++) {
-		if(is_instanceof(sorted_chara_to_create[chara_index], data_chara)) {
-			var cur_chara = sorted_chara_to_create[chara_index]
-			var chara_instance = instance_create_layer(x_pos, y_pos, chara_layer, cur_chara.object_index, {
-				player_max_health : cur_chara.player_max_health,
-				is_controlled_chara : cur_chara.is_controlled_chara,
-				chara_id : cur_chara.chara_id
-			})
-		
-			if(previous_chara != noone) {
-				previous_chara.follower = chara_instance
-			}
-			previous_chara = chara_instance
-		}
-	}
-}
-
 /// @desc										Updates the order of the character instances to the
 ///													given array order
 /// @param {Array<data_chara>} new_chara_order	The array of data_chara to determines the character
@@ -56,10 +28,10 @@ function create_chara_instances(sorted_chara_to_create) {
 function update_chara_order(new_chara_order) {
 	if(global.player_chara == noone ||
 		!instance_exists(global.player_chara) ||
-		new_chara_order[0].chara_id != global.player_chara.chara_id) {
+		new_chara_order[0].chara_id != global.player_chara.chara_data.chara_id) {
 			for(var chara_index = 0; chara_index < instance_number(obj_player); chara_index++) {
 				var chara = instance_find(obj_player, chara_index)
-				if(chara.chara_id == new_chara_order[0].chara_id) {
+				if(chara.chara_data.chara_id == new_chara_order[0].chara_id) {
 					global.player_chara = chara
 					break
 				}
@@ -71,7 +43,7 @@ function update_chara_order(new_chara_order) {
 		for(var new_chara_index = 1; new_chara_index < array_length(new_chara_order); new_chara_index++) {
 			for(var chara_index = 0; chara_index < instance_number(obj_player); chara_index++) {
 				var chara = instance_find(obj_player, chara_index)
-				if(chara.chara_id == new_chara_order[new_chara_index].chara_id) {
+				if(chara.chara_data.chara_id == new_chara_order[new_chara_index].chara_id) {
 					chara.follower = noone
 					previous_chara.follower = chara
 					previous_chara = chara
@@ -168,6 +140,20 @@ function add_follower_chain_to_leader(leader_chara, chara_to_add) {
 	}
 }
 
+/// @desc									Gets the current order of the character party
+/// @returns {Array<data_chara>}			An array of the current party's data_chara			
+function get_charas_ordered() {
+	if(typeof(chara_order) != "array" || array_length(chara_order) <= 0) {
+		var chara_instances = find_charas_ordered()
+		chara_order = array_create(array_length(chara_instances))
+		for(var chara_index = 0; chara_index < array_length(chara_instances); chara_index++) {
+			chara_order[chara_index] = chara_instances[chara_index].chara_data
+		}
+	}
+	
+	return chara_order
+}
+
 /// @desc									Finds the player characters in their follower order
 /// @param {Id.Instance} next_chara			The next character to be added to the ordered array
 /// @param {Array<Id.Instance>} chara_list	The ordered array that will eventually be returned
@@ -175,7 +161,7 @@ function add_follower_chain_to_leader(leader_chara, chara_to_add) {
 ///												chara and stepping through each of their followers
 function find_charas_ordered(next_chara = noone, chara_list = []) {
 	if(!variable_global_exists("player_chara") || global.player_chara == noone) {
-		obj_follower_order_manager.find_player_chara()
+		find_player_chara()
 	}
 	if(typeof(next_chara) != "ref" || next_chara == noone) {
 		if(!instance_exists(global.player_chara)) {

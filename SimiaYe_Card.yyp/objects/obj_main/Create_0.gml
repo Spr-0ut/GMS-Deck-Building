@@ -1,3 +1,7 @@
+if(!is_instanceof(chara_data, data_main)) {
+	chara_data = new data_main()
+}
+
 // Inherit the parent event
 event_inherited();
 

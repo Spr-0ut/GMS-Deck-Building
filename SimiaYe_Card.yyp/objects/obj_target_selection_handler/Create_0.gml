@@ -136,7 +136,7 @@ function find_allowed_attackers(allowed_class = [chara_class.all_chara]) {
 		if (array_contains(allowed_class, chara_class.all_chara)) {
 			array_push(allowed_attackers, chara_instance)
 		}
-		else if (array_contains(allowed_class, chara_instance.class)) {
+		else if (array_contains(allowed_class, chara_instance.chara_data.class)) {
 			array_push(allowed_attackers, chara_instance)
 		}
 	}

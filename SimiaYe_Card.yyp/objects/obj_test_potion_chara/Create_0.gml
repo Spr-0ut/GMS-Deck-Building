@@ -1,3 +1,7 @@
+if(!is_instanceof(chara_data, data_test_potion_class)) {
+	chara_data = new data_test_potion_class()
+}
+
 // Inherit the parent event
 event_inherited();
 

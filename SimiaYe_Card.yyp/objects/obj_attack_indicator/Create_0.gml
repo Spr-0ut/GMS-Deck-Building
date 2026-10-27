@@ -47,7 +47,7 @@ function attack_target_character() {
 		for(var attack_index = 0; attack_index < array_length(attacks_to_display); attack_index++) {
 			var enemy_is_alive = attacks_to_display[attack_index].enemy_id.enemy_data.is_alive
 			if(!attacks_to_display[attack_index].attack.has_summon_sickness && enemy_is_alive) {
-				if(object_is_ancestor(target.object_index, obj_player) && target.player_current_health > 0) {
+				if(object_is_ancestor(target.object_index, obj_player) && target.chara_data.player_current_health > 0) {
 					target.hit_by_enemy(attacks_to_display[attack_index].attack)
 				}
 				else if(object_is_ancestor(target.object_index, obj_enemy)) {

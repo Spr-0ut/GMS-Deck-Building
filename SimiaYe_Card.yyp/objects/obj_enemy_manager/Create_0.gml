@@ -3,6 +3,7 @@ if(instance_number(obj_enemy_manager) > 1) {
 }
 
 ordered_enemies = []
+dead_enemies = []
 room_enemy_data = {}
 encounter_data = []
 
@@ -33,23 +34,25 @@ function create_enemy_instances(enemies_to_create) {
 		for(var enemy_index = 0; enemy_index < array_length(enemies_to_create); enemy_index++) {
 			var cur_enemy = enemies_to_create[enemy_index]
 			if(typeof(cur_enemy) = "struct" && is_instanceof(cur_enemy, data_enemy)) {
-				var x_pos = cur_enemy.initial_x_pos + sprite_get_xoffset(object_get_sprite(cur_enemy.object))
-				var y_pos = cur_enemy.initial_y_pos + sprite_get_yoffset(object_get_sprite(cur_enemy.object))
+				if(cur_enemy.is_alive || (cur_enemy.encounter_just_defeated && !global.room_is_arena)) {
+					var x_pos = cur_enemy.initial_x_pos + sprite_get_xoffset(object_get_sprite(cur_enemy.object))
+					var y_pos = cur_enemy.initial_y_pos + sprite_get_yoffset(object_get_sprite(cur_enemy.object))
 				
-				var enemy_instance = instance_create_layer(x_pos, y_pos, enemy_instance_layer, cur_enemy.object, { 
-					enemy_data : cur_enemy
-				})
-				array_push(enemy_instances_created, enemy_instance)
+					var enemy_instance = instance_create_layer(x_pos, y_pos, enemy_instance_layer, cur_enemy.object, { 
+						enemy_data : cur_enemy
+					})
+					array_push(enemy_instances_created, enemy_instance)
+				}
 			}
 		}
 	}
 	return enemy_instances_created
 }
 
-/// @desc										Saves the data_enemy that will be used for the next
-///													Arena encounter
+/// @desc										Saves the given data_enemy that will be used for the
+///													next Arena encounter
 /// @param {Array<Struct>} enemies_in_fight		The data_enemy used to create the enemies in the Arena
-function save_encounter_data(enemies_in_fight) {
+function save_enemy_encounter_data(enemies_in_fight) {
 	encounter_data = enemies_in_fight
 }
 
@@ -137,6 +140,38 @@ function summon_new_enemy(enemy) {
 		}
 	}
 	return noone
+}
+
+/// @desc								Handles an enemy dying, and determines if the encounter is over
+/// @param {Id.Instance} enemy_instance	The enemy instance that died
+function enemy_dies(enemy_instance) {
+	if(variable_instance_exists(enemy_instance, "object_index") &&
+		object_is_ancestor(enemy_instance.object_index, obj_enemy)) {
+			array_push(dead_enemies, enemy_instance)
+			var all_enemies_killed = array_all(ordered_enemies, function (element, index) { 
+				return array_contains(dead_enemies, element) 
+			})
+	
+			if(all_enemies_killed) {
+				return_from_encounter()
+			}
+	}
+}
+
+/// @desc								Handles returning the player to the room_to_return_to and
+///											marking it so it animates it's death
+function return_from_encounter() {
+	if(variable_global_exists("room_is_arena") && global.room_is_arena) {
+		global.room_is_arena = false
+		for(var enemy_index = 0; enemy_index < array_length(ordered_enemies); enemy_index++) {
+			ordered_enemies[enemy_index].enemy_data.is_alive = true
+			ordered_enemies[enemy_index].enemy_data.encounter_just_defeated = true
+		}
+	
+		if(variable_global_exists("return_room") && room_exists(global.return_room)) {
+			room_goto(global.return_room)
+		}
+	}
 }
 
 /// @desc								Handles ending the enemies turn, triggering their debuffs,

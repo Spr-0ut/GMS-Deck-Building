@@ -29,7 +29,10 @@ if (variable_global_exists("room_is_arena") && global.room_is_arena) {
 	}
 }
 else {
-	if(check_for_dist_to_target && variable_global_exists("player_chara") && global.player_chara != noone) {
+	if(enemy_data.encounter_just_defeated) {
+		animate_enemy_dying()
+	}
+	else if(check_for_dist_to_target && variable_global_exists("player_chara") && global.player_chara != noone) {
 		determine_enemy_chase_action(global.player_chara)
 	}
 }
