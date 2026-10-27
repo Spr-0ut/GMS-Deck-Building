@@ -246,7 +246,7 @@ function swap_to_arena() {
 	global.room_is_arena = true
 	global.return_room = room
 	if(instance_exists(obj_enemy_manager)) {
-		obj_enemy_manager.save_encounter_data(enemy_data.encounter_data)
+		obj_enemy_manager.save_enemy_encounter_data(enemy_data.encounter_data)
 	}
 	if(instance_exists(obj_player_chara_manager)) {
 		obj_player_chara_manager.save_chara_encounter_data()
