@@ -39,7 +39,7 @@ function create_chara_instances() {
 			if(is_instanceof(sorted_chara_to_create[chara_index], data_chara)) {
 				var cur_chara = sorted_chara_to_create[chara_index]
 				
-				if(chara_room_data != noone) {
+				if(chara_room_data != noone && struct_exists(chara_room_data, cur_chara.chara_id)) {
 					x_pos = chara_room_data[$ cur_chara.chara_id].x_pos
 					y_pos = chara_room_data[$ cur_chara.chara_id].y_pos
 				}
