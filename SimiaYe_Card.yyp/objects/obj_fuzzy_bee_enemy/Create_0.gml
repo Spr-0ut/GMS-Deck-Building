@@ -1,3 +1,4 @@
+#macro MAX_BEES_SUMMONABLE		5
 // Inherit the parent event
 event_inherited();
 
@@ -37,7 +38,7 @@ check_for_conditional_attack = function() {
 	if(!has_summon_sickness) {
 		if(!variable_global_exists("check_for_bee_summon") || global.check_for_bee_summon) {
 			global.check_for_bee_summon = false
-			if(instance_number(obj_fuzzy_bee_enemy) < 5) {
+			if(instance_number(obj_fuzzy_bee_enemy) < MAX_BEES_SUMMONABLE && instance_number(obj_enemy) < MAX_NUM_ENEMIES) {
 				var alive_bees = []
 				for(var bee_index = 0; bee_index < instance_number(obj_fuzzy_bee_enemy); bee_index++) {
 					var current_bee = instance_find(obj_fuzzy_bee_enemy, bee_index)
