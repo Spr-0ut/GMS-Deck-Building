@@ -21,7 +21,7 @@ function create_enemies(enemies_to_create) {
 	})
 		
 	if(instance_exists(obj_enemy_attack_manager)) {
-		obj_enemy_attack_manager.create_indicators()
+		obj_enemy_attack_manager.handle_enemy_creation_finished()
 	}
 }
 

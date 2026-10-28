@@ -13,9 +13,29 @@ ordered_player_charas = []
 attack_highlighter = instance_find(obj_attack_highlight, 0)
 enemy_to_highlight_attack = noone
 highlight_enemy_attack = false
+chara_instances_created = false
+enemy_instances_created = false
 
 player_attack_num = 0
 enemy_attack_num = 1
+
+/// @desc								Saves a flag that the enemies have all been created and
+///											determines if the indicators should be created
+function handle_enemy_creation_finished() {
+	enemy_instances_created = true
+	if(chara_instances_created) {
+		create_indicators()
+	}
+}
+
+/// @desc								Saves a flag that the characters have all been created and
+///											determines if the indicators should be created
+function handle_chara_creation_finished() {
+	chara_instances_created = true
+	if(enemy_instances_created) {
+		create_indicators()
+	}
+}
 
 /// @desc								Creates an obj_attack_indicator for each character / enemy then
 ///											position each character / enemy below the indicator and save

@@ -109,7 +109,10 @@ function add_queue_to_follower_chain() {
 ///											loop to the end of the chain to add the new character
 /// @param {Id.Instance} chara_to_add	The character instance to add to the end of the chain
 function add_chara_to_follower_chain_end(leader_chara, chara_to_add) {
-	if(leader_chara == chara_to_add) {
+	if(typeof(chara_to_add) != "ref" || !instance_exists(chara_to_add)) {
+		return false	
+	}
+	else if(leader_chara == chara_to_add) {
 		return false
 	}
 	else if(leader_chara != noone && leader_chara.follower == noone) {
@@ -127,8 +130,11 @@ function add_chara_to_follower_chain_end(leader_chara, chara_to_add) {
 /// @param {Id.Instance} leader_chara	The character instance to set the follower of
 /// @param {Id.Instance} chara_to_add	The character instance to set as leader_chara's follower
 function add_follower_chain_to_leader(leader_chara, chara_to_add) {
-	if(leader_chara == chara_to_add) {
-		return	
+	if(typeof(chara_to_add) != "ref" || !instance_exists(chara_to_add)) {
+		return
+	}
+	else if(leader_chara == chara_to_add) {
+		return
 	}
 	else if(leader_chara.follower != noone) {
 		var temp = leader_chara.follower

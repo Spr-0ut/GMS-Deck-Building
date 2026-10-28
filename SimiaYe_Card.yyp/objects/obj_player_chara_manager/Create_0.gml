@@ -51,13 +51,19 @@ function create_chara_instances() {
 					chara_data : cur_chara
 				})
 		
-				if(previous_chara != noone) {
+				if(cur_chara.is_controlled_chara) {
+					global.player_chara = chara_instance
+				}
+				else if(previous_chara != noone) {
 					previous_chara.follower = chara_instance
 				}
 				previous_chara = chara_instance
 			}
 		}
 		
+		if(instance_exists(obj_enemy_attack_manager)) {
+			obj_enemy_attack_manager.handle_chara_creation_finished()
+		}
 		struct_remove(room_chara_data, room_get_name(room))
 	}
 }
