@@ -7,11 +7,42 @@ if(!variable_global_exists("object_being_clicked")) {
 	global.object_being_clicked = false
 }
 chara_clicked = false
+hovering_over_chara = false
 is_selected = false
 arrow_pos = 0
 highlight_pulse_size = 0
 starting_image_x_scale = image_xscale
 starting_image_y_scale = image_yscale
+
+/// @desc						Handles the mouse hovering over this chara preparing to be pressed
+function handle_mouse_enter_chara() {
+	if((!global.object_being_clicked || chara_clicked) && is_top_layer(layer, mouse_x, mouse_y)) {
+		hovering_over_chara = true
+	}
+}
+
+/// @desc						Handles the mouse leaving this chara
+function handle_mouse_leave_chara() {
+	hovering_over_chara = false
+}
+
+/// @desc						Handles the chara being clicked, but not yet released
+function handle_selectable_chara_pressed() {
+	if(!global.object_being_clicked && is_top_layer(layer, mouse_x, mouse_y)) {
+		chara_clicked = true
+		global.object_being_clicked = true
+	}
+}
+
+/// @desc						Handles the chara being selected, telling obj_target_selection_handler
+///									which character was selected
+function handle_selectable_chara_chosen() {
+	is_selected = !is_selected
+	if(is_selected) 
+		obj_target_selection_handler.target_selected(chara_instance)
+	else 
+		obj_target_selection_handler.target_deselected(chara_instance)
+}
 
 /// @desc						Draws the highlight behind this character.
 ///									NOTE this can only be used in the draw events
