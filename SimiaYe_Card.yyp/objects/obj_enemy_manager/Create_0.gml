@@ -1,3 +1,5 @@
+#macro ENEMY_ARENA_SCALE		1.25
+
 if(instance_number(obj_enemy_manager) > 1) {
 	instance_destroy()
 }
@@ -29,6 +31,12 @@ function create_enemies(enemies_to_create) {
 function create_enemy_instances(enemies_to_create) {
 	var enemy_instances_created = []
 	var enemy_instance_layer = get_enemy_instance_layer()
+	var enemy_x_scale = 1
+	var enemy_y_scale = 1
+	if(variable_global_exists("room_is_arena") && global.room_is_arena) {
+		enemy_x_scale = ENEMY_ARENA_SCALE
+		enemy_y_scale = ENEMY_ARENA_SCALE
+	}
 	
 	if(typeof(enemies_to_create) = "array") {
 		for(var enemy_index = 0; enemy_index < array_length(enemies_to_create); enemy_index++) {
@@ -39,6 +47,8 @@ function create_enemy_instances(enemies_to_create) {
 					var y_pos = cur_enemy.initial_y_pos + sprite_get_yoffset(object_get_sprite(cur_enemy.object))
 				
 					var enemy_instance = instance_create_layer(x_pos, y_pos, enemy_instance_layer, cur_enemy.object, { 
+						image_xscale : enemy_x_scale,
+						image_yscale : enemy_y_scale,
 						enemy_data : cur_enemy
 					})
 					array_push(enemy_instances_created, enemy_instance)
@@ -123,8 +133,16 @@ function summon_new_enemy(enemy) {
 				var enemy_instance_layer = get_enemy_instance_layer()
 				var x_pos = enemy_indicator.x + sprite_get_xoffset(object_get_sprite(enemy))
 				var y_pos = enemy_indicator.y + sprite_get_yoffset(object_get_sprite(enemy)) + ATTACK_INDICATOR_Y_PADDING
+				var enemy_x_scale = 1
+				var enemy_y_scale = 1
+				if(variable_global_exists("room_is_arena") && global.room_is_arena) {
+					enemy_x_scale = ENEMY_ARENA_SCALE
+					enemy_y_scale = ENEMY_ARENA_SCALE
+				}
 				
 				var enemy_instance = instance_create_layer(x_pos, y_pos, enemy_instance_layer, enemy, { 
+					image_xscale : enemy_x_scale,
+					image_yscale : enemy_y_scale,
 					has_summon_sickness : true
 				})
 				add_existing_enemy(enemy_instance)

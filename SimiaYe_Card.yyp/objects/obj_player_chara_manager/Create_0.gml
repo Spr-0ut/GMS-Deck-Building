@@ -1,3 +1,7 @@
+#macro CHARA_ARENA_SCALE		1.5
+#macro CHARA_DEFAULT_X_POS		192
+#macro CHARA_DEFAULT_y_POS		576
+
 if(instance_number(obj_player_chara_manager) > 1) {
 	instance_destroy()
 }
@@ -20,8 +24,15 @@ function create_chara_instances() {
 			chara_layer = layer_create(0, "Instances")	
 		}
 		
-		var x_pos = 192
-		var y_pos = 576
+		var x_pos = CHARA_DEFAULT_X_POS
+		var y_pos = CHARA_DEFAULT_y_POS
+		
+		var chara_x_scale = 1
+		var chara_y_scale = 1
+		if(variable_global_exists("room_is_arena") && global.room_is_arena) {
+			chara_x_scale = CHARA_ARENA_SCALE
+			chara_y_scale = CHARA_ARENA_SCALE
+		}
 	
 		var previous_chara = noone
 		for(var chara_index = 0; chara_index < array_length(sorted_chara_to_create); chara_index++) {
@@ -34,6 +45,8 @@ function create_chara_instances() {
 				}
 				
 				var chara_instance = instance_create_layer(x_pos, y_pos, chara_layer, cur_chara.object_index, {
+					image_xscale : chara_x_scale,
+					image_yscale : chara_y_scale,
 					is_controlled_chara : cur_chara.is_controlled_chara,
 					chara_data : cur_chara
 				})
