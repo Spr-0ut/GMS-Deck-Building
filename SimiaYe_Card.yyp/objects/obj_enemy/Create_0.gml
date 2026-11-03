@@ -2,6 +2,7 @@
 #macro SECONDS_ENEMY_SEARCHS_FOR_PLAYER		2
 #macro ENEMY_LOSES_PLAYER_SPRITE			spr_enemy_loses_player_symbol
 #macro ENEMY_LOSES_PLAYER_SYMBOL_PADDING	5
+#macro ENGAGE_FIGHT_PERCENT_CAMERA_ZOOM		0.5
 
 active_debuffs = {}
 active_buffs = {}
@@ -13,6 +14,9 @@ enemy_start_x = x
 enemy_start_y = y
 enemy_returning_to_start = true
 display_enemy_loses_player_symbol = false
+enemy_can_move = true
+enemy_sprite_speed = image_speed
+enemy_path_speed = path_speed
 collidable_items = find_room_collision_items(room)
 enemy_path = path_add()
 
@@ -217,6 +221,23 @@ function take_damage(health_damage) {
 	}
 }
 
+/// @desc							Freezes this enemies movement and animations
+function pause_enemy_movement() {
+	enemy_can_move = false
+	enemy_sprite_speed = image_speed
+	enemy_path_speed = path_speed
+	image_speed = 0
+	path_speed = 0
+	
+}
+
+/// @desc							Resumes this enemies movement and animations after being frozen
+function resume_enemy_movement() {
+	enemy_can_move = true
+	image_speed = enemy_sprite_speed
+	path_speed = enemy_path_speed
+}
+
 /// @desc									Finds how far this enemy is away from the target_to_chase
 ///												and determines its next action based on that distance
 /// @param {Id.Instance} target_to_chase	The target instance to determine the distance from
@@ -229,7 +250,8 @@ function determine_enemy_chase_action(target_to_chase) {
 	
 	if(place_meeting(x, y, target_to_chase)) {
 		display_enemy_loses_player_symbol = false
-		swap_to_arena()
+		var zoom_focus_radius = sqrt(dist_to_target_sqr) + target_to_chase.sprite_width + sprite_width
+		engage_player_in_fight(zoom_focus_radius)
 	}
 	else if(dist_to_target_sqr < sqr(dist_to_chase_target)) {
 		display_enemy_loses_player_symbol = false
@@ -237,6 +259,22 @@ function determine_enemy_chase_action(target_to_chase) {
 	}
 	else {
 		check_for_dist_to_target = false
+	}
+}
+
+/// @desc									Prepares the scene to start a fight between this enemy
+///												and the player, animating the fight starting
+/// @param {Real} size_of_zoom_focus		The radius that will not be blured by the camera zoom effect
+function engage_player_in_fight(size_of_zoom_focus) {
+	with (obj_enemy) {
+		pause_enemy_movement()
+	}
+	with (obj_player) {
+		pause_chara_movement()
+	}
+	if(instance_exists(obj_camera_controller)) {
+		obj_camera_controller.start_camera_zoom(ENGAGE_FIGHT_PERCENT_CAMERA_ZOOM, ENGAGE_FIGHT_PERCENT_CAMERA_ZOOM,
+												size_of_zoom_focus, method(self, swap_to_arena))
 	}
 }
 

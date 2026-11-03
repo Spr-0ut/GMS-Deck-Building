@@ -76,6 +76,7 @@
     {"name":"get_chara_id","order":3,"path":"scripts/get_chara_id/get_chara_id.yy",},
     {"name":"obj_chara_card_drawn_elements","order":6,"path":"scripts/obj_chara_card_drawn_elements/obj_chara_card_drawn_elements.yy",},
     {"name":"sound_effect_struct","order":2,"path":"scripts/sound_effect_struct/sound_effect_struct.yy",},
+    {"name":"shd_camera_zoom","order":2,"path":"shaders/shd_camera_zoom/shd_camera_zoom.yy",},
     {"name":"etest","order":1,"path":"sprites/etest/etest.yy",},
     {"name":"spr_ability_symbol","order":3,"path":"sprites/spr_ability_symbol/spr_ability_symbol.yy",},
     {"name":"spr_attack_symbol","order":2,"path":"sprites/spr_attack_symbol/spr_attack_symbol.yy",},

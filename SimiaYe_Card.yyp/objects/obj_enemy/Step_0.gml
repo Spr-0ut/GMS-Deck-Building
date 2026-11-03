@@ -28,7 +28,7 @@ if (variable_global_exists("room_is_arena") && global.room_is_arena) {
 		}
 	}
 }
-else {
+else if(enemy_can_move) {
 	if(enemy_data.encounter_just_defeated) {
 		animate_enemy_dying()
 	}

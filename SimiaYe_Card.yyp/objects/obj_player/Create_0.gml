@@ -42,6 +42,9 @@ dir_player_enters_room = dir_to_place_player.Top
 dist_to_move_chara = 0
 on_walk_animation_end = undefined
 chara_leaving_room = undefined
+chara_can_move = true
+chara_sprite_speed = image_speed
+chara_path_speed = path_speed
 
 active_buffs = {}
 active_debuffs = {}
@@ -95,6 +98,22 @@ function set_initial_pos() {
 			obj_camera_controller.set_camera_initial_pos()
 		}
 	}
+}
+
+/// @desc								Freezes this character's movement and animations
+function pause_chara_movement() {
+	chara_can_move = false
+	chara_sprite_speed = image_speed
+	chara_path_speed = path_speed
+	image_speed = 0
+	path_speed = 0
+}
+
+/// @desc								Resumes this character's movement and animations after being frozen
+function resume_chara_movement() {
+	chara_can_move = true
+	image_speed = chara_sprite_speed
+	path_speed = chara_path_speed
 }
 
 /// @desc									Sets up the character automatically walking in the given

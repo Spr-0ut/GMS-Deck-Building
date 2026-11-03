@@ -642,6 +642,7 @@
     {"id":{"name":"sound_effect_struct","path":"scripts/sound_effect_struct/sound_effect_struct.yy",},},
     {"id":{"name":"struct_card_action","path":"scripts/struct_card_action/struct_card_action.yy",},},
     {"id":{"name":"top_layer_check","path":"scripts/top_layer_check/top_layer_check.yy",},},
+    {"id":{"name":"shd_camera_zoom","path":"shaders/shd_camera_zoom/shd_camera_zoom.yy",},},
     {"id":{"name":"shd_clip","path":"shaders/shd_clip/shd_clip.yy",},},
     {"id":{"name":"shd_flip_page","path":"shaders/shd_flip_page/shd_flip_page.yy",},},
     {"id":{"name":"shd_see_through","path":"shaders/shd_see_through/shd_see_through.yy",},},
