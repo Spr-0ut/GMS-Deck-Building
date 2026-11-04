@@ -11,7 +11,7 @@ health_surface = -1
 function find_chara_health_x_scale() {
 	if(associated_chara != noone && instance_number(associated_chara) > 0) {
 		var chara_instance = instance_find(associated_chara, 0)
-		target_health_x_scale = clamp(chara_instance.player_current_health / chara_instance.player_max_health, 0, 1)
+		target_health_x_scale = clamp(chara_instance.chara_data.player_current_health / chara_instance.chara_data.player_max_health, 0, 1)
 	}
 }
 

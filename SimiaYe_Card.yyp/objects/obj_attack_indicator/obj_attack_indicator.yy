@@ -11,8 +11,8 @@
   "name":"obj_attack_indicator",
   "overriddenProperties":[],
   "parent":{
-    "name":"Enemy",
-    "path":"folders/Objects/Enemy.yy",
+    "name":"Attack_Indicator",
+    "path":"folders/Objects/Enemy/Attack_Indicator.yy",
   },
   "parentObjectId":null,
   "persistent":false,

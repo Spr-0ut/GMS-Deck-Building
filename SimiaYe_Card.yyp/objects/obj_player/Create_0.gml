@@ -24,8 +24,8 @@ if(!variable_global_exists("room_switching"))
 
 arena = false
 collidable_items = find_room_collision_items(room)
-if(player_current_health == -1)
-	player_current_health = player_max_health
+if(chara_data.player_current_health == -1)
+	chara_data.player_current_health = chara_data.player_max_health
 
 var bbox_edge_to_origin_dist = { left :	bbox_left - x,
 									top :	bbox_top - y,
@@ -42,19 +42,16 @@ dir_player_enters_room = dir_to_place_player.Top
 dist_to_move_chara = 0
 on_walk_animation_end = undefined
 chara_leaving_room = undefined
+chara_can_move = true
+chara_sprite_speed = image_speed
+chara_path_speed = path_speed
 
-class = chara_class.damage
 active_buffs = {}
 active_debuffs = {}
 display_next_effect_text = true
 effect_to_display = []
 chara_shield = 0
-player_current_health = player_max_health
 turns_since_gain_strength_on_attack = 1
-
-if(!is_real(chara_id) || chara_id < 0) {
-	chara_id = create_chara_id()	
-}
 
 /// @desc								Sets the controlled character's initial position so they are
 ///											next to the obj_room_change_trigger with pos_num equal to
@@ -101,6 +98,22 @@ function set_initial_pos() {
 			obj_camera_controller.set_camera_initial_pos()
 		}
 	}
+}
+
+/// @desc								Freezes this character's movement and animations
+function pause_chara_movement() {
+	chara_can_move = false
+	chara_sprite_speed = image_speed
+	chara_path_speed = path_speed
+	image_speed = 0
+	path_speed = 0
+}
+
+/// @desc								Resumes this character's movement and animations after being frozen
+function resume_chara_movement() {
+	chara_can_move = true
+	image_speed = chara_sprite_speed
+	path_speed = chara_path_speed
 }
 
 /// @desc									Sets up the character automatically walking in the given
@@ -178,7 +191,7 @@ function hit_by_enemy(enemy_attack) {
 ///											checks if it was enough damage to kill them
 /// @param {Real} damage_taken			The amount of health to remove from this character
 function take_damage(damage_taken) {
-	player_current_health = clamp(player_current_health - damage_taken, 0, player_max_health)
+	chara_data.player_current_health = clamp(chara_data.player_current_health - damage_taken, 0, chara_data.player_max_health)
 	if(instance_number(ui_health_bar) > 0) {
 		for(var health_bar_index = 0; health_bar_index < instance_number(ui_health_bar); health_bar_index++) {
 			var health_bar_instance = instance_find(ui_health_bar, health_bar_index)
@@ -188,8 +201,8 @@ function take_damage(damage_taken) {
 		}
 	}
 		
-	show_debug_message(player_current_health)
-	if(player_current_health <= 0)
+	show_debug_message(chara_data.player_current_health)
+	if(chara_data.player_current_health <= 0)
 		show_debug_message("Player is dead")
 }
 
@@ -272,7 +285,7 @@ function add_shield(shield_amount) {
 /// @param {Real} health_to_add			The maximum health to be healed
 function heal_chara(health_to_add) {
 	if(health_to_add > 0)
-		player_current_health = clamp(player_current_health + health_to_add, 0, player_max_health)
+		chara_data.player_current_health = clamp(chara_data.player_current_health + health_to_add, 0, chara_data.player_max_health)
 }
 
 /// @desc											Adds the given buff data to the effect_to_display
@@ -730,5 +743,19 @@ function check_for_building_entrance() {
 	var closest_trigger = instance_nearest(x, y, obj_enter_building_trigger)
 	if(distance_to_object(closest_trigger) < MAX_DIST_TO_ENTER_BUILDING) {
 		closest_trigger.wake_up()	
+	}
+}
+
+/// @desc							Activates any enemies on screen, allowing them to attack the player
+function check_for_near_enemy() {
+	var dist_to_wake_enemies_x = camera_get_view_width(view_camera[0])
+	var dist_to_wake_enemies_y = camera_get_view_height(view_camera[0])
+	
+	var enemies_to_wake = ds_list_create()
+	var num_enemies_to_wake = collision_rectangle_list(x - dist_to_wake_enemies_x, y - dist_to_wake_enemies_y,
+														x + dist_to_wake_enemies_x, y + dist_to_wake_enemies_y,
+														obj_enemy, false, true, enemies_to_wake, false)
+	for(var enemy_index = 0; enemy_index < num_enemies_to_wake; enemy_index++) {
+		enemies_to_wake[| enemy_index].activate_player_tracking()
 	}
 }

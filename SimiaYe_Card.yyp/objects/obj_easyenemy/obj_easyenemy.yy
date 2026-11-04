@@ -4,10 +4,12 @@
   "eventList":[],
   "managed":true,
   "name":"obj_easyenemy",
-  "overriddenProperties":[],
+  "overriddenProperties":[
+    {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"obj_enemy","path":"objects/obj_enemy/obj_enemy.yy",},"propertyId":{"name":"enemy_data","path":"objects/obj_enemy/obj_enemy.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"new data_easyenemy()",},
+  ],
   "parent":{
-    "name":"Enemy",
-    "path":"folders/Objects/Enemy.yy",
+    "name":"Easyenemy",
+    "path":"folders/Objects/Enemy/Easyenemy.yy",
   },
   "parentObjectId":{
     "name":"obj_enemy",

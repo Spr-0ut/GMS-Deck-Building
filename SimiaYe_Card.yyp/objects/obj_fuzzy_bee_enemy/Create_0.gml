@@ -1,3 +1,4 @@
+#macro MAX_BEES_SUMMONABLE		5
 // Inherit the parent event
 event_inherited();
 
@@ -37,27 +38,32 @@ check_for_conditional_attack = function() {
 	if(!has_summon_sickness) {
 		if(!variable_global_exists("check_for_bee_summon") || global.check_for_bee_summon) {
 			global.check_for_bee_summon = false
-			if(instance_number(obj_fuzzy_bee_enemy) < 5) {
+			if(instance_number(obj_fuzzy_bee_enemy) < MAX_BEES_SUMMONABLE && instance_number(obj_enemy) < MAX_NUM_ENEMIES) {
 				var alive_bees = []
 				for(var bee_index = 0; bee_index < instance_number(obj_fuzzy_bee_enemy); bee_index++) {
 					var current_bee = instance_find(obj_fuzzy_bee_enemy, bee_index)
 					var latest_attack_method = method_get_index(current_bee.attack_options[current_bee.next_attack_index].attack)
-					if(current_bee.Is_alive && 
+					if(current_bee.enemy_data.is_alive && 
 						!current_bee.has_summon_sickness &&
 						latest_attack_method != summon_fuzzy_bee) {
 							array_push(alive_bees, current_bee)
 					}
 				}
 			
-				var bee_to_summon_bee = alive_bees[irandom(array_length(alive_bees) - 1)]
-				with (bee_to_summon_bee) {
-					array_insert(attack_options, next_attack_index + 1, 
-					{
-						attack : method(self, summon_fuzzy_bee),
-						attack_parameters : [],
-						targeting_type : enemy_attack_target.summon_enemy,
-						is_temporary_attack : true
-					})
+				if(array_length(alive_bees) > 0) {
+					var bee_to_summon_bee = alive_bees[irandom(array_length(alive_bees) - 1)]
+					with (bee_to_summon_bee) {
+						array_insert(attack_options, next_attack_index + 1, 
+						{
+							attack : method(self, summon_fuzzy_bee),
+							attack_parameters : [],
+							targeting_type : enemy_attack_target.summon_enemy,
+							is_temporary_attack : true
+						})
+					}
+				}
+				else {
+					global.check_for_bee_summon = true
 				}
 			}
 			else {

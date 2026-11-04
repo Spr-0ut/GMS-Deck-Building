@@ -1,3 +1,7 @@
+if(!is_instanceof(chara_data, data_gilk)) {
+	chara_data = new data_gilk()
+}
+
 // Inherit the parent event
 event_inherited();
 

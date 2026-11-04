@@ -1,8 +1,24 @@
+#macro ENEMY_CHASE_SPEED					WALK_SPEED * 0.7
+#macro SECONDS_ENEMY_SEARCHS_FOR_PLAYER		2
+#macro ENEMY_LOSES_PLAYER_SPRITE			spr_enemy_loses_player_symbol
+#macro ENEMY_LOSES_PLAYER_SYMBOL_PADDING	5
+#macro ENGAGE_FIGHT_PERCENT_CAMERA_ZOOM		0.5
+
 active_debuffs = {}
 active_buffs = {}
 display_next_damage_text = true
 damage_to_display = []
 next_attack_index = 0
+check_for_dist_to_target = false
+enemy_start_x = x
+enemy_start_y = y
+enemy_returning_to_start = true
+display_enemy_loses_player_symbol = false
+enemy_can_move = true
+enemy_sprite_speed = image_speed
+enemy_path_speed = path_speed
+collidable_items = find_room_collision_items(room)
+enemy_path = path_add()
 
 #region Implement in each enemy type
 
@@ -23,6 +39,10 @@ function basic_attack() {
 
 #endregion
 
+/// @desc							Alerts this enemy to begin tracking the player position to attack them
+function activate_player_tracking() {
+	check_for_dist_to_target = true
+}
 
 /// @desc							Checks if this enemy has summon sickness from just being summoned
 ///										and adds a temporary attack that clears the summon sickness
@@ -188,12 +208,148 @@ function trigger_end_of_turn_debuffs() {
 /// @desc							Removes health from this enemy and checks if they die
 /// @param {Real} health_damage		The amount of health to remove from this enemy
 function take_damage(health_damage) {
-	Health -= health_damage
-	if(Health <= 0 && Is_alive) {
-		Is_alive = false
+	enemy_data.current_health -= health_damage
+	if(enemy_data.current_health <= 0 && enemy_data.is_alive) {
+		enemy_data.is_alive = false
 		show_debug_message("This enemy is dead")
 		if(instance_exists(obj_enemy_attack_manager)) {
 			obj_enemy_attack_manager.remove_enemy_intent(id)
 		}
+		if(instance_exists(obj_enemy_manager)) {
+			obj_enemy_manager.enemy_dies(id)
+		}
+	}
+}
+
+/// @desc							Freezes this enemies movement and animations
+function pause_enemy_movement() {
+	enemy_can_move = false
+	enemy_sprite_speed = image_speed
+	enemy_path_speed = path_speed
+	image_speed = 0
+	path_speed = 0
+	
+}
+
+/// @desc							Resumes this enemies movement and animations after being frozen
+function resume_enemy_movement() {
+	enemy_can_move = true
+	image_speed = enemy_sprite_speed
+	path_speed = enemy_path_speed
+}
+
+/// @desc									Finds how far this enemy is away from the target_to_chase
+///												and determines its next action based on that distance
+/// @param {Id.Instance} target_to_chase	The target instance to determine the distance from
+function determine_enemy_chase_action(target_to_chase) {
+	var center_of_enemy_x = bbox_left + (bbox_right - bbox_left) / 2
+	var center_of_enemy_y = bbox_top + (bbox_bottom - bbox_top) / 2
+	var center_of_target_x = target_to_chase.bbox_left + (target_to_chase.bbox_right - target_to_chase.bbox_left) / 2
+	var center_of_target_y = target_to_chase.bbox_top + (target_to_chase.bbox_bottom -  target_to_chase.bbox_top) / 2
+	var dist_to_target_sqr = sqr(center_of_target_x - center_of_enemy_x) + sqr(center_of_target_y - center_of_enemy_y)
+	
+	if(place_meeting(x, y, target_to_chase)) {
+		display_enemy_loses_player_symbol = false
+		var zoom_focus_radius = sqrt(dist_to_target_sqr) + target_to_chase.sprite_width + sprite_width
+		engage_player_in_fight(zoom_focus_radius)
+	}
+	else if(dist_to_target_sqr < sqr(dist_to_chase_target)) {
+		display_enemy_loses_player_symbol = false
+		find_enemy_path(target_to_chase, center_of_enemy_x, center_of_enemy_y, center_of_target_x, center_of_target_y)
+	}
+	else {
+		check_for_dist_to_target = false
+	}
+}
+
+/// @desc									Prepares the scene to start a fight between this enemy
+///												and the player, animating the fight starting
+/// @param {Real} size_of_zoom_focus		The radius that will not be blured by the camera zoom effect
+function engage_player_in_fight(size_of_zoom_focus) {
+	with (obj_enemy) {
+		pause_enemy_movement()
+	}
+	with (obj_player) {
+		pause_chara_movement()
+	}
+	if(instance_exists(obj_camera_controller)) {
+		obj_camera_controller.start_camera_zoom(ENGAGE_FIGHT_PERCENT_CAMERA_ZOOM, ENGAGE_FIGHT_PERCENT_CAMERA_ZOOM,
+												size_of_zoom_focus, method(self, swap_to_arena))
+	}
+}
+
+/// @desc									Saves data about the current room and swaps the player
+//												into the Arena room to begin a fight
+function swap_to_arena() {
+	global.room_is_arena = true
+	global.return_room = room
+	if(instance_exists(obj_enemy_manager)) {
+		obj_enemy_manager.save_enemy_encounter_data(enemy_data.encounter_data)
+	}
+	if(instance_exists(obj_player_chara_manager)) {
+		obj_player_chara_manager.save_chara_encounter_data()
+	}
+	
+	room_goto(Arena)
+}
+
+/// @desc									Finds whether this enemy will chase the given target or return
+///												to it's original position
+/// @param {Id.Instance} target_to_chase	The target this enemy will path towards
+/// @param {Real} center_of_enemy_x			The x position of the center of this enemy's bounding box
+/// @param {Real} center_of_enemy_y			The y position of the center of this enemy's bounding box
+/// @param {Real} center_of_target_x		The x position of the center of the target's bounding box
+/// @param {Real} center_of_target_y		The y position of the center of the target's bounding box
+function find_enemy_path(target_to_chase, center_of_enemy_x, center_of_enemy_y, center_of_target_x, center_of_target_y) {
+	if(check_target_can_be_seen(target_to_chase)) {
+		path_enemy_to_target(center_of_enemy_x, center_of_enemy_y, center_of_target_x, center_of_target_y)
+	}
+}
+
+/// @desc									Determines if the top or bottom of this enemy is able to see
+///												the top or the bottom of the given target's bounding box
+/// @param {Id.Instance} target_to_chase	The instance this enemy is attempting to see
+/// @returns {Bool}							A flag for if the enemy can see the given character
+function check_target_can_be_seen(target_to_chase) {
+	var top_left_visible = collision_line(bbox_left, bbox_top, target_to_chase.bbox_left,  target_to_chase.bbox_top, collidable_items, false, true) == noone
+	var top_right_visible = collision_line(bbox_right, bbox_top, target_to_chase.bbox_right,  target_to_chase.bbox_top, collidable_items, false, true) == noone
+	var bottom_left_visible = collision_line(bbox_left, bbox_bottom, target_to_chase.bbox_left, target_to_chase.bbox_bottom, collidable_items, false, true) == noone
+	var bottom_right_visible = collision_line(bbox_right, bbox_bottom, target_to_chase.bbox_right, target_to_chase.bbox_bottom, collidable_items, false, true) == noone
+
+	return top_left_visible || top_right_visible || bottom_left_visible || bottom_right_visible
+}
+
+/// @desc									Attempts to find an enemy_path from the center of the enemy
+///												the the center of the target on global.pathing_grid
+/// @param {Real} center_of_enemy_x			The x position of the center of this enemy's bounding box
+/// @param {Real} center_of_enemy_y			The y position of the center of this enemy's bounding box
+/// @param {Real} center_of_target_x		The x position of the center of the target's bounding box
+/// @param {Real} center_of_target_y		The y position of the center of the target's bounding box
+function path_enemy_to_target(center_of_enemy_x, center_of_enemy_y, center_of_target_x, center_of_target_y) {
+	if(mp_grid_path(global.pathing_grid, enemy_path, center_of_enemy_x, center_of_enemy_y, center_of_target_x, center_of_target_y, true)) {
+		enemy_returning_to_start = false
+		path_start(enemy_path, ENEMY_CHASE_SPEED, path_action_stop, false)
+	}	
+}
+
+/// @desc									Attempts to find an enemy_path from the enemy's current
+///												position to the enemy_start_ position
+function path_enemy_to_start() {
+	if(!enemy_returning_to_start &&
+		mp_grid_path(global.pathing_grid, enemy_path, x, y, enemy_start_x, enemy_start_y, true)) {
+			enemy_returning_to_start = true
+			path_start(enemy_path, ENEMY_CHASE_SPEED, path_action_stop, false)
+	}
+}
+
+/// @desc									Temporary way to show the player killed the enemy when
+///												returning to the overworld. This should be replaced
+///												with a proper animation later
+function animate_enemy_dying() {
+	image_angle += 5
+	if(image_angle >= 360) {
+		enemy_data.is_alive = false
+		enemy_data.encounter_just_defeated = false
+		instance_destroy()
 	}
 }

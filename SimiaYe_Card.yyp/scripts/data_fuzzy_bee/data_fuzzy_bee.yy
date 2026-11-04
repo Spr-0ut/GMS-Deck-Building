@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"data_fuzzy_bee",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"data_fuzzy_bee",
+  "parent":{
+    "name":"Fuzzy_Bee",
+    "path":"folders/Objects/Enemy/Fuzzy_Bee.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

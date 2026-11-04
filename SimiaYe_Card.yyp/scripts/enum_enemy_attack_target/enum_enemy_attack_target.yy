@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"enum_enemy_attack_target",
   "parent":{
-    "name":"Enemy",
-    "path":"folders/Objects/Enemy.yy",
+    "name":"Attack_Indicator",
+    "path":"folders/Objects/Enemy/Attack_Indicator.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

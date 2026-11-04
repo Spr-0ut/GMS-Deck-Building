@@ -1,7 +1,7 @@
 if (variable_global_exists("room_is_arena") && global.room_is_arena) {
 	display_effect_text()
 }
-else {
+else if (chara_can_move) {
 	if(is_controlled_chara) {
 		if(variable_global_exists("room_switching") && global.room_switching) {
 			animate_player_leaving_room()	
@@ -20,6 +20,7 @@ else {
 			}
 			
 			check_for_building_entrance()
+			check_for_near_enemy()
 		}
 	}
 	else if (!character_teleporting) {

@@ -26,7 +26,7 @@ function set_chara_targeted(charas) {
 	}
 	
 	if(array_length(chara_targeted) < array_length(charas)) {
-		for(var chara_index = array_length(chara_targeted) - 1; chara_index < array_length(charas); chara_index++) {
+		for(var chara_index = array_length(chara_targeted); chara_index < array_length(charas); chara_index++) {
 			chara_targeted[chara_index] = charas[chara_index]
 			charas[chara_index].visible = false	
 		}
@@ -55,7 +55,7 @@ function set_attack_indicators(indicators) {
 	}
 	
 	if(array_length(attack_indicators) < array_length(indicators)) {
-		for(var indicator_index = array_length(attack_indicators) - 1; indicator_index < array_length(indicators); indicator_index++) {
+		for(var indicator_index = array_length(attack_indicators); indicator_index < array_length(indicators); indicator_index++) {
 			attack_indicators[indicator_index] = indicators[indicator_index]
 		}
 	}

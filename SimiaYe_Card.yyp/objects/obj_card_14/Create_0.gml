@@ -17,7 +17,7 @@ function calc_energy_cost() {
 	var allowed_attackers = array_create(0)
 	for(var chara_index = 0; chara_index < num_avaliable_charas; chara_index++) {
 		var chara_instance = instance_find(obj_player, chara_index)
-		if(chara_instance.class == chara_class.science) {
+		if(chara_instance.chara_data.class == chara_class.science) {
 			energy_cost--;	
 		}
 	}	
